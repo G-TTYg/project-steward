@@ -1,6 +1,47 @@
-# Long-Work Templates
+# Project Steward Templates
 
-Use these templates only when they improve recoverability. Keep them short and factual.
+Use these templates only when they improve project clarity, recovery, or handoff. Keep them short and factual.
+
+## AGENTS.md
+
+```markdown
+# Agent Instructions
+
+## Project Scope
+
+- Project root:
+- Primary app/package:
+- Important subprojects:
+
+## Commands
+
+- Install:
+- Test:
+- Lint/typecheck:
+- Build:
+- Run:
+
+## Architecture
+
+- Entry points:
+- Application/use-case layer:
+- Domain/business logic:
+- Infrastructure/adapters:
+- Persistence/external services:
+
+## Conventions
+
+- Code style:
+- Test style:
+- Docs/logs/ADR locations:
+- Migration/deployment notes:
+
+## Safety
+
+- Do not:
+- Ask before:
+- Required verification before delivery:
+```
 
 ## Run Plan
 
@@ -53,6 +94,70 @@ Run state: `<path>`
 - Next:
 - Risk/blocker:
 ```
+
+## ADR
+
+```markdown
+# ADR: <decision title>
+
+Date: <YYYY-MM-DD>
+Status: proposed | accepted | superseded
+
+## Context
+
+<facts and forces that made the decision necessary>
+
+## Decision
+
+<the chosen direction>
+
+## Consequences
+
+- Positive:
+- Negative:
+- Follow-up:
+
+## Alternatives Considered
+
+- <alternative and why it was not chosen>
+```
+
+## Architecture Note
+
+````markdown
+# Architecture: <area>
+
+## Purpose
+
+<what this area owns>
+
+## Boundaries
+
+- Owns:
+- Does not own:
+- Depends on:
+- Called by:
+
+## Contracts
+
+- API/CLI/events/schemas:
+- Data models:
+- Error handling:
+
+## Diagram
+
+```mermaid
+flowchart LR
+  A["Caller"] --> B["Application/use case"]
+  B --> C["Domain"]
+  B --> D["Adapter"]
+```
+
+## Verification
+
+- Tests:
+- Manual checks:
+````
 
 ## Handoff
 
@@ -130,4 +235,3 @@ Recorded:
 Remaining:
 - <risk, TODO, or none>
 ```
-

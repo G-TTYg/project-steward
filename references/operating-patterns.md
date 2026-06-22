@@ -1,6 +1,6 @@
-# Long-Work Operating Patterns
+# Codex Operating Patterns
 
-Use this reference when a task is too large, risky, or ambiguous for a single edit loop.
+Use this reference when stewardship work becomes long-running, risky, ambiguous, or likely to survive context compaction. These patterns support project stability; they do not replace architecture and documentation discipline.
 
 ## Planning Patterns
 
@@ -76,7 +76,7 @@ Use targeted searches rather than broad rereads:
 
 Record search conclusions only when they change the plan.
 
-## Long-Running Engineering Techniques
+## Stewarded Execution Techniques
 
 ### Preserve a working state
 
@@ -92,7 +92,7 @@ Use project-native boundaries:
 - adapters for vendor/framework details;
 - tests at the narrowest stable contract.
 
-Do not add layers just to look architectural. Add boundaries where change, risk, or coupling is real.
+Do not add layers just to look architectural. Add boundaries where change, risk, or coupling is real. If the boundary is architectural, document it in the project map or ADR.
 
 ### Verification ladder
 
@@ -138,6 +138,20 @@ Poor subagent tasks:
 
 Merge subagent output into the main run state with confidence and action taken.
 
+## Handoff Quality
+
+A good handoff lets a human or fresh agent continue without guessing:
+
+- exact project root;
+- current objective and current slice;
+- changed files and why;
+- commands run and results;
+- facts, assumptions, and decisions separated;
+- unresolved risks;
+- next safest step.
+
+Do not bury critical project facts in chat-only summaries.
+
 ## User Communication
 
 For long work, concise updates should tell the user what changed in your understanding:
@@ -147,4 +161,3 @@ For long work, concise updates should tell the user what changed in your underst
 - "The broad build fails in unrelated generated code; I recorded the exact failure and verified the changed module directly."
 
 Avoid updates that only say you are still working.
-

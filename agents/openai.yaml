@@ -1,4 +1,4 @@
 interface:
   display_name: "Project Steward"
-  short_description: "Steer long Codex project work with checkpoints."
-  default_prompt: "Use $project-steward to steward this project task with scoped context, checkpoints, verification, and a clean handoff."
+  short_description: "Keep Codex project work stable and clear."
+  default_prompt: "Use $project-steward to keep this project change stable, clear, documented, verified, and easy to continue."

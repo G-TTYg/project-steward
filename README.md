@@ -1,6 +1,6 @@
 # Project Steward
 
-Project Steward is a Codex skill for long-running project work: context binding, project-scoped plans, checkpoints, resumable handoffs, architecture hygiene, and verified delivery.
+Project Steward is a Codex skill for stable, clear project work: project-root binding, architecture hygiene, anti-sprawl governance, project-scoped docs/logs/ADRs, checkpoints, handoffs, and verified delivery.
 
 This repository is the skill folder itself. Install it as `project-steward` so Codex can invoke it as `$project-steward`.
 
@@ -49,17 +49,17 @@ or make sure `git clone` has access through Git Credential Manager, SSH, or a to
 Start a new Codex session or refresh Codex if the skill is not detected immediately, then invoke:
 
 ```text
-Use $project-steward to steward this project task with scoped context, checkpoints, verification, and a clean handoff.
+Use $project-steward to keep this project change stable, clear, documented, verified, and easy for the next maintainer to continue.
 ```
 
 Good prompts:
 
 ```text
-Use $project-steward to refactor this module without losing context across a long session.
+Use $project-steward to refactor this module while preserving architecture boundaries, docs, and tests.
 ```
 
 ```text
-Use $project-steward to continue this migration from the existing handoff and verify each slice.
+Use $project-steward to continue this migration from the existing handoff, protect project structure, and verify each slice.
 ```
 
 ## Update
@@ -98,7 +98,7 @@ Skill is valid!
 
 For installation or updates, read this README first.
 
-For task execution, read `SKILL.md` first. Load `references/operating-patterns.md` only for deeper long-running workflow guidance, and load `references/templates.md` only when creating durable plans, logs, handoffs, blocker notes, or verification matrices.
+For task execution, read `SKILL.md` first. Load `references/stewardship-standards.md` when judging architecture/anti-sprawl risk, load `references/operating-patterns.md` only for deeper long-running workflow guidance, and load `references/templates.md` only when creating durable plans, logs, ADRs, handoffs, blocker notes, or verification matrices.
 
 Use `scripts/long_work.py` when a task needs durable run state:
 
@@ -111,4 +111,3 @@ Then checkpoint meaningful progress:
 ```bash
 python ~/.codex/skills/project-steward/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --next "next action" --verify "test result"
 ```
-

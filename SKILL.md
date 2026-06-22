@@ -1,154 +1,215 @@
 ---
 name: project-steward
-description: Project-scoped stewardship and long-running Codex work system for complex coding, refactoring, research, migration, debugging, architecture hygiene, documentation, or multi-repository tasks that may span many tool calls, context compaction, subagents, or verification cycles. Use when Codex needs sustained autonomous execution, durable task state, project-scoped plans/logs/handoffs, checkpoint recovery, careful context budgeting, multi-step engineering plans, blocker handling, clean continuation across long sessions, anti-sprawl project governance, or verified delivery.
+description: Project-scoped stewardship and anti-sprawl workflow for Codex and coding agents working in one or many repositories. Use when starting or continuing project work, entering an unfamiliar repo/subproject, creating or refactoring features, preserving architecture, enforcing maintainable engineering defaults, writing or repairing AGENTS.md/README/docs/logs/ADRs/specs, preventing architecture drift, keeping durable project memory, creating handoffs, or carrying long-running work through checkpoints and verification without mixing state across projects.
 ---
 
 # Project Steward
 
-Use this skill to make Codex behave like a durable project operator during long or risky work. The goal is not extra paperwork; the goal is to keep project facts scoped, maintain momentum, recover cleanly after context loss, and finish with evidence.
+Project Steward makes Codex act like a careful maintainer, not a drive-by coder. The first duty is to keep the project stable, clear, and continuable by both humans and future agents.
 
-Treat stewardship as two intertwined responsibilities: preserve project quality, and keep the work itself resumable. Architecture, documentation, checkpoints, verification, and handoff should support each other instead of becoming separate rituals.
+This skill is project-scoped. Always identify the current project root first, and write governance artifacts inside that project. Do not let an agent workspace, global memory folder, or unrelated repository stand in for the actual project.
 
-## Mode Selection
+Long-running execution support is included, but it is a means, not the identity of the skill. Checkpoints, handoffs, and run logs exist to protect project continuity.
 
-Use **Fast Track** for local, reversible changes that fit in one short edit/test loop. Keep state in chat and `update_plan`; do not create run files unless the task grows.
+## Stewardship Principle
 
-Use **Stewarded Run** for any task with one or more of these signals:
+Optimize for the next competent maintainer:
 
-- the user asks Codex to keep working for a long time;
-- scope is ambiguous, cross-module, multi-repo, or likely to change;
-- work includes refactors, migrations, performance, security, infrastructure, data, public APIs, or UI flows;
-- success requires multiple verification layers;
-- context compaction, interruption, or handoff is plausible;
-- subagents or external research will be useful.
+- clear project boundaries;
+- readable architecture and ownership;
+- explicit contracts between modules;
+- local, reversible changes when possible;
+- durable facts in project files;
+- decisions recorded where future work will find them;
+- verification that matches the risk of the change.
 
-## Stewarded Run Workflow
+If speed and stewardship conflict, choose the smallest move that preserves project stability unless the user explicitly asks for a throwaway patch.
 
-### 1. Bind scope
+## Default Engineering Posture
 
-Identify the project root and the task boundary before editing. Read the nearest project instructions first: `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.github/copilot-instructions.md`, README files, docs, test/build config, and nearby code.
+Unless the user clearly asks for a tiny patch or prototype, assume the desired outcome is maintainable engineering, not the shortest diff.
 
-For multi-repo work, track one run state per repository plus one coordination note. Never mix state from unrelated projects just because they share an agent workspace.
+Default to:
 
-### 2. Create durable run state
+- **Layered architecture**: separate entrypoints/presentation, application/use-case orchestration, domain logic, infrastructure/adapters, persistence, and external integration concerns when project scale warrants it.
+- **Modularity and cohesion**: keep modules focused; avoid dumping grounds and hidden global state.
+- **Explicit contracts**: define interfaces, schemas, command contracts, events, type boundaries, and data models where modules cross boundaries.
+- **Decoupling by default**: prevent framework, vendor, I/O, and UI details from leaking into domain logic.
+- **Progressive abstraction**: abstract only when a boundary, duplicated concept, or future change point is real.
+- **Change locality**: make changes so one feature or provider swap does not require unrelated edits.
+- **Fact-backed docs**: keep docs, project maps, ADRs, and logs aligned with actual code.
 
-Use the project's existing issue, spec, log, or docs convention when one exists. If there is no convention and the task is a Stewarded Run, create a run folder with:
+Avoid ceremonial architecture for trivial scripts. The goal is clarity under future change.
+
+## Non-Negotiables
+
+For non-trivial project work, do these unless the user explicitly says to skip stewardship:
+
+1. **Bind to one project root first**: determine the exact repository/subproject. Multi-repo tasks need separate state per repo plus a coordination note.
+2. **Read before changing**: inspect project instructions, docs, similar code, tests, and architecture notes before edits.
+3. **Respect or repair the project contract**: read `AGENTS.md` or equivalents; if missing or too vague for major work, draft or update a project-local contract.
+4. **Plan in writing**: record scope, constraints, affected modules, verification, risks, and rollback before broad changes.
+5. **Protect structure**: preserve or create clear layers, modules, interfaces, and abstraction boundaries.
+6. **Document meaningful decisions**: write an ADR or decision note for hard-to-reverse, cross-cutting, surprising, or policy-level choices.
+7. **Log important work**: leave dated project-local context for multi-step work, workarounds, risks, and continuation.
+8. **Verify**: run relevant tests/lints/builds/manual checks, or state exactly what could not be verified.
+9. **Close the loop**: update docs/specs/diagrams when behavior, interfaces, setup, deployment, data, or architecture changes.
+
+## Fast Path Vs Full Stewardship
+
+Use **Fast Path** for small, local, reversible edits: typos, one-line bug fixes, obvious config tweaks, or narrow test updates.
+
+Fast Path still requires:
+
+- read nearest project instructions;
+- inspect surrounding code;
+- verify if cheap;
+- mention when docs/logs were not needed.
+
+Use **Full Stewardship** for new features, refactors, migrations, infrastructure, data/schema changes, security/auth changes, public API changes, cross-module changes, ambiguous tasks, unfamiliar projects, or anything likely to affect future maintainability.
+
+## Full Stewardship Workflow
+
+### 0. Bind To The Current Project Root
+
+Prefer the user-provided repo/path or current coding session `cwd`. If starting from a subdirectory, walk upward to the nearest project marker such as `.git/`, `package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, `README.md`, or project-local `AGENTS.md`.
+
+Scope rules:
+
+- Treat `AGENTS.md`, `docs/`, `logs/`, `docs/adr/`, `specs/`, `.codex/`, and `.claude/specs/` as relative to the current project root.
+- Do not write project facts into global memory unless the user asks for cross-project memory.
+- If the project root is ambiguous, state the chosen root before modifying files or ask one precise question.
+- When handing off, include the absolute project root and any subproject path.
+
+### 1. Establish The Project Contract
+
+Within the project root, read relevant files in this order when present:
+
+- `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.windsurfrules`, `.github/copilot-instructions.md`
+- `README.md`, `docs/`, `architecture/`, `specs/`, `.claude/specs/`
+- `CHANGELOG.md`, `DECISIONS.md`, `docs/adr/`, `docs/decisions/`
+- build/test/package config
+- recent project logs: `logs/`, `docs/logs/`, `memory/`, `.agents/logs/`, or `docs/agent-runs/`
+
+If no useful project contract exists and the work is non-trivial, create or propose a project-local `AGENTS.md` using `references/templates.md`.
+
+### 2. Build Context Before Coding
+
+Before edits, answer internally or in a project note:
+
+- What user outcome is requested?
+- What invariants must not break?
+- What existing modules already solve similar problems?
+- What layers/modules own the responsibility being changed?
+- What interfaces/contracts/data models are affected?
+- Where would a boundary reduce coupling rather than add ceremony?
+- What tests or manual checks prove success?
+- What docs/specs/logs must be updated?
+
+For unfamiliar or large repos, create or update `docs/project-map.md` or an equivalent map when it will save future rediscovery.
+
+### 3. Plan The Work
+
+For Full Stewardship, write a short plan in the smallest durable place that fits:
+
+- chat plan for small tasks;
+- `logs/YYYY-MM-DD.md` or `docs/agent-runs/<task>/PLAN.md` for durable multi-step work;
+- `docs/tasks/<task>.md` or an issue/PR description for larger work.
+
+Plan shape: Goal, Context read, Affected areas, Steps, Verification, Risks, Docs to update.
+
+### 4. Implement With Architecture Hygiene
+
+While editing:
+
+- search for existing patterns before adding abstractions;
+- keep module boundaries explicit;
+- prefer small cohesive changes over sweeping rewrites;
+- introduce interfaces/contracts at real boundaries;
+- keep public contracts backward-compatible unless the task requires a break;
+- avoid parallel frameworks, duplicated modules, and cross-layer shortcuts;
+- do not add dependencies without recording why;
+- update tests near changed behavior;
+- update the plan/log when requirements or facts change.
+
+Use `references/stewardship-standards.md` when judging maintainability, ADR triggers, or review risk.
+
+### 5. Record Decisions And Logs
+
+Write an ADR or decision note when a decision is hard to reverse, cross-cutting, security-sensitive, data-model related, public-contract related, or likely to surprise future maintainers.
+
+Suggested locations:
+
+- `docs/adr/YYYY-MM-DD-title.md`
+- `docs/decisions/YYYY-MM-DD-title.md`
+- `DECISIONS.md` for smaller projects
+
+Append a project log entry when work spans multiple steps/sessions, important context was discovered, a workaround/risk/TODO remains, or another person/agent may continue the work.
+
+### 6. Support Long-Running Codex Work
+
+Use durable run state when context loss, interruption, compaction, or continuation is plausible:
 
 ```bash
 python <skill-root>/scripts/long_work.py init --project . --task "short task title"
 ```
 
-The script creates `PLAN.md`, `LOG.md`, `HANDOFF.md`, and `STATE.json` under `docs/agent-runs/<date>-<task-slug>/` by default. Use `--base <relative/path>` when the repository already has a better place for agent run records.
+This creates `PLAN.md`, `LOG.md`, `HANDOFF.md`, and `STATE.json` under `docs/agent-runs/<date>-<task-slug>/` by default.
 
-Keep the chat `update_plan` and durable `PLAN.md` aligned at milestone level. The chat plan is for live coordination; durable files are for recovery.
-
-### 3. Build a working model
-
-Before broad edits, capture enough context to answer:
-
-- requested user outcome and acceptance criteria;
-- constraints from project instructions and existing behavior;
-- affected modules, owners, interfaces, data models, and external services;
-- similar code paths and tests;
-- verification commands and manual checks;
-- rollback path or safest undo strategy;
-- docs, diagrams, logs, or ADRs that must change.
-
-Read only what is relevant to the next slice. Write findings into the run log when they would help a future continuation.
-
-### 4. Slice for momentum
-
-Turn the task into small, verifiable slices. Prefer vertical slices that produce a working state over large speculative rewrites.
-
-Each slice should have:
-
-- a concrete outcome;
-- files or modules likely to change;
-- a cheap verification signal;
-- a stop condition;
-- a next action if verification fails.
-
-When uncertainty is high, do a probe first: inspect, spike, test, or produce a minimal failing reproduction. Do not commit to a large design before evidence exists.
-
-### 5. Execute the loop
-
-Repeat this loop until the task is verified, blocked, or explicitly paused:
-
-1. Choose the next slice.
-2. Read the smallest useful context.
-3. Edit within existing project patterns.
-4. Verify the slice with the narrowest meaningful check.
-5. Record what changed, what was learned, and the next action.
-6. Update the live plan and send a concise user update at natural milestones.
-
-Before any risky step, record a checkpoint. After every meaningful test/build/review result, record the result.
+Checkpoint after meaningful progress, verification, pivots, or before risky steps:
 
 ```bash
 python <skill-root>/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --next "next action" --verify "test result or pending check"
 ```
 
-### 6. Manage context like a resource
+Keep `HANDOFF.md` compact and factual: current objective, completed work, active assumptions, important files, commands run, decisions, risks, blockers, and the next safest step.
 
-Keep a recoverable "compressed state" in `HANDOFF.md`:
+After resume or compaction, rebuild state from `HANDOFF.md`, `PLAN.md`, recent `LOG.md`, `git status`, relevant diffs, and latest terminal output before continuing.
 
-- current objective;
-- completed work;
-- active assumptions;
-- important files and line anchors;
-- commands run and results;
-- decisions made and why;
-- risks, blockers, and next safest step.
+Use `references/operating-patterns.md` for deeper long-running execution patterns.
 
-Refresh `HANDOFF.md` before long tool runs, context-heavy pivots, risky migrations, user pauses, or any point where another Codex instance might need to continue.
+### 7. Update Documentation And Diagrams
 
-After a resume or compaction, rebuild state from durable artifacts first: read `HANDOFF.md`, `PLAN.md`, recent `LOG.md` entries, `git status`, relevant diffs, and the latest terminal output when needed. Then continue from the next safest step.
+Update docs when any of these change:
 
-### 7. Use subagents deliberately
+- setup/development commands;
+- configuration or environment variables;
+- API/CLI behavior;
+- data models or migrations;
+- system boundaries, layers, modules, interfaces, or dependencies;
+- deployment/runtime behavior;
+- troubleshooting knowledge.
 
-Use subagents when independent work reduces risk or time: code review, test strategy, documentation scan, root-cause hypotheses, API research, or parallel repository inspection.
+Prefer text-based diagrams stored in git: Mermaid in Markdown for most projects, C4-style views for complex systems, and PlantUML only if already used.
 
-Give subagents raw artifacts and a narrow task. Do not leak your expected answer unless the task requires it. Merge their findings into the run log with source, confidence, and action taken.
+### 8. Verify And Deliver
 
-### 8. Handle blockers without stalling
+Run the narrowest sufficient verification first, then broader checks when risk warrants:
 
-When blocked, make three passes before handing it back unless the next step is dangerous or impossible:
-
-1. Reproduce or isolate the failure.
-2. Search local project history, docs, and similar code.
-3. Try one safer alternate route or reduce the scope to a smaller proof.
-
-If still blocked, update `HANDOFF.md` with attempted steps, evidence, exact blocker, and the smallest question for the user. Ask one precise question or state the external dependency needed.
-
-### 9. Verify and deliver
-
-Run verification in layers:
-
-- changed-unit tests or targeted reproductions;
+- unit tests for changed modules;
 - typecheck/lint/static checks;
-- integration, build, package, or UI/browser checks when behavior crosses boundaries;
-- manual smoke checks for workflows that automated tests do not cover.
+- integration/e2e tests for cross-boundary behavior;
+- build/package checks;
+- browser/manual smoke checks for UI or workflows.
 
-If a check cannot run, record the exact reason and the residual risk. Do not present unverified assumptions as completed facts.
+Final response or handoff must include:
 
-Final response or handoff should include: changed behavior, important files/docs, verification run, remaining risks, and where the run state lives.
+- what changed;
+- files/docs updated;
+- verification run and results;
+- remaining risks/TODOs;
+- ADR/log/spec/run-state location when created.
 
-## Codex Surface Choices
+## Escalation Rules
 
-Use the smallest durable surface that fits:
+Pause and ask before destructive migrations or data deletion, broad rewrites not explicitly requested, paid/external service changes, security/auth/permission changes without clear approval, publishing/deploying, or sending external messages.
 
-- prompt/thread context for one-off constraints;
-- `AGENTS.md` for repository conventions and commands;
-- this skill for reusable long-work procedure;
-- project `.codex/config.toml` or hooks for mechanical enforcement;
-- MCP/connectors for live private data or authorized external systems;
-- automations for scheduled follow-up or recurring checks;
-- a plugin when the workflow needs bundled skills plus tools, MCP, hooks, or assets.
+If blocked, make a clear project-local note with current state, attempted steps, exact blocker, evidence, and safest next action.
 
-Do not hide project facts in global memory when they belong in the repository.
+## Reference Files
 
-## References
+Load only what is needed:
 
-Load only what the task needs:
-
-- `references/operating-patterns.md` - deeper patterns for long-running engineering, context budgets, subagents, verification, and recovery.
-- `references/templates.md` - compact templates for run plans, logs, handoffs, blocker notes, verification matrices, and final summaries.
+- `references/stewardship-standards.md` - anti-sprawl quality standards, ADR triggers, and review checklist.
+- `references/operating-patterns.md` - long-running Codex execution, context recovery, subagents, and verification loops.
+- `references/templates.md` - templates for `AGENTS.md`, plans, logs, ADRs, architecture notes, handoffs, blockers, and verification.
