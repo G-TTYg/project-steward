@@ -81,6 +81,8 @@ Scope rules:
 - If the project root is ambiguous, state the chosen root before modifying files or ask one precise question.
 - When handing off, include the absolute project root and any subproject path.
 
+Read `references/project-files.md` when root selection, monorepo layout, governance file placement, or per-project memory boundaries are unclear.
+
 ### 1. Establish The Project Contract
 
 Within the project root, read relevant files in this order when present:
@@ -210,6 +212,7 @@ If blocked, make a clear project-local note with current state, attempted steps,
 
 Load only what is needed:
 
+- `references/project-files.md` - project-scoped file layout, multi-project workspace rules, and where governance artifacts belong.
 - `references/stewardship-standards.md` - anti-sprawl quality standards, ADR triggers, and review checklist.
 - `references/operating-patterns.md` - long-running Codex execution, context recovery, subagents, and verification loops.
 - `references/templates.md` - templates for `AGENTS.md`, plans, logs, ADRs, architecture notes, handoffs, blockers, and verification.

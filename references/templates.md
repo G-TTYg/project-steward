@@ -1,200 +1,259 @@
 # Project Steward Templates
 
-Use these templates only when they improve project clarity, recovery, or handoff. Keep them short and factual.
+Copy and adapt these templates. Keep them short unless the project requires detail.
 
-## AGENTS.md
+## `AGENTS.md` Template
 
 ```markdown
-# Agent Instructions
+# AGENTS.md
 
 ## Project Scope
 
 - Project root:
-- Primary app/package:
-- Important subprojects:
+- Monorepo subproject, if any:
+
+## Project Purpose
+
+- What this project does:
+- Non-goals:
+- Primary users/systems:
+
+## Required Reading Before Work
+
+1. `README.md`
+2. `docs/architecture.md` or `docs/architecture/overview.md`
+3. Relevant files under `docs/`, `specs/`, or `.claude/specs/`
+4. Nearby source code and tests for the area being changed
+5. Recent project-local logs under `logs/` when continuing prior work
+
+## Project Map
+
+- `src/...` -
+- `tests/...` -
+- `docs/...` -
 
 ## Commands
 
 - Install:
+- Dev:
 - Test:
 - Lint/typecheck:
 - Build:
-- Run:
 
-## Architecture
+## Architecture Rules
 
-- Entry points:
-- Application/use-case layer:
-- Domain/business logic:
-- Infrastructure/adapters:
-- Persistence/external services:
+- Default to modern maintainable engineering: layered architecture, modularity, decoupling, explicit interfaces/contracts, and clear abstraction boundaries.
+- Follow existing module boundaries; improve unclear boundaries when the change would otherwise spread across unrelated code.
+- Search for similar implementations before adding new modules.
+- Do not add dependencies/frameworks without a documented reason.
+- Keep public APIs backward-compatible unless explicitly changing them.
+- Keep domain/business logic independent from UI, framework, vendor, and infrastructure details where practical.
 
-## Conventions
+## Documentation Rules
 
-- Code style:
-- Test style:
-- Docs/logs/ADR locations:
-- Migration/deployment notes:
+- Update README/docs when commands, behavior, APIs, setup, or architecture change.
+- Record significant decisions in `docs/adr/` or `DECISIONS.md`.
+- Update diagrams when system boundaries or dependencies change.
 
-## Safety
+## Logging Rules
 
-- Do not:
-- Ask before:
-- Required verification before delivery:
+- For non-trivial work, append this project's `logs/YYYY-MM-DD.md` with plan, discoveries, verification, and risks.
+- Do not mix logs from other repos/projects managed by the same agent.
+- Do not log secrets or sensitive personal data.
+
+## Verification Rules
+
+- Run the narrowest relevant test first.
+- Run lint/typecheck/build when touching shared code or before handoff.
+- If checks cannot run, explain why and what is unverified.
+
+## Safety Rules
+
+- Ask before destructive migrations, data deletion, deployments, or security posture changes.
 ```
 
-## Run Plan
+## Work Plan Template
 
 ```markdown
-# Plan: <task>
+## Plan: <task title>
 
-Project: `<absolute project root>`
-Run state: `<path>`
+Date: YYYY-MM-DD
+Owner/agent:
+Project root:
+Subproject:
 
-## Goal
+### Goal
 
-- User outcome:
-- Acceptance criteria:
-- Non-goals:
+### Context Read
+
+- [ ] `AGENTS.md`
+- [ ] `README.md`
+- [ ] Relevant docs/specs
+- [ ] Nearby code/tests
+- [ ] Similar implementations searched
+
+### Affected Areas
+
+### Layering / Interfaces
+
+- Existing layers/modules involved:
+- Interfaces/contracts affected:
+- New abstraction needed? Why/why not:
+
+### Proposed Steps
+
+1.
+2.
+3.
+
+### Verification
+
+### Docs/Logs/ADRs to Update
+
+### Risks / Unknowns
+```
+
+## Daily Project Log Template
+
+```markdown
+# YYYY-MM-DD
+
+## <task title>
+
+Time:
+Agent:
+Project root:
+Subproject:
+
+### Intent
+
+### Context / Discoveries
+
+### Changes
+
+-
+
+### Decisions
+
+-
+
+### Architecture / Interface Notes
+
+- Layers/modules affected:
+- Contracts/docs updated:
+
+### Verification
+
+- Command/result:
+
+### Risks / TODO
+
+-
+
+### Handoff Notes
+
+-
+```
+
+## ADR Template
+
+```markdown
+# ADR YYYY-MM-DD: <decision title>
+
+Status: Proposed | Accepted | Superseded
+Date: YYYY-MM-DD
 
 ## Context
 
-- Instructions read:
-- Existing patterns:
-- Affected modules/contracts:
-
-## Slices
-
-1. <slice>
-   - Files/modules:
-   - Verification:
-   - Stop condition:
-
-## Verification
-
-- Targeted:
-- Broad:
-- Manual:
-
-## Risks
-
-- Risk:
-- Rollback:
-```
-
-## Log Entry
-
-```markdown
-## <timestamp>
-
-- Did:
-- Learned:
-- Changed files:
-- Verification:
-- Next:
-- Risk/blocker:
-```
-
-## ADR
-
-```markdown
-# ADR: <decision title>
-
-Date: <YYYY-MM-DD>
-Status: proposed | accepted | superseded
-
-## Context
-
-<facts and forces that made the decision necessary>
+What problem or force led to this decision?
 
 ## Decision
 
-<the chosen direction>
-
-## Consequences
-
-- Positive:
-- Negative:
-- Follow-up:
+What are we choosing?
 
 ## Alternatives Considered
 
-- <alternative and why it was not chosen>
+1. Option A - pros/cons
+2. Option B - pros/cons
+
+## Consequences
+
+### Positive
+
+### Negative / Tradeoffs
+
+### Follow-up
+
+## References
+
+- Related issue/spec/log:
 ```
 
-## Architecture Note
+## Architecture Overview Template
 
 ````markdown
-# Architecture: <area>
+# Architecture Overview
 
-## Purpose
+Last updated: YYYY-MM-DD
 
-<what this area owns>
+## System Purpose
 
-## Boundaries
-
-- Owns:
-- Does not own:
-- Depends on:
-- Called by:
-
-## Contracts
-
-- API/CLI/events/schemas:
-- Data models:
-- Error handling:
-
-## Diagram
+## High-Level Diagram
 
 ```mermaid
 flowchart LR
-  A["Caller"] --> B["Application/use case"]
-  B --> C["Domain"]
-  B --> D["Adapter"]
+  User --> App["Application"]
+  App --> Store[("Data Store")]
 ```
 
-## Verification
+## Major Components
 
-- Tests:
-- Manual checks:
+| Component | Layer | Responsibility | Public contracts/interfaces | Key files |
+|---|---|---|---|---|
+|  |  |  |  |  |
+
+## Layering and Dependency Rules
+
+- Presentation/entrypoints:
+- Application/use cases:
+- Domain/business logic:
+- Infrastructure/adapters:
+- Persistence/integration schemas:
+
+## Data / Control Flow
+
+## External Dependencies
+
+## Important Invariants
+
+## Known Risks / Tech Debt
+
+## References
+
+- ADRs:
+- Specs:
+- Runbooks:
 ````
 
-## Handoff
+## Handoff Template
 
 ```markdown
-# Handoff: <task>
+## Handoff: <task>
 
-Updated: <timestamp>
-Status: active | paused | blocked | verified | complete
-Project: `<absolute project root>`
+Project root:
+Subproject:
 
-## Current Objective
+### Current State
 
-<one paragraph>
+### What Was Done
 
-## Completed
+### Files Touched
 
-- <facts only>
+### Verification
 
-## Current State
+### Open Questions
 
-- Changed files:
-- Important commands:
-- Important decisions:
-
-## Next Safest Step
-
-<exact command, file, or action>
-
-## Verification
-
-- Run:
-- Result:
-- Still needed:
-
-## Risks Or Blockers
-
-- <risk or none>
+### Next Safe Step
 ```
 
 ## Blocker Note
@@ -202,6 +261,8 @@ Project: `<absolute project root>`
 ```markdown
 ## Blocker: <short title>
 
+Project root:
+Subproject:
 Impact:
 Evidence:
 Tried:
@@ -218,20 +279,4 @@ Question for user:
 | Contract/API | `<command or manual check>` | pass/fail/not run | |
 | Build/lint/typecheck | `<command>` | pass/fail/not run | |
 | UI/manual flow | `<steps>` | pass/fail/not run | |
-```
-
-## Final Summary
-
-```markdown
-Changed:
-- <behavior or files>
-
-Verified:
-- `<command>` - <result>
-
-Recorded:
-- <run/log/ADR/spec path>
-
-Remaining:
-- <risk, TODO, or none>
 ```

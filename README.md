@@ -98,7 +98,7 @@ Skill is valid!
 
 For installation or updates, read this README first.
 
-For task execution, read `SKILL.md` first. Load `references/stewardship-standards.md` when judging architecture/anti-sprawl risk, load `references/operating-patterns.md` only for deeper long-running workflow guidance, and load `references/templates.md` only when creating durable plans, logs, ADRs, handoffs, blocker notes, or verification matrices.
+For task execution, read `SKILL.md` first. Load `references/project-files.md` when deciding project root, monorepo layout, or governance file placement. Load `references/stewardship-standards.md` when judging architecture/anti-sprawl risk. Load `references/operating-patterns.md` only for deeper long-running workflow guidance, and load `references/templates.md` only when creating durable plans, logs, ADRs, handoffs, blocker notes, or verification matrices.
 
 Use `scripts/long_work.py` when a task needs durable run state:
 
