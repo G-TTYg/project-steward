@@ -202,6 +202,43 @@ Final response or handoff must include:
 - remaining risks/TODOs;
 - ADR/log/spec/run-state location when created.
 
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "This is small, so I can skip reading project instructions." | Small edits still inherit project conventions. Read the nearest instructions and surrounding code first. |
+| "I will update AGENTS.md/docs later." | Missing project context is how future humans and agents repeat the same discovery work. Update durable docs when behavior, commands, boundaries, or conventions change. |
+| "The architecture issue is nearby, so I should fix it while I am here." | Stewardship is not drive-by renovation. Record unrelated cleanup as a follow-up unless it is required for the requested change. |
+| "A global note is enough." | Project facts belong in the project. Global memory cannot substitute for repo-local `AGENTS.md`, docs, logs, ADRs, or handoffs. |
+| "The code looks right." | Verification requires evidence: tests, build output, typecheck/lint, runtime/manual checks, or a stated unverified gap. |
+| "I can keep the plan in my head." | Long tasks cross context boundaries. A written plan/log/handoff is the continuity mechanism for the next maintainer. |
+| "This new abstraction will help later." | Abstractions must earn their cost now by clarifying a real boundary, reducing duplication, or preventing coupling. |
+
+## Red Flags
+
+- Project root was never stated or inferred from weak evidence.
+- Work touches multiple modules but no plan or affected-boundary note exists.
+- `AGENTS.md` is missing or stale during non-trivial work and nobody repairs or proposes it.
+- New modules, dependencies, services, schemas, or public contracts appear without docs or an ADR/decision note.
+- Logs or handoffs are written outside the project root for project-specific facts.
+- A feature/refactor accumulates large unverified changes.
+- Cross-layer shortcuts are introduced because they are faster than using or creating a contract.
+- Tests/build/lint are skipped with vague wording such as "should be fine."
+- Long-running run state replaces architecture docs instead of supporting them.
+- The final answer does not name verification results or residual risk.
+
+## Verification Gate
+
+Before final delivery, confirm:
+
+- [ ] Current project root and subproject scope are correct.
+- [ ] Relevant project instructions, docs, nearby code, and tests were read.
+- [ ] Fast Path or Full Stewardship choice matches the risk.
+- [ ] Affected layers/modules/contracts are understood and kept clear.
+- [ ] Required docs/logs/ADRs/handoffs were updated or intentionally skipped with a reason.
+- [ ] Relevant verification ran, with exact commands/results, or unverified areas are explicit.
+- [ ] Remaining risks, TODOs, and next safe step are recorded when work is incomplete.
+
 ## Escalation Rules
 
 Pause and ask before destructive migrations or data deletion, broad rewrites not explicitly requested, paid/external service changes, security/auth/permission changes without clear approval, publishing/deploying, or sending external messages.
