@@ -52,6 +52,29 @@ Make failure visible:
 - Avoid swallowing exceptions or returning ambiguous null/empty values.
 - Add logs/telemetry only where useful and non-sensitive.
 
+## Patch Vs Redesign
+
+Do not keep stacking patches when the local design is the problem. A patch is appropriate when the defect is isolated, the module ownership is clear, the fix preserves existing contracts, and verification can prove the behavior.
+
+Pause and propose a redesign or local refactor when any of these are true:
+
+- The same bug or edge case has been fixed multiple times.
+- Fixes require touching unrelated layers or many files for a small behavior change.
+- Ownership is unclear and logic is split across presentation, application, domain, and infrastructure code.
+- Invariants contradict each other or are enforced inconsistently.
+- Tests are hard to write because the code has hidden dependencies or global state.
+- A workaround has become part of the normal path.
+- New patches increase complexity more than they reduce risk.
+
+When redesign is warranted:
+
+1. State why another patch is unsafe.
+2. Define the desired boundary or invariant.
+3. Sketch the smallest migration path that keeps the project working.
+4. Add or update tests around the behavior before broad rewrites when practical.
+5. Record the decision in a plan, log, ADR, or architecture note depending on impact.
+6. Keep the refactor local unless the root cause is truly architectural.
+
 ## ADR Triggers
 
 Write an ADR or `DECISIONS.md` entry when any of these are true:
@@ -89,6 +112,7 @@ Before final delivery, check:
 - Is there unnecessary duplication?
 - Is any new dependency justified?
 - Are naming and file placement consistent?
+- If this area has been patched repeatedly, did you assess redesign/refactor instead of adding another patch?
 
 ### Documentation
 

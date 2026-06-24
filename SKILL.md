@@ -22,6 +22,7 @@ Optimize for the next competent maintainer:
 - durable facts in project files;
 - decisions recorded where future work will find them;
 - verification that matches the risk of the change.
+- willingness to redesign or refactor a broken area when repeated patches would make the project less stable.
 
 If speed and stewardship conflict, choose the smallest move that preserves project stability unless the user explicitly asks for a throwaway patch.
 
@@ -127,6 +128,7 @@ While editing:
 - search for existing patterns before adding abstractions;
 - keep module boundaries explicit;
 - prefer small cohesive changes over sweeping rewrites;
+- stop patching when evidence shows a local design is fundamentally wrong, repeatedly repaired, or too tangled to change safely;
 - introduce interfaces/contracts at real boundaries;
 - keep public contracts backward-compatible unless the task requires a break;
 - avoid parallel frameworks, duplicated modules, and cross-layer shortcuts;
@@ -135,6 +137,8 @@ While editing:
 - update the plan/log when requirements or facts change.
 
 Use `references/stewardship-standards.md` when judging maintainability, ADR triggers, or review risk.
+
+If an area has had multiple failed fixes, contradictory invariants, unclear ownership, or patch-on-patch complexity, pause implementation and write a small redesign/refactor plan. Identify the root cause, intended boundary, migration steps, verification, rollback, and docs/ADR impact before changing code broadly.
 
 ### 5. Record Decisions And Logs
 
@@ -209,6 +213,7 @@ Final response or handoff must include:
 | "This is small, so I can skip reading project instructions." | Small edits still inherit project conventions. Read the nearest instructions and surrounding code first. |
 | "I will update AGENTS.md/docs later." | Missing project context is how future humans and agents repeat the same discovery work. Update durable docs when behavior, commands, boundaries, or conventions change. |
 | "The architecture issue is nearby, so I should fix it while I am here." | Stewardship is not drive-by renovation. Record unrelated cleanup as a follow-up unless it is required for the requested change. |
+| "One more patch will be safer than refactoring." | Sometimes yes, but repeated patches around the same failure are evidence that the design may be wrong. Stop and assess root cause before adding another layer. |
 | "A global note is enough." | Project facts belong in the project. Global memory cannot substitute for repo-local `AGENTS.md`, docs, logs, ADRs, or handoffs. |
 | "The code looks right." | Verification requires evidence: tests, build output, typecheck/lint, runtime/manual checks, or a stated unverified gap. |
 | "I can keep the plan in my head." | Long tasks cross context boundaries. A written plan/log/handoff is the continuity mechanism for the next maintainer. |
@@ -222,6 +227,8 @@ Final response or handoff must include:
 - New modules, dependencies, services, schemas, or public contracts appear without docs or an ADR/decision note.
 - Logs or handoffs are written outside the project root for project-specific facts.
 - A feature/refactor accumulates large unverified changes.
+- The same bug, edge case, or module has been patched repeatedly without a root-cause design fix.
+- The code path is so tangled that a small requested change requires unrelated edits across many files.
 - Cross-layer shortcuts are introduced because they are faster than using or creating a contract.
 - Tests/build/lint are skipped with vague wording such as "should be fine."
 - Long-running run state replaces architecture docs instead of supporting them.
@@ -235,6 +242,7 @@ Before final delivery, confirm:
 - [ ] Relevant project instructions, docs, nearby code, and tests were read.
 - [ ] Fast Path or Full Stewardship choice matches the risk.
 - [ ] Affected layers/modules/contracts are understood and kept clear.
+- [ ] Repeatedly patched or fundamentally flawed areas were assessed for redesign/refactor instead of receiving another blind patch.
 - [ ] Required docs/logs/ADRs/handoffs were updated or intentionally skipped with a reason.
 - [ ] Relevant verification ran, with exact commands/results, or unverified areas are explicit.
 - [ ] Remaining risks, TODOs, and next safe step are recorded when work is incomplete.

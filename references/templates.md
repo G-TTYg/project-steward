@@ -189,6 +189,50 @@ What are we choosing?
 - Related issue/spec/log:
 ```
 
+## Redesign / Refactor Plan Template
+
+```markdown
+## Redesign / Refactor Plan: <area>
+
+Date: YYYY-MM-DD
+Project root:
+Subproject:
+
+### Why Another Patch Is Not Enough
+
+- Repeated failures or patches:
+- Root cause evidence:
+- Risk of continuing to patch:
+
+### Desired Boundary / Invariant
+
+- Ownership:
+- Public contract:
+- Invariants:
+
+### Migration Steps
+
+1.
+2.
+3.
+
+### Verification
+
+- Characterization tests before refactor:
+- Unit/integration checks:
+- Manual smoke checks:
+
+### Rollback / Safety
+
+- Rollback path:
+- Feature flag or compatibility shim:
+
+### Docs / ADR Impact
+
+- Docs to update:
+- ADR needed? Why/why not:
+```
+
 ## Architecture Overview Template
 
 ````markdown
