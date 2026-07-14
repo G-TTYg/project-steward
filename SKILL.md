@@ -21,6 +21,7 @@ Optimize for the next competent maintainer:
 - local, reversible changes when possible;
 - durable facts in project files;
 - disciplined Git state that preserves collaboration, rollback, and ownership;
+- local commits for completed agent-owned work so others can inspect, revert, or continue it;
 - decisions recorded where future work will find them;
 - verification that matches the risk of the change.
 - willingness to redesign or refactor a broken area when repeated patches would make the project less stable.
@@ -56,7 +57,8 @@ For non-trivial project work, do these unless the user explicitly says to skip s
 7. **Document meaningful decisions**: write an ADR or decision note for hard-to-reverse, cross-cutting, surprising, or policy-level choices.
 8. **Log important work**: leave dated project-local context for multi-step work, workarounds, risks, and continuation.
 9. **Verify**: run relevant tests/lints/builds/manual checks, or state exactly what could not be verified.
-10. **Close the loop**: update docs/specs/diagrams when behavior, interfaces, setup, deployment, data, or architecture changes.
+10. **Commit agent-owned completed work**: for non-trivial completed work in Git repositories, create explicit local commits for your own verified changes unless the user or project workflow says not to commit.
+11. **Close the loop**: update docs/specs/diagrams when behavior, interfaces, setup, deployment, data, or architecture changes.
 
 ## Fast Path Vs Full Stewardship
 
@@ -108,7 +110,8 @@ For any work in a Git repository, establish at least a lightweight baseline. For
 - distinguish user changes from your own changes, especially in a dirty worktree;
 - do not overwrite, move, stage, stash, discard, rebase, reset, or merge user work without explicit approval;
 - stage only intentional paths, not blind `git add -A`, unless the repository workflow explicitly expects it;
-- create commits or checkpoints at stable, verified slices when the task is long-running or multi-agent.
+- create local commits at stable, verified slices for agent-owned completed work unless commits are explicitly out of scope;
+- if you do not commit completed work, record why and list the remaining dirty files, ownership, verification state, and next Git action.
 
 Read `references/git-stewardship.md` for multi-agent branch/worktree, commit, push, rollback, and PR standards.
 
@@ -143,6 +146,7 @@ While editing:
 
 - keep Git status understandable; know which files you touched and why;
 - preserve user changes and unrelated agent changes in the worktree;
+- commit your own completed, verified slices with explicit staging so rollback and review do not depend on guessing;
 - search for existing patterns before adding abstractions;
 - keep module boundaries explicit;
 - prefer small cohesive changes over sweeping rewrites;
@@ -186,6 +190,14 @@ Checkpoint after meaningful progress, verification, pivots, or before risky step
 python <skill-root>/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --next "next action" --verify "test result or pending check"
 ```
 
+For agent-run documentation you created yourself, the script can create an explicit local commit when requested:
+
+```bash
+python <skill-root>/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --commit-run-state
+```
+
+This only stages files inside that run directory, refuses to run when unrelated staged changes already exist, and never pushes.
+
 Keep `HANDOFF.md` compact and factual: current objective, completed work, active assumptions, important files, Git branch/status/commit state, commands run, decisions, risks, blockers, and the next safest step.
 
 After resume or compaction, rebuild state from `HANDOFF.md`, `PLAN.md`, recent `LOG.md`, `git status`, relevant diffs, and latest terminal output before continuing.
@@ -222,6 +234,7 @@ Final response or handoff must include:
 - files/docs updated;
 - verification run and results;
 - Git state: branch, commit(s), dirty status, unpushed work, PR/remote if relevant;
+- whether agent-owned completed work was committed; if not, why it remains dirty and what exact Git action should happen next;
 - remaining risks/TODOs;
 - ADR/log/spec/run-state location when created.
 
@@ -235,6 +248,7 @@ Final response or handoff must include:
 | "One more patch will be safer than refactoring." | Sometimes yes, but repeated patches around the same failure are evidence that the design may be wrong. Stop and assess root cause before adding another layer. |
 | "A global note is enough." | Project facts belong in the project. Global memory cannot substitute for repo-local `AGENTS.md`, docs, logs, ADRs, or handoffs. |
 | "I can clean up Git at the end." | Dirty, mixed work destroys rollback and multi-agent coordination. Keep Git understandable throughout the work. |
+| "AI agents should just leave files modified." | Completed agent-owned work should usually become explicit local commits so humans and agents can inspect, revert, cherry-pick, or continue it. |
 | "git add -A is faster." | Blind staging can capture user work, generated noise, secrets, or unrelated agent edits. Stage explicit paths unless the repo workflow says otherwise. |
 | "The code looks right." | Verification requires evidence: tests, build output, typecheck/lint, runtime/manual checks, or a stated unverified gap. |
 | "I can keep the plan in my head." | Long tasks cross context boundaries. A written plan/log/handoff is the continuity mechanism for the next maintainer. |
@@ -247,6 +261,7 @@ Final response or handoff must include:
 - Git status was not checked before edits in a non-trivial repository task.
 - Dirty user changes are present and the agent cannot say who owns them.
 - A commit mixes feature work, refactor, formatting, generated files, and docs without a clear reason.
+- Completed agent-owned work is left dirty with no reason, no ownership note, and no next Git action.
 - A shared branch is rebased, reset, force-pushed, or conflict-resolved without explicit approval.
 - `AGENTS.md` is missing or stale during non-trivial work and nobody repairs or proposes it.
 - New modules, dependencies, services, schemas, or public contracts appear without docs or an ADR/decision note.
@@ -266,6 +281,7 @@ Before final delivery, confirm:
 - [ ] Current project root and subproject scope are correct.
 - [ ] Relevant project instructions, docs, nearby code, and tests were read.
 - [ ] Git baseline was checked and user/unrelated changes were preserved.
+- [ ] Completed agent-owned work was locally committed at a verified slice, or the reason for leaving it dirty is explicit.
 - [ ] Fast Path or Full Stewardship choice matches the risk.
 - [ ] Affected layers/modules/contracts are understood and kept clear.
 - [ ] Repeatedly patched or fundamentally flawed areas were assessed for redesign/refactor instead of receiving another blind patch.

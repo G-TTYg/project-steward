@@ -111,3 +111,11 @@ Then checkpoint meaningful progress:
 ```bash
 python ~/.codex/skills/project-steward/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --next "next action" --verify "test result"
 ```
+
+When the run-state files are agent-owned and ready to preserve in project history, add an explicit local commit:
+
+```bash
+python ~/.codex/skills/project-steward/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --commit-run-state
+```
+
+`--commit-run-state` stages only that run directory, refuses to continue if unrelated staged changes already exist, and never pushes.

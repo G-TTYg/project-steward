@@ -7,6 +7,7 @@ Use this reference for production-grade Git hygiene in projects touched by multi
 - Protect work you did not create.
 - Keep every change attributable, reviewable, and reversible.
 - Prefer small verified commits over large mixed snapshots.
+- Make completed agent-owned work into explicit local commits so others can inspect, revert, cherry-pick, or continue it.
 - Use Git to communicate project state, not just to save files.
 - Never trade short-term convenience for lost rollback or unclear ownership.
 
@@ -38,6 +39,22 @@ Record or mention:
 
 If the worktree is dirty, do not assume the changes are yours. Read relevant diffs before editing files that are already modified.
 
+## Agent-Owned Commit Closure
+
+For non-trivial completed work in a Git repository, the default stewarded outcome is a local commit for the changes the agent owns. Do this when the user requested implementation, the work reached a stable verified slice, and the project workflow does not forbid local commits.
+
+Do not commit when:
+
+- the user explicitly asked not to commit;
+- verification is materially incomplete and the change is not a useful checkpoint;
+- ownership of modified files is unclear;
+- staging would require mixing user work, unrelated agent work, secrets, local artifacts, or generated noise;
+- the repository has a policy requiring review before any local commit.
+
+If you leave completed work uncommitted, record the reason, exact dirty files, likely owner, verification state, and next Git action. Do not leave an ambiguous dirty worktree as the final project state.
+
+Local commits are not publication. Do not push unless the user requested it or the project workflow clearly requires it.
+
 ## Multi-Agent Rules
 
 In multi-agent or multi-human work:
@@ -46,6 +63,7 @@ In multi-agent or multi-human work:
 - If multiple agents share a branch, partition files/modules explicitly and record ownership in the plan or handoff.
 - Do not edit files already modified by another agent unless the plan says so.
 - Do not stage or commit another agent's work without stating it and getting approval when ownership is uncertain.
+- Commit your own completed slices before handoff when safe, so another agent can revert or continue without reconstructing ownership from dirty files.
 - Pull/sync intentionally. Prefer `git pull --ff-only` on shared branches to avoid surprise merge commits.
 - Stop on merge conflicts unless conflict ownership and resolution are clear.
 - Handoffs must include branch, base commit, HEAD commit, dirty status, unpushed commits, and open PR/issue if relevant.
@@ -70,7 +88,7 @@ If dirty state exists, decide explicitly: keep working, commit, ask, or create a
 
 ## Commit Standards
 
-Commit at stable, verified slices. A good commit:
+Commit agent-owned work at stable, verified slices. A good commit:
 
 - does one logical thing;
 - includes code, tests, docs, and migrations that belong to that slice;
@@ -86,6 +104,15 @@ git add path/to/file path/to/test
 
 Use `git add -p` or equivalent when a file contains mixed concerns. Avoid blind `git add -A` unless the repo convention explicitly expects it and you have checked the full diff.
 
+Before committing, check what will be recorded:
+
+```bash
+git diff --cached --stat
+git diff --cached --name-only
+```
+
+If unrelated staged files appear, unstage only your own mistaken staging or stop and ask when ownership is unclear.
+
 Suggested commit message shape:
 
 ```text
@@ -99,6 +126,14 @@ Verified:
 ```
 
 Keep the message shorter when the change is obvious; include verification for risky or non-trivial commits.
+
+For agent-run documentation created by Project Steward, it is acceptable to create a documentation-only checkpoint commit, for example:
+
+```text
+chore(agent-run): checkpoint <task>
+```
+
+Such commits must stage only the relevant `docs/agent-runs/<run>/` files and must never include business-code changes by accident.
 
 ## Generated Files, Secrets, And Large Files
 
@@ -177,6 +212,7 @@ Include Git state in any durable handoff:
 - unpushed commits;
 - remote/PR URL if relevant;
 - files intentionally left modified;
+- why any agent-owned completed work was not committed;
 - files not owned by this agent that must not be overwritten.
 
 ## Red Flags
@@ -184,9 +220,9 @@ Include Git state in any durable handoff:
 - The agent cannot explain the current branch or dirty status.
 - A broad `git add -A` stages unrelated work.
 - A commit includes unrelated formatting churn.
+- Completed agent-owned work remains dirty without a reason and next Git action.
 - A worktree has untracked files with unclear purpose.
 - Multiple agents edit the same files without coordination.
 - A shared branch is rebased or force-pushed casually.
 - Verification results are not tied to commits or handoff state.
 - Recovery would require guessing which files belong to whom.
-
