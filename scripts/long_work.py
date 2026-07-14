@@ -155,6 +155,14 @@ Fill PLAN.md with context, slices, and verification, then execute the first smal
 - `LOG.md`
 - `STATE.json`
 
+## Git State
+
+- Branch:
+- Base commit:
+- Current HEAD:
+- Dirty/untracked files:
+- Unpushed commits:
+
 ## Verification
 
 Not run yet.
@@ -217,6 +225,14 @@ Status: {args.status}
 ## Verification
 
 {args.verify or state.get("verification", "Not recorded.")}
+
+## Git State
+
+- Branch:
+- Base commit:
+- Current HEAD:
+- Dirty/untracked files:
+- Unpushed commits:
 
 ## Risks Or Blockers
 
@@ -295,4 +311,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

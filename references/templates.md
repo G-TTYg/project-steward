@@ -40,6 +40,16 @@ Copy and adapt these templates. Keep them short unless the project requires deta
 - Lint/typecheck:
 - Build:
 
+## Git Rules
+
+- Default branch:
+- Branch naming:
+- Commit style:
+- PR/review requirements:
+- Protected files/paths:
+- Multi-agent coordination rule:
+- Required Git checks before handoff:
+
 ## Architecture Rules
 
 - Default to modern maintainable engineering: layered architecture, modularity, decoupling, explicit interfaces/contracts, and clear abstraction boundaries.
@@ -92,6 +102,15 @@ Subproject:
 - [ ] Nearby code/tests
 - [ ] Similar implementations searched
 
+### Git Baseline
+
+- Branch:
+- Upstream:
+- Dirty files before work:
+- Untracked files:
+- Unpushed commits:
+- User/other-agent changes to preserve:
+
 ### Affected Areas
 
 ### Layering / Interfaces
@@ -109,6 +128,13 @@ Subproject:
 ### Verification
 
 ### Docs/Logs/ADRs to Update
+
+### Git / Collaboration
+
+- Commit/checkpoint plan:
+- Branch/PR plan:
+- Rollback plan:
+- Multi-agent ownership:
 
 ### Risks / Unknowns
 ```
@@ -145,6 +171,13 @@ Subproject:
 ### Verification
 
 - Command/result:
+
+### Git State
+
+- Branch:
+- Commits:
+- Dirty/untracked files:
+- Unpushed work:
 
 ### Risks / TODO
 
@@ -296,6 +329,15 @@ Subproject:
 ### Verification
 
 ### Open Questions
+
+### Git State
+
+- Branch:
+- Base commit:
+- Current HEAD:
+- Dirty/untracked files:
+- Unpushed commits:
+- PR/remote:
 
 ### Next Safe Step
 ```

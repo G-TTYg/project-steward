@@ -1,6 +1,6 @@
 # Project Steward
 
-Project Steward is a Codex skill for stable, clear project work: project-root binding, architecture hygiene, anti-sprawl governance, project-scoped docs/logs/ADRs, checkpoints, handoffs, and verified delivery.
+Project Steward is a Codex skill for stable, clear project work: project-root binding, architecture hygiene, production Git stewardship, anti-sprawl governance, project-scoped docs/logs/ADRs, checkpoints, handoffs, and verified delivery.
 
 This repository is the skill folder itself. Install it as `project-steward` so Codex can invoke it as `$project-steward`.
 
@@ -98,7 +98,7 @@ Skill is valid!
 
 For installation or updates, read this README first.
 
-For task execution, read `SKILL.md` first. Load `references/project-files.md` when deciding project root, monorepo layout, or governance file placement. Load `references/stewardship-standards.md` when judging architecture/anti-sprawl risk. Load `references/operating-patterns.md` only for deeper long-running workflow guidance, and load `references/templates.md` only when creating durable plans, logs, ADRs, handoffs, blocker notes, or verification matrices.
+For task execution, read `SKILL.md` first. Load `references/project-files.md` when deciding project root, monorepo layout, or governance file placement. Load `references/git-stewardship.md` when coordinating branches, commits, dirty worktrees, rollback, PRs, or multi-agent Git ownership. Load `references/stewardship-standards.md` when judging architecture/anti-sprawl risk. Load `references/operating-patterns.md` only for deeper long-running workflow guidance, and load `references/templates.md` only when creating durable plans, logs, ADRs, handoffs, blocker notes, or verification matrices.
 
 Use `scripts/long_work.py` when a task needs durable run state:
 

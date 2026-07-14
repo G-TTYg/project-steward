@@ -128,9 +128,17 @@ Before final delivery, check:
 - Are unverified areas explicit?
 - Is rollback or mitigation clear for risky changes?
 
+### Git State
+
+- Was `git status --short --branch` checked before non-trivial edits?
+- Are existing dirty files understood and protected?
+- Are commits small, verified, and reviewable?
+- Are staged files limited to intentional changes?
+- Is rollback possible without losing unrelated work?
+
 ### Continuity
 
-- Can a future human or agent find the project root, plan, logs, docs, ADRs, and next step without reading the whole chat?
+- Can a future human or agent find the project root, Git branch/status, plan, logs, docs, ADRs, and next step without reading the whole chat?
 - Are project-specific facts stored in the project rather than only in global memory?
 - Does any handoff separate facts, assumptions, decisions, blockers, and verification?
 

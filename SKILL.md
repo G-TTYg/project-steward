@@ -1,6 +1,6 @@
 ---
 name: project-steward
-description: Project-scoped stewardship and anti-sprawl workflow for Codex and coding agents working in one or many repositories. Use when starting or continuing project work, entering an unfamiliar repo/subproject, creating or refactoring features, preserving architecture, enforcing maintainable engineering defaults, writing or repairing AGENTS.md/README/docs/logs/ADRs/specs, preventing architecture drift, keeping durable project memory, creating handoffs, or carrying long-running work through checkpoints and verification without mixing state across projects.
+description: Project-scoped stewardship and anti-sprawl workflow for Codex and coding agents working in one or many repositories. Use when starting or continuing project work, entering an unfamiliar repo/subproject, creating or refactoring features, preserving architecture, enforcing maintainable engineering defaults, maintaining production-grade Git hygiene for multi-agent work, writing or repairing AGENTS.md/README/docs/logs/ADRs/specs, preventing architecture drift, keeping durable project memory, creating handoffs, or carrying long-running work through checkpoints and verification without mixing state across projects.
 ---
 
 # Project Steward
@@ -20,6 +20,7 @@ Optimize for the next competent maintainer:
 - explicit contracts between modules;
 - local, reversible changes when possible;
 - durable facts in project files;
+- disciplined Git state that preserves collaboration, rollback, and ownership;
 - decisions recorded where future work will find them;
 - verification that matches the risk of the change.
 - willingness to redesign or refactor a broken area when repeated patches would make the project less stable.
@@ -49,12 +50,13 @@ For non-trivial project work, do these unless the user explicitly says to skip s
 1. **Bind to one project root first**: determine the exact repository/subproject. Multi-repo tasks need separate state per repo plus a coordination note.
 2. **Read before changing**: inspect project instructions, docs, similar code, tests, and architecture notes before edits.
 3. **Respect or repair the project contract**: read `AGENTS.md` or equivalents; if missing or too vague for major work, draft or update a project-local contract.
-4. **Plan in writing**: record scope, constraints, affected modules, verification, risks, and rollback before broad changes.
-5. **Protect structure**: preserve or create clear layers, modules, interfaces, and abstraction boundaries.
-6. **Document meaningful decisions**: write an ADR or decision note for hard-to-reverse, cross-cutting, surprising, or policy-level choices.
-7. **Log important work**: leave dated project-local context for multi-step work, workarounds, risks, and continuation.
-8. **Verify**: run relevant tests/lints/builds/manual checks, or state exactly what could not be verified.
-9. **Close the loop**: update docs/specs/diagrams when behavior, interfaces, setup, deployment, data, or architecture changes.
+4. **Maintain Git hygiene**: check branch/status before edits, protect uncommitted user work, stage explicit paths, and keep rollback possible.
+5. **Plan in writing**: record scope, constraints, affected modules, verification, risks, and rollback before broad changes.
+6. **Protect structure**: preserve or create clear layers, modules, interfaces, and abstraction boundaries.
+7. **Document meaningful decisions**: write an ADR or decision note for hard-to-reverse, cross-cutting, surprising, or policy-level choices.
+8. **Log important work**: leave dated project-local context for multi-step work, workarounds, risks, and continuation.
+9. **Verify**: run relevant tests/lints/builds/manual checks, or state exactly what could not be verified.
+10. **Close the loop**: update docs/specs/diagrams when behavior, interfaces, setup, deployment, data, or architecture changes.
 
 ## Fast Path Vs Full Stewardship
 
@@ -62,6 +64,7 @@ Use **Fast Path** for small, local, reversible edits: typos, one-line bug fixes,
 
 Fast Path still requires:
 
+- check `git status --short --branch` when inside a Git repository;
 - read nearest project instructions;
 - inspect surrounding code;
 - verify if cheap;
@@ -96,7 +99,20 @@ Within the project root, read relevant files in this order when present:
 
 If no useful project contract exists and the work is non-trivial, create or propose a project-local `AGENTS.md` using `references/templates.md`.
 
-### 2. Build Context Before Coding
+### 2. Establish Git Baseline
+
+For any work in a Git repository, establish at least a lightweight baseline. For non-trivial work, record it in the plan/log/handoff:
+
+- run `git status --short --branch` before editing;
+- identify the current branch, upstream, dirty files, untracked files, and unpushed commits;
+- distinguish user changes from your own changes, especially in a dirty worktree;
+- do not overwrite, move, stage, stash, discard, rebase, reset, or merge user work without explicit approval;
+- stage only intentional paths, not blind `git add -A`, unless the repository workflow explicitly expects it;
+- create commits or checkpoints at stable, verified slices when the task is long-running or multi-agent.
+
+Read `references/git-stewardship.md` for multi-agent branch/worktree, commit, push, rollback, and PR standards.
+
+### 3. Build Context Before Coding
 
 Before edits, answer internally or in a project note:
 
@@ -111,7 +127,7 @@ Before edits, answer internally or in a project note:
 
 For unfamiliar or large repos, create or update `docs/project-map.md` or an equivalent map when it will save future rediscovery.
 
-### 3. Plan The Work
+### 4. Plan The Work
 
 For Full Stewardship, write a short plan in the smallest durable place that fits:
 
@@ -121,10 +137,12 @@ For Full Stewardship, write a short plan in the smallest durable place that fits
 
 Plan shape: Goal, Context read, Affected areas, Steps, Verification, Risks, Docs to update.
 
-### 4. Implement With Architecture Hygiene
+### 5. Implement With Architecture And Git Hygiene
 
 While editing:
 
+- keep Git status understandable; know which files you touched and why;
+- preserve user changes and unrelated agent changes in the worktree;
 - search for existing patterns before adding abstractions;
 - keep module boundaries explicit;
 - prefer small cohesive changes over sweeping rewrites;
@@ -140,7 +158,7 @@ Use `references/stewardship-standards.md` when judging maintainability, ADR trig
 
 If an area has had multiple failed fixes, contradictory invariants, unclear ownership, or patch-on-patch complexity, pause implementation and write a small redesign/refactor plan. Identify the root cause, intended boundary, migration steps, verification, rollback, and docs/ADR impact before changing code broadly.
 
-### 5. Record Decisions And Logs
+### 6. Record Decisions And Logs
 
 Write an ADR or decision note when a decision is hard to reverse, cross-cutting, security-sensitive, data-model related, public-contract related, or likely to surprise future maintainers.
 
@@ -152,7 +170,7 @@ Suggested locations:
 
 Append a project log entry when work spans multiple steps/sessions, important context was discovered, a workaround/risk/TODO remains, or another person/agent may continue the work.
 
-### 6. Support Long-Running Codex Work
+### 7. Support Long-Running Codex Work
 
 Use durable run state when context loss, interruption, compaction, or continuation is plausible:
 
@@ -168,13 +186,13 @@ Checkpoint after meaningful progress, verification, pivots, or before risky step
 python <skill-root>/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --next "next action" --verify "test result or pending check"
 ```
 
-Keep `HANDOFF.md` compact and factual: current objective, completed work, active assumptions, important files, commands run, decisions, risks, blockers, and the next safest step.
+Keep `HANDOFF.md` compact and factual: current objective, completed work, active assumptions, important files, Git branch/status/commit state, commands run, decisions, risks, blockers, and the next safest step.
 
 After resume or compaction, rebuild state from `HANDOFF.md`, `PLAN.md`, recent `LOG.md`, `git status`, relevant diffs, and latest terminal output before continuing.
 
 Use `references/operating-patterns.md` for deeper long-running execution patterns.
 
-### 7. Update Documentation And Diagrams
+### 8. Update Documentation And Diagrams
 
 Update docs when any of these change:
 
@@ -188,7 +206,7 @@ Update docs when any of these change:
 
 Prefer text-based diagrams stored in git: Mermaid in Markdown for most projects, C4-style views for complex systems, and PlantUML only if already used.
 
-### 8. Verify And Deliver
+### 9. Verify And Deliver
 
 Run the narrowest sufficient verification first, then broader checks when risk warrants:
 
@@ -203,6 +221,7 @@ Final response or handoff must include:
 - what changed;
 - files/docs updated;
 - verification run and results;
+- Git state: branch, commit(s), dirty status, unpushed work, PR/remote if relevant;
 - remaining risks/TODOs;
 - ADR/log/spec/run-state location when created.
 
@@ -215,6 +234,8 @@ Final response or handoff must include:
 | "The architecture issue is nearby, so I should fix it while I am here." | Stewardship is not drive-by renovation. Record unrelated cleanup as a follow-up unless it is required for the requested change. |
 | "One more patch will be safer than refactoring." | Sometimes yes, but repeated patches around the same failure are evidence that the design may be wrong. Stop and assess root cause before adding another layer. |
 | "A global note is enough." | Project facts belong in the project. Global memory cannot substitute for repo-local `AGENTS.md`, docs, logs, ADRs, or handoffs. |
+| "I can clean up Git at the end." | Dirty, mixed work destroys rollback and multi-agent coordination. Keep Git understandable throughout the work. |
+| "git add -A is faster." | Blind staging can capture user work, generated noise, secrets, or unrelated agent edits. Stage explicit paths unless the repo workflow says otherwise. |
 | "The code looks right." | Verification requires evidence: tests, build output, typecheck/lint, runtime/manual checks, or a stated unverified gap. |
 | "I can keep the plan in my head." | Long tasks cross context boundaries. A written plan/log/handoff is the continuity mechanism for the next maintainer. |
 | "This new abstraction will help later." | Abstractions must earn their cost now by clarifying a real boundary, reducing duplication, or preventing coupling. |
@@ -223,6 +244,10 @@ Final response or handoff must include:
 
 - Project root was never stated or inferred from weak evidence.
 - Work touches multiple modules but no plan or affected-boundary note exists.
+- Git status was not checked before edits in a non-trivial repository task.
+- Dirty user changes are present and the agent cannot say who owns them.
+- A commit mixes feature work, refactor, formatting, generated files, and docs without a clear reason.
+- A shared branch is rebased, reset, force-pushed, or conflict-resolved without explicit approval.
 - `AGENTS.md` is missing or stale during non-trivial work and nobody repairs or proposes it.
 - New modules, dependencies, services, schemas, or public contracts appear without docs or an ADR/decision note.
 - Logs or handoffs are written outside the project root for project-specific facts.
@@ -240,6 +265,7 @@ Before final delivery, confirm:
 
 - [ ] Current project root and subproject scope are correct.
 - [ ] Relevant project instructions, docs, nearby code, and tests were read.
+- [ ] Git baseline was checked and user/unrelated changes were preserved.
 - [ ] Fast Path or Full Stewardship choice matches the risk.
 - [ ] Affected layers/modules/contracts are understood and kept clear.
 - [ ] Repeatedly patched or fundamentally flawed areas were assessed for redesign/refactor instead of receiving another blind patch.
@@ -249,7 +275,7 @@ Before final delivery, confirm:
 
 ## Escalation Rules
 
-Pause and ask before destructive migrations or data deletion, broad rewrites not explicitly requested, paid/external service changes, security/auth/permission changes without clear approval, publishing/deploying, or sending external messages.
+Pause and ask before destructive migrations or data deletion, broad rewrites not explicitly requested, paid/external service changes, security/auth/permission changes without clear approval, publishing/deploying, sending external messages, force-pushing, rebasing shared branches, resetting history, discarding changes, resolving conflicts that touch user-owned work, or pushing commits the user did not ask to publish.
 
 If blocked, make a clear project-local note with current state, attempted steps, exact blocker, evidence, and safest next action.
 
@@ -258,6 +284,7 @@ If blocked, make a clear project-local note with current state, attempted steps,
 Load only what is needed:
 
 - `references/project-files.md` - project-scoped file layout, multi-project workspace rules, and where governance artifacts belong.
+- `references/git-stewardship.md` - production Git standards for multi-agent work, commits, branches, rollback, PRs, and handoffs.
 - `references/stewardship-standards.md` - anti-sprawl quality standards, ADR triggers, and review checklist.
 - `references/operating-patterns.md` - long-running Codex execution, context recovery, subagents, and verification loops.
 - `references/templates.md` - templates for `AGENTS.md`, plans, logs, ADRs, architecture notes, handoffs, blockers, and verification.
