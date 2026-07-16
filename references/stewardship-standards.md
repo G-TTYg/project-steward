@@ -120,6 +120,7 @@ Before final delivery, check:
 - Did architecture docs or diagrams change when boundaries changed?
 - Did you record non-obvious decisions?
 - Did you log important discoveries/risks?
+- Are stable facts, decisions, process facts, and agent execution state stored in their canonical locations?
 
 ### Verification
 
@@ -141,6 +142,7 @@ Before final delivery, check:
 - Can a future human or agent find the project root, Git branch/status, plan, logs, docs, ADRs, and next step without reading the whole chat?
 - Are project-specific facts stored in the project rather than only in global memory?
 - Does any handoff separate facts, assumptions, decisions, blockers, and verification?
+- Does any handoff point to canonical files instead of being the only copy of stable facts or decisions?
 
 ## Architecture Diagram Expectations
 

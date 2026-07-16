@@ -15,6 +15,7 @@ Write a plan that a fresh Codex instance could execute without remembering the c
 - ordered slices with verification for each slice;
 - rollback path and risks;
 - current open questions.
+- fact placement: which stable facts, decisions, process facts, and agent-run state must be written where.
 
 Keep the plan live. If reality changes, edit the plan before continuing.
 
@@ -52,6 +53,8 @@ Maintain three separate ledgers:
 
 Never let assumptions silently become facts.
 
+Place confirmed facts by type. Stable facts belong in README/AGENTS/docs, decision facts in DECISIONS/docs/adr, process facts in `logs/YYYY-MM-DD.md`, and execution recovery state in `docs/agent-runs/`.
+
 ### Compression checkpoints
 
 Before context-heavy transitions, update `HANDOFF.md` with:
@@ -62,6 +65,7 @@ Before context-heavy transitions, update `HANDOFF.md` with:
 - exact next command or edit;
 - known risks;
 - user-facing commitments.
+- durable facts that still need promotion from the run directory into README/AGENTS/docs, DECISIONS/docs/adr, or `logs/YYYY-MM-DD.md`.
 
 After compaction, read the handoff before trusting memory.
 
@@ -149,8 +153,10 @@ A good handoff lets a human or fresh agent continue without guessing:
 - facts, assumptions, and decisions separated;
 - unresolved risks;
 - next safest step.
+- fact placement status: what has been promoted to stable docs, decisions, process logs, and what remains only in agent-run state.
 
 Do not bury critical project facts in chat-only summaries.
+Do not leave critical stable facts or decisions only in `docs/agent-runs/`.
 
 ## User Communication
 

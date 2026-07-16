@@ -18,8 +18,22 @@ Rules:
 - Keep `AGENTS.md`, `docs/`, `logs/`, ADRs, specs, and architecture diagrams inside that project root.
 - Do not mix logs from different projects in a shared agent-level `logs/` directory.
 - Do not put project facts into global agent memory unless they are intentionally cross-project or the user asks to remember them globally.
+- Do not create parallel fact stores such as `docs/logs/`, `memory/`, or `.agents/logs/` unless the repository already uses them and `AGENTS.md` names them.
 - If a monorepo has multiple apps/packages, either follow the monorepo root governance or create subproject notes under `docs/projects/<name>/` / `packages/<name>/docs/` according to existing conventions.
 - Handoffs must include `project_root` and, for monorepos, `subproject`.
+
+## Canonical Fact Placement
+
+Use this classification before creating or updating files:
+
+| Fact type | Canonical location | Examples | Do not put only in |
+|---|---|---|---|
+| Stable facts | `README.md`, `AGENTS.md`, `docs/` | Purpose, commands, setup, architecture, project map, module ownership, APIs, data contracts, testing rules, runbooks. | `logs/`, `docs/agent-runs/`, chat. |
+| Decision facts | `DECISIONS.md`, `docs/adr/` | Chosen design, rejected alternatives, dependency choices, migration strategy, security posture, public contract changes. | Daily logs, handoffs, chat. |
+| Process facts | `logs/YYYY-MM-DD.md` | Work chronology, discoveries, files changed/planned, verification, risks, next steps. | README/AGENTS as narrative history, `docs/agent-runs/` only. |
+| Agent execution state | `docs/agent-runs/<date-task>/` | Active plan, checkpoints, handoff, current slice, recovery notes, local machine state. | Stable docs as noisy run state. |
+
+Promotion rule: when a run log or daily log discovers a stable fact, move that fact to README/AGENTS/docs. When it records a durable choice, move that choice to DECISIONS/docs/adr. Leave only the chronology and pointers in `logs/YYYY-MM-DD.md`.
 
 ## Core Contract
 
@@ -64,6 +78,8 @@ docs/
     YYYY-MM-DD-title.md           # architecture decision records
   tasks/
     YYYY-MM-DD-task-name.md       # larger implementation plans when useful
+  agent-runs/
+    YYYY-MM-DD-task/              # optional execution state for long-running agent work
 logs/
   YYYY-MM-DD.md                   # durable work log
 ```
@@ -89,6 +105,8 @@ DECISIONS.md
 logs/YYYY-MM-DD.md
 ```
 
+Small repos still use the same fact placement. They simply keep stable facts compact in README/AGENTS, decisions in DECISIONS.md, and process facts in one daily log instead of many docs.
+
 ## What Must Be Updated When
 
 | Change type | Required artifact |
@@ -104,15 +122,36 @@ logs/YYYY-MM-DD.md
 
 ## Project Log Rules
 
-Project logs are project-local, not agent-global. They are not chat transcripts. They should preserve facts useful to future maintainers of this specific project:
+Project logs are project-local, not agent-global. They are not chat transcripts and not stable documentation. They should preserve process facts useful to future maintainers of this specific project:
 
 - Date/time.
 - Task intent.
 - Key discoveries.
 - Files changed or planned.
-- Decisions made.
+- Decision summaries and links to `DECISIONS.md` or `docs/adr/` when durable.
 - Verification results.
 - Remaining risks and next steps.
+- Links to stable docs, decisions, ADRs, commits, issues, or agent-runs when relevant.
+
+Do not bury stable project facts or durable decisions only in daily logs. Promote them to the canonical stable or decision files and leave a short pointer in the log.
+
+## Agent Run State Rules
+
+Use `docs/agent-runs/<date-task>/` only when a task needs checkpointing, recovery after context loss, or handoff to another agent.
+
+Agent-run files may contain temporary execution detail:
+
+- active plan and slice;
+- checkpoints;
+- current assumptions and blockers;
+- handoff state;
+- commands run during the run;
+- machine-readable `STATE.json`.
+
+Before final delivery, promote durable facts out of `docs/agent-runs/`:
+
+- stable facts -> `README.md`, `AGENTS.md`, or `docs/`;
+- decision facts -> `DECISIONS.md` or `docs/adr/`;
+- process summary -> `logs/YYYY-MM-DD.md`.
 
 Do not log secrets. Redact credentials, tokens, personal data, and private messages.
-

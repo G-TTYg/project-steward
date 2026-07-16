@@ -100,6 +100,13 @@ For installation or updates, read this README first.
 
 For task execution, read `SKILL.md` first. Load `references/project-files.md` when deciding project root, monorepo layout, or governance file placement. Load `references/git-stewardship.md` when coordinating branches, commits, dirty worktrees, rollback, PRs, or multi-agent Git ownership. Load `references/stewardship-standards.md` when judging architecture/anti-sprawl risk. Load `references/operating-patterns.md` only for deeper long-running workflow guidance, and load `references/templates.md` only when creating durable plans, logs, ADRs, handoffs, blocker notes, or verification matrices.
 
+Fact placement is strict:
+
+- Stable facts -> `README.md`, `AGENTS.md`, `docs/`
+- Decision facts -> `DECISIONS.md`, `docs/adr/`
+- Process facts -> `logs/YYYY-MM-DD.md`
+- Agent execution state -> `docs/agent-runs/<date-task>/`
+
 Use `scripts/long_work.py` when a task needs durable run state:
 
 ```bash

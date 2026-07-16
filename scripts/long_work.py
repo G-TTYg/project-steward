@@ -167,6 +167,13 @@ Mode: {args.mode}
 - Existing patterns:
 - Similar modules/tests:
 
+## Fact Placement
+
+- Stable facts -> README.md / AGENTS.md / docs/:
+- Decision facts -> DECISIONS.md / docs/adr/:
+- Process facts -> logs/YYYY-MM-DD.md:
+- Agent execution state -> this run directory only:
+
 ## Slices
 
 1. Slice:
@@ -219,6 +226,13 @@ Project: `{project}`
 
 - PLAN.md needs slice details.
 - No verification has run yet.
+
+## Fact Placement
+
+- Stable facts to promote:
+- Decision facts to promote:
+- Process facts to log:
+- Agent-run-only state:
 
 ## Next Safest Step
 
@@ -304,6 +318,13 @@ Status: {args.status}
 ## Verification
 
 {args.verify or state.get("verification", "Not recorded.")}
+
+## Fact Placement
+
+- Stable facts should be in README.md, AGENTS.md, or docs/.
+- Decision facts should be in DECISIONS.md or docs/adr/.
+- Process facts should be in logs/YYYY-MM-DD.md.
+- This run directory should contain only execution recovery state that still matters for handoff.
 
 ## Git State
 

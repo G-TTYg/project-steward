@@ -61,13 +61,19 @@ Copy and adapt these templates. Keep them short unless the project requires deta
 
 ## Documentation Rules
 
+- Stable facts live in `README.md`, `AGENTS.md`, and `docs/`.
+- Decision facts live in `DECISIONS.md` or `docs/adr/`.
+- Process facts live in `logs/YYYY-MM-DD.md`.
+- Agent execution state lives in `docs/agent-runs/<date-task>/` and must not be the only copy of durable project facts.
 - Update README/docs when commands, behavior, APIs, setup, or architecture change.
 - Record significant decisions in `docs/adr/` or `DECISIONS.md`.
 - Update diagrams when system boundaries or dependencies change.
 
 ## Logging Rules
 
-- For non-trivial work, append this project's `logs/YYYY-MM-DD.md` with plan, discoveries, verification, and risks.
+- For non-trivial work, append this project's `logs/YYYY-MM-DD.md` with process facts: plan summary, discoveries, verification, and risks.
+- Promote stable facts from logs or agent-runs into README/AGENTS/docs.
+- Promote durable decisions from logs or agent-runs into DECISIONS/docs/adr.
 - Do not mix logs from other repos/projects managed by the same agent.
 - Do not log secrets or sensitive personal data.
 
@@ -129,6 +135,11 @@ Subproject:
 
 ### Docs/Logs/ADRs to Update
 
+- Stable facts:
+- Decision facts:
+- Process facts:
+- Agent-run state needed? Why/why not:
+
 ### Git / Collaboration
 
 - Commit/checkpoint plan:
@@ -159,9 +170,16 @@ Subproject:
 
 -
 
-### Decisions
+### Decision Pointers
 
--
+- Durable decisions recorded in:
+- Summary:
+
+### Fact Placement
+
+- Stable facts promoted to:
+- Decision facts promoted to:
+- Agent-run state linked, if any:
 
 ### Architecture / Interface Notes
 
