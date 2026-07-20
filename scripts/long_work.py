@@ -117,7 +117,7 @@ def commit_run_state(project: Path, run: Path, message: str) -> str | None:
         "-m",
         message,
         "-m",
-        "Agent-owned Project Steward execution-state checkpoint. No business-code paths should be included.",
+        "Agent-owned Project Steward agent execution state checkpoint. No business-code paths should be included.",
     )
     if commit.returncode != 0:
         raise SystemExit(commit.stderr.strip() or "failed to commit agent execution state")
@@ -220,7 +220,7 @@ Project: `{project}`
 
 ## Completed
 
-- Run state initialized.
+- Agent execution state initialized.
 
 ## Current State
 
@@ -232,7 +232,7 @@ Project: `{project}`
 - Stable facts to promote:
 - Decision facts to promote:
 - Process facts to log:
-- Agent-run-only state:
+- Agent execution state only:
 
 ## Next Safest Step
 
@@ -264,7 +264,7 @@ Not run yet.
 
     write_state(run, state)
     if args.commit_run_state:
-        commit = commit_run_state(project, run, f"chore(agent-run): initialize {slugify(args.task)}")
+        commit = commit_run_state(project, run, f"chore(agent-state): initialize {slugify(args.task)}")
         if commit:
             print(f"committed agent execution state: {commit}")
     print(run)
@@ -324,7 +324,7 @@ Status: {args.status}
 - Stable facts should be in README.md, AGENTS.md, or docs/.
 - Decision facts should be in DECISIONS.md or docs/adr/.
 - Process facts should be in logs/YYYY-MM-DD.md.
-- This run directory should contain only execution recovery state that still matters for handoff.
+- This run directory should contain only agent execution state that still matters for handoff.
 
 ## Git State
 
@@ -348,7 +348,7 @@ Status: {args.status}
     write_state(run, state)
     if args.commit_run_state:
         task = str(state.get("task", run.name))
-        commit = commit_run_state(run, run, f"chore(agent-run): checkpoint {slugify(task)}")
+        commit = commit_run_state(run, run, f"chore(agent-state): checkpoint {slugify(task)}")
         if commit:
             print(f"committed agent execution state: {commit}")
     print(run / "HANDOFF.md")
@@ -382,12 +382,12 @@ def build_parser() -> argparse.ArgumentParser:
     init = sub.add_parser("init", help="create PLAN.md, LOG.md, HANDOFF.md, and STATE.json")
     init.add_argument("--project", default=".", help="project root")
     init.add_argument("--task", required=True, help="short task title")
-    init.add_argument("--base", default="docs/agent-runs", help="run directory relative to project")
+    init.add_argument("--base", default="docs/agent-runs", help="agent execution state base directory relative to project")
     init.add_argument("--mode", default="stewarded", choices=["stewarded", "fast", "recovery"])
     init.add_argument(
         "--commit-run-state",
         action="store_true",
-        help="commit only the created run directory; refuses existing staged changes and never pushes",
+        help="commit only the created agent execution state directory; refuses existing staged changes and never pushes",
     )
     init.set_defaults(func=init_run)
 
@@ -401,7 +401,7 @@ def build_parser() -> argparse.ArgumentParser:
     cp.add_argument(
         "--commit-run-state",
         action="store_true",
-        help="commit only this run directory; refuses existing staged changes and never pushes",
+        help="commit only this agent execution state directory; refuses existing staged changes and never pushes",
     )
     cp.set_defaults(func=checkpoint)
 
@@ -411,7 +411,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     find = sub.add_parser("find", help="list recent run directories")
     find.add_argument("--project", default=".", help="project root")
-    find.add_argument("--base", default="docs/agent-runs", help="run directory relative to project")
+    find.add_argument("--base", default="docs/agent-runs", help="agent execution state base directory relative to project")
     find.add_argument("--limit", type=int, default=10)
     find.set_defaults(func=find_runs)
 

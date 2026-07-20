@@ -132,7 +132,7 @@ Code and project-structure clarity are strict too:
 - `AGENTS.md` is the maintenance contract for humans and agents editing this skill repository.
 - `README.md` is the install, update, usage, and design summary.
 - `references/` holds detailed standards loaded only when needed.
-- `scripts/long_work.py` manages agent execution state only; it does not own canonical project memory.
+- `scripts/long_work.py` manages agent execution state only; it does not own canonical durable facts.
 - `agents/openai.yaml` is UI metadata and must stay aligned with `SKILL.md`.
 
 Use `scripts/long_work.py` when a task needs agent execution state for recovery or handoff:
@@ -147,7 +147,7 @@ Then checkpoint meaningful progress:
 python ~/.codex/skills/project-steward/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --next "next action" --verify "test result"
 ```
 
-When the agent execution-state files are agent-owned and ready to preserve in project history, add an explicit local commit:
+When the agent execution state files are agent-owned and ready to preserve in project history, add an explicit local commit:
 
 ```bash
 python ~/.codex/skills/project-steward/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --commit-run-state

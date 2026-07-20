@@ -1,6 +1,6 @@
 ---
 name: project-steward
-description: Project-scoped stewardship and anti-sprawl workflow for Codex and coding agents working in one or many repositories. Use when starting or continuing project work, entering an unfamiliar repo/subproject, creating or refactoring features, preserving architecture, enforcing maintainable engineering defaults, maintaining production-grade Git hygiene for multi-agent work, writing or repairing AGENTS.md/README/docs/logs/ADRs/specs, improving code comments and project structure, preventing architecture drift, keeping durable project memory, creating handoffs, or carrying long-running work through checkpoints and verification without mixing state across projects.
+description: Project-scoped stewardship and anti-sprawl workflow for Codex and coding agents working in one or many repositories. Use when starting or continuing project work, entering an unfamiliar repo/subproject, creating or refactoring features, preserving architecture, enforcing maintainable engineering defaults, maintaining production-grade Git hygiene for multi-agent work, writing or repairing AGENTS.md/README/docs/logs/ADRs/specs, improving code comments and project structure, preventing architecture drift, placing durable project facts correctly, creating handoffs, or carrying long-running work through checkpoints and verification without mixing state across projects.
 ---
 
 # Project Steward
@@ -9,7 +9,7 @@ Project Steward makes Codex act like a careful maintainer, not a drive-by coder.
 
 This skill is project-scoped. Always identify the current project root first, and write governance artifacts inside that project. Do not let an agent workspace, global memory folder, or unrelated repository stand in for the actual project.
 
-Long-running execution support is included, but it is a means, not the identity of the skill. Checkpoints, handoffs, and agent-run logs exist to protect execution continuity; they are not the canonical home for durable project facts.
+Long-running execution support is included, but it is a means, not the identity of the skill. Checkpoints, handoffs, and execution logs exist to protect continuity; they are not the canonical home for durable project facts.
 
 ## Skill Design Contract
 
@@ -54,7 +54,7 @@ If speed and stewardship conflict, choose the smallest move that preserves proje
 
 ## Canonical Fact Placement
 
-Before writing project memory, classify the fact and put it in the canonical location:
+Before recording durable project facts, classify the fact and put it in the canonical location:
 
 | Fact type | Canonical location | Use for |
 |---|---|---|
@@ -63,7 +63,7 @@ Before writing project memory, classify the fact and put it in the canonical loc
 | Process facts | `logs/YYYY-MM-DD.md` | Work chronology, discoveries, changed/planned files, verification, risks, next steps. |
 | Agent execution state | `docs/agent-runs/<date-task>/` | Current slice, checkpoints, handoff, recovery after interruption or compaction. |
 
-Do not use `docs/agent-runs/` as the only place for stable facts, decisions, or project process history. Promote durable facts out of the run directory into the canonical files above before delivery or handoff.
+Do not use `docs/agent-runs/` as the only place for stable facts, decision facts, or project process history. Promote durable facts out of the run directory into the canonical files above before delivery or handoff.
 
 ## Default Engineering Posture
 
@@ -91,7 +91,7 @@ For non-trivial project work, do these unless the user explicitly says to skip s
 2. **Read before changing**: inspect project instructions, docs, similar code, tests, and architecture notes before edits.
 3. **Respect or repair the project contract**: read `AGENTS.md` or equivalents; if missing or too vague for major work, draft or update a project-local contract.
 4. **Maintain Git hygiene**: check branch/status before edits, protect uncommitted user work, stage explicit paths, and keep rollback possible.
-5. **Classify facts before writing**: stable facts go to README/AGENTS/docs, decisions to DECISIONS/docs/adr, process facts to `logs/YYYY-MM-DD.md`, and agent execution state to `docs/agent-runs/`.
+5. **Classify facts before writing**: stable facts go to README/AGENTS/docs, decision facts to DECISIONS/docs/adr, process facts to `logs/YYYY-MM-DD.md`, and agent execution state to `docs/agent-runs/`.
 6. **Plan in writing**: record scope, constraints, affected modules, verification, risks, and rollback before broad changes.
 7. **Protect structure**: preserve or create clear layers, modules, interfaces, and abstraction boundaries.
 8. **Keep code self-explaining and commented where needed**: names and structure should carry ordinary meaning; comments/docstrings should capture non-obvious intent, invariants, constraints, edge cases, and risk.
@@ -129,7 +129,7 @@ Scope rules:
 - If the project root is ambiguous, state the chosen root before modifying files or ask one precise question.
 - When handing off, include the absolute project root and any subproject path.
 
-Read `references/project-files.md` when root selection, monorepo layout, governance file placement, or per-project memory boundaries are unclear.
+Read `references/project-files.md` when root selection, monorepo layout, governance file placement, or per-project fact boundaries are unclear.
 
 ### 1. Establish The Project Contract
 
@@ -206,7 +206,7 @@ While editing:
 - avoid comment starvation: code that encodes important intent but leaves the next maintainer to reverse-engineer why it exists;
 - do not add dependencies without recording why;
 - update tests near changed behavior;
-- update the correct project file when facts change: stable facts in README/AGENTS/docs, decisions in DECISIONS/docs/adr, process facts in `logs/YYYY-MM-DD.md`, and recovery state in `docs/agent-runs/`.
+- update the correct project file when facts change: stable facts in README/AGENTS/docs, decision facts in DECISIONS/docs/adr, process facts in `logs/YYYY-MM-DD.md`, and agent execution state in `docs/agent-runs/`.
 
 Use `references/stewardship-standards.md` when judging maintainability, ADR triggers, or review risk.
 
@@ -236,7 +236,7 @@ python <skill-root>/scripts/long_work.py init --project . --task "short task tit
 
 This creates `PLAN.md`, `LOG.md`, `HANDOFF.md`, and `STATE.json` under `docs/agent-runs/<date>-<task-slug>/` by default.
 
-`docs/agent-runs/` is an execution-state area, not the canonical project memory. Use it for interruption recovery, active checkpoints, and handoff. Before delivery, promote stable facts to README/AGENTS/docs, decision facts to DECISIONS/docs/adr, and process facts to `logs/YYYY-MM-DD.md`.
+`docs/agent-runs/` is an agent execution state area, not the canonical durable fact store. Use it for interruption recovery, active checkpoints, and handoff. Before delivery, promote stable facts to README/AGENTS/docs, decision facts to DECISIONS/docs/adr, and process facts to `logs/YYYY-MM-DD.md`.
 
 Checkpoint after meaningful progress, verification, pivots, or before risky steps:
 
@@ -244,7 +244,7 @@ Checkpoint after meaningful progress, verification, pivots, or before risky step
 python <skill-root>/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --next "next action" --verify "test result or pending check"
 ```
 
-For agent-run documentation you created yourself, the script can create an explicit local commit when requested:
+For agent execution state documentation you created yourself, the script can create an explicit local commit when requested:
 
 ```bash
 python <skill-root>/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --commit-run-state
@@ -288,12 +288,12 @@ Final response or handoff must include:
 - what changed;
 - files/docs updated;
 - verification run and results;
-- fact placement: stable facts, decisions, process facts, and agent-run state were written to the correct places or intentionally skipped;
+- fact placement: stable facts, decision facts, process facts, and agent execution state were written to the correct places or intentionally skipped;
 - structure clarity: notable project-structure/module/comment changes, or why none were needed;
 - Git state: branch, commit(s), dirty status, unpushed work, PR/remote if relevant;
 - whether agent-owned completed work was committed; if not, why it remains dirty and what exact Git action should happen next;
 - remaining risks/TODOs;
-- ADR/log/spec/agent-run state location when created.
+- ADR/log/spec/agent execution state location when created.
 
 ## Common Rationalizations
 
@@ -326,7 +326,7 @@ Final response or handoff must include:
 - `AGENTS.md` is missing or stale during non-trivial work and nobody repairs or proposes it.
 - New modules, dependencies, services, schemas, or public contracts appear without docs or an ADR/decision note.
 - Logs or handoffs are written outside the project root for project-specific facts.
-- `docs/agent-runs/` is the only place where stable facts, decisions, or process history were recorded.
+- `docs/agent-runs/` is the only place where stable facts, decision facts, or process history were recorded.
 - Stable facts are buried in `logs/`; decisions are buried in daily logs; process facts are scattered through README/AGENTS/docs.
 - A feature/refactor accumulates large unverified changes.
 - The same bug, edge case, or module has been patched repeatedly without a root-cause design fix.

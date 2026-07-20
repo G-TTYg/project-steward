@@ -127,10 +127,10 @@ Verified:
 
 Keep the message shorter when the change is obvious; include verification for risky or non-trivial commits.
 
-For agent-run documentation created by Project Steward, it is acceptable to create a documentation-only checkpoint commit, for example:
+For agent execution state documentation created by Project Steward, it is acceptable to create a documentation-only checkpoint commit, for example:
 
 ```text
-chore(agent-run): checkpoint <task>
+chore(agent-state): checkpoint <task>
 ```
 
 Such commits must stage only the relevant `docs/agent-runs/<run>/` files and must never include business-code changes by accident.

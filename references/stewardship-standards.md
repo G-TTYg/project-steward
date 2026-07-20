@@ -128,7 +128,7 @@ Avoid comments that:
 - justify poor structure instead of fixing it;
 - hide secrets, private data, or sensitive operational details.
 
-When changing code near an existing comment, update or remove stale comments in the same slice. A stale comment is a bug in project memory.
+When changing code near an existing comment, update or remove stale comments in the same slice. A stale comment is a bug in project understanding.
 
 ## Patch Vs Redesign
 
@@ -201,7 +201,7 @@ Before final delivery, check:
 - Did architecture docs or diagrams change when boundaries changed?
 - Did you record non-obvious decisions?
 - Did you log important discoveries/risks?
-- Are stable facts, decisions, process facts, and agent execution state stored in their canonical locations?
+- Are stable facts, decision facts, process facts, and agent execution state stored in their canonical locations?
 
 ### Verification
 

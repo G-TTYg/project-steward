@@ -31,9 +31,9 @@ Use this classification before creating or updating files:
 | Stable facts | `README.md`, `AGENTS.md`, `docs/` | Purpose, commands, setup, architecture, project map, module ownership, APIs, data contracts, testing rules, runbooks. | `logs/`, `docs/agent-runs/`, chat. |
 | Decision facts | `DECISIONS.md`, `docs/adr/` | Chosen design, rejected alternatives, dependency choices, migration strategy, security posture, public contract changes. | Daily logs, handoffs, chat. |
 | Process facts | `logs/YYYY-MM-DD.md` | Work chronology, discoveries, files changed/planned, verification, risks, next steps. | README/AGENTS as narrative history, `docs/agent-runs/` only. |
-| Agent execution state | `docs/agent-runs/<date-task>/` | Active plan, checkpoints, handoff, current slice, recovery notes, local machine state. | Stable docs as noisy run state. |
+| Agent execution state | `docs/agent-runs/<date-task>/` | Active plan, checkpoints, handoff, current slice, recovery notes, local machine state. | Stable docs as noisy execution detail. |
 
-Promotion rule: when a run log or daily log discovers a stable fact, move that fact to README/AGENTS/docs. When it records a durable choice, move that choice to DECISIONS/docs/adr. Leave only the chronology and pointers in `logs/YYYY-MM-DD.md`.
+Promotion rule: when an execution log or daily log discovers a stable fact, move that fact to README/AGENTS/docs. When it records a durable choice, move that choice to DECISIONS/docs/adr. Leave only the chronology and pointers in `logs/YYYY-MM-DD.md`.
 
 ## Core Contract
 
@@ -202,11 +202,11 @@ Project logs are project-local, not agent-global. They are not chat transcripts 
 
 Do not bury stable project facts or durable decisions only in daily logs. Promote them to the canonical stable or decision files and leave a short pointer in the log.
 
-## Agent Run State Rules
+## Agent Execution State Rules
 
 Use `docs/agent-runs/<date-task>/` only when a task needs checkpointing, recovery after context loss, or handoff to another agent.
 
-Agent-run files may contain temporary execution detail:
+Agent execution state files may contain temporary execution detail:
 
 - active plan and slice;
 - checkpoints;

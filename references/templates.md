@@ -90,8 +90,8 @@ Copy and adapt these templates. Keep them short unless the project requires deta
 ## Logging Rules
 
 - For non-trivial work, append this project's `logs/YYYY-MM-DD.md` with process facts: plan summary, discoveries, verification, and risks.
-- Promote stable facts from logs or agent-runs into README/AGENTS/docs.
-- Promote durable decisions from logs or agent-runs into DECISIONS/docs/adr.
+- Promote stable facts from logs or agent execution state into README/AGENTS/docs.
+- Promote durable decisions from logs or agent execution state into DECISIONS/docs/adr.
 - Do not mix logs from other repos/projects managed by the same agent.
 - Do not log secrets or sensitive personal data.
 
@@ -158,7 +158,7 @@ Subproject:
 - Stable facts:
 - Decision facts:
 - Process facts:
-- Agent-run state needed? Why/why not:
+- Agent execution state needed? Why/why not:
 
 ### Git / Collaboration
 
@@ -199,7 +199,7 @@ Subproject:
 
 - Stable facts promoted to:
 - Decision facts promoted to:
-- Agent-run state linked, if any:
+- Agent execution state linked, if any:
 
 ### Architecture / Interface Notes
 

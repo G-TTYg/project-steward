@@ -25,14 +25,14 @@ Keep every description and rule aligned with these pillars:
 7. Use `docs/agent-runs/` only for execution recovery and handoff state.
 8. Verify work and report residual risk.
 
-Do not let any part of the skill imply that agent-run state replaces README/AGENTS/docs, ADRs, process logs, project structure, code comments, tests, or Git commits.
+Do not let any part of the skill imply that agent execution state replaces README/AGENTS/docs, ADRs, process logs, project structure, code comments, tests, or Git commits.
 
 ## Repository Map
 
 - `SKILL.md` - primary skill instructions and trigger-facing workflow.
 - `README.md` - install, update, use, validate, and design summary for humans and agents.
 - `agents/openai.yaml` - Codex UI metadata; keep it consistent with `SKILL.md`.
-- `scripts/long_work.py` - deterministic helper for agent-run execution state.
+- `scripts/long_work.py` - deterministic helper for agent execution state.
 - `references/project-files.md` - project-root, fact placement, project structure, and governance file rules.
 - `references/stewardship-standards.md` - architecture, anti-sprawl, project structure, comment, redesign, and review standards.
 - `references/git-stewardship.md` - production Git workflow, commits, rollback, PRs, and handoffs.
@@ -43,7 +43,7 @@ Do not let any part of the skill imply that agent-run state replaces README/AGEN
 
 - Use `Project Steward` for the skill name and `project-steward` for the folder/invocation name.
 - Use `project structure`, not `source layout`, when describing folder organization.
-- Use `agent execution state` or `agent-run state` for `docs/agent-runs/`; do not call it canonical memory.
+- Use `agent execution state` for `docs/agent-runs/`; do not call it canonical memory.
 - Use `stable facts`, `decision facts`, `process facts`, and `agent execution state` consistently.
 - Keep `SKILL.md` focused on core workflow; put detailed standards in `references/`.
 - Keep reference files one level deep and directly linked from `SKILL.md`.
