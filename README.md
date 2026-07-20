@@ -107,6 +107,11 @@ Fact placement is strict:
 - Process facts -> `logs/YYYY-MM-DD.md`
 - Agent execution state -> `docs/agent-runs/<date-task>/`
 
+Code and project-structure clarity are strict too:
+
+- Project structure should expose layer, feature, adapter, provider, artifact-type, verification-scope, or bounded-context ownership instead of dumping files into flat catch-all folders.
+- Comments/docstrings should capture non-obvious intent, invariants, external constraints, edge cases, risks, and public contracts close to the code.
+
 Use `scripts/long_work.py` when a task needs durable run state:
 
 ```bash

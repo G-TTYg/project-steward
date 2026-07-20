@@ -18,6 +18,7 @@ Design targets:
 - Stable interfaces at boundaries; implementation details hidden behind adapters where useful.
 - Dependency direction should point inward toward stable domain/application abstractions, not outward toward UI/framework/vendor code.
 - Each new module should have an obvious owner, responsibility, public surface, tests, and documentation entry.
+- Project directories should reveal ownership. Do not let source, tests, scripts, configs, assets, docs, packages, or root folders become undifferentiated piles of unrelated files.
 - Avoid both extremes: no god files/spaghetti, but also no empty ceremonial layers for tiny scripts.
 
 Documentation target:
@@ -32,6 +33,7 @@ Prefer existing structure over novelty:
 - Reuse established naming, layering, error handling, and testing patterns.
 - Add a new abstraction when it removes duplication, clarifies a boundary, defines a stable contract, or prevents cross-layer coupling; avoid abstractions that are only decorative.
 - Avoid `misc`, `utils`, `helpers`, and `common` dumping grounds unless the project already has disciplined conventions for them.
+- Split folders by real responsibility when the project already has distinct features, layers, adapters, providers, protocols, domains, artifact types, or verification scopes.
 
 Keep boundaries clear:
 
@@ -51,6 +53,82 @@ Make failure visible:
 - Handle errors according to project conventions.
 - Avoid swallowing exceptions or returning ambiguous null/empty values.
 - Add logs/telemetry only where useful and non-sensitive.
+
+## Project Structure Standards
+
+Use the repository's existing structure first. If it is absent or already turning into a flat pile, introduce a small, explicit project tree that matches the project's scale.
+
+Good project structure makes these questions answerable from filenames and folders:
+
+- What kind of artifact is this: source, test, script, config, asset, doc, generated output, migration, or tool?
+- What layer, feature, bounded context, provider, protocol, or adapter owns it?
+- Where are its tests, fixtures, contracts, schemas, generated artifacts, and docs?
+- Which areas are stable domain/application logic and which areas are framework/vendor/I/O glue?
+
+Common patterns:
+
+```text
+<source-root>/
+  presentation/ or routes/ or ui/
+  application/ or use-cases/
+  domain/
+  infrastructure/ or adapters/
+  persistence/ or schemas/
+  shared/ or kernel/
+tests/
+  unit/
+  integration/
+  e2e/
+scripts/ or tools/
+config/
+docs/
+```
+
+Feature-oriented projects may instead use:
+
+```text
+<source-root>/
+  features/<feature>/
+    presentation/
+    application/
+    domain/
+    infrastructure/
+  shared/
+tests/<feature>/
+docs/<feature>/
+```
+
+Rules:
+
+- Prefer folders with clear ownership over flat project dumps.
+- Keep tests, fixtures, scripts, configs, docs, assets, generated outputs, and migrations discoverable by responsibility and lifecycle.
+- Keep tests near the changed behavior or mirror the project/code structure according to project convention.
+- Keep cross-cutting shared/common/utils/tooling areas small, named, and documented; do not use them as parking lots.
+- Add a folder when it groups at least one real responsibility boundary or prevents foreseeable mixing; avoid empty ceremonial folders.
+- When moving files, preserve public imports through compatibility shims or migration notes if callers would otherwise break.
+
+## Code Comment Standards
+
+Code comments are part of project stewardship. Documentation outside the code is not enough when the most precise fact lives next to a branch, invariant, protocol translation, migration, or workaround.
+
+Write comments/docstrings for:
+
+- domain invariants and business rules that are not obvious from names;
+- why an unusual branch, fallback, retry, timeout, ordering, cache, or validation exists;
+- external API quirks, protocol constraints, data-shape assumptions, and version compatibility;
+- concurrency, transaction, idempotency, security, privacy, performance, or resource-lifetime constraints;
+- non-trivial algorithms, parsing, serialization, migrations, and lossiness;
+- temporary workarounds, feature flags, compatibility shims, and removal conditions;
+- public interfaces where callers need contract, side-effect, error, or lifecycle expectations.
+
+Avoid comments that:
+
+- restate syntax or repeat the next line in prose;
+- describe stale behavior;
+- justify poor structure instead of fixing it;
+- hide secrets, private data, or sensitive operational details.
+
+When changing code near an existing comment, update or remove stale comments in the same slice. A stale comment is a bug in project memory.
 
 ## Patch Vs Redesign
 
@@ -112,6 +190,9 @@ Before final delivery, check:
 - Is there unnecessary duplication?
 - Is any new dependency justified?
 - Are naming and file placement consistent?
+- Does project structure avoid catch-all directories and reveal ownership/layer/feature/artifact boundaries?
+- Do comments/docstrings explain non-obvious intent, invariants, constraints, risks, and public contracts?
+- Did changed code update stale nearby comments?
 - If this area has been patched repeatedly, did you assess redesign/refactor instead of adding another patch?
 
 ### Documentation

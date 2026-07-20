@@ -49,6 +49,8 @@ Include:
 - Required reading order.
 - Build/test/dev commands.
 - Architecture boundaries, layers, modules, and dependency direction.
+- Project structure rules: where source, tests, scripts, configs, docs, assets, adapters, migrations, generated files, and tooling belong.
+- Code comment rules: what must be commented near code and what comments are noise.
 - Coding conventions.
 - Documentation/logging requirements.
 - Verification requirements.
@@ -63,6 +65,55 @@ Human-facing overview:
 - Quick start.
 - Common commands.
 - Links to docs/architecture/runbooks.
+
+## Project Structure
+
+Use existing project conventions first. If absent, avoid a flat project pile. Prefer a layout that makes ownership visible across source, tests, scripts, configs, docs, assets, migrations, generated files, and tooling.
+
+Layer-oriented default:
+
+```text
+<source-root>/
+  presentation/                  # UI, HTTP routes, CLI, workers, handlers
+  application/                   # use cases, orchestration, transactions, policies
+  domain/                        # core rules, entities, value objects, domain services
+  infrastructure/                # adapters for DB, APIs, queues, filesystem, model providers
+  persistence/                   # schemas, migrations, repositories, data contracts
+  shared/                        # small shared kernel; not a dumping ground
+tests/
+  unit/
+  integration/
+  e2e/
+scripts/ or tools/               # project automation and maintenance commands
+config/                          # project/runtime/tool configuration if not framework-owned
+docs/                            # stable facts and architecture docs
+assets/                          # source assets; keep generated outputs separate when possible
+```
+
+Feature-oriented alternative when the project is organized by bounded context:
+
+```text
+<source-root>/
+  features/
+    <feature>/
+      presentation/
+      application/
+      domain/
+      infrastructure/
+  shared/
+tests/
+  <feature>/
+docs/
+  projects/ or features/
+```
+
+Rules:
+
+- Do not put unrelated files directly under source, test, script, config, docs, assets, tooling, or project-root directories when ownership is already clear.
+- Create folders for real responsibilities, not empty ceremony.
+- Keep tests discoverable near the changed code or mirrored by project/code structure.
+- Keep shared/common/utils/tooling folders small and named by responsibility where possible.
+- Document the chosen structure in `AGENTS.md` and `docs/project-map.md` when it is non-trivial.
 
 ## Documentation
 
@@ -113,12 +164,28 @@ Small repos still use the same fact placement. They simply keep stable facts com
 |---|---|
 | New dev/build/test command | `README.md` and/or `AGENTS.md` |
 | New module/service/boundary/interface/layer | `docs/architecture.md` or `docs/project-map.md` |
+| New project structure/folder convention | `AGENTS.md` and `docs/project-map.md` |
 | API/CLI behavior change | API docs, README, tests |
 | Data/schema migration | migration docs, ADR if strategic |
 | New dependency/framework | ADR or `DECISIONS.md` entry |
 | Cross-cutting refactor | plan + log + architecture update |
 | Security/auth/permissions | ADR + runbook/security notes |
 | Workaround or known risk | log + TODO/issue reference |
+
+## Code Comment Rules
+
+Comments belong close to the code when they protect facts that are too specific for external docs alone.
+
+Write comments/docstrings near:
+
+- domain invariants and business rules;
+- non-obvious branches, fallbacks, retries, ordering, caches, timeouts, and validation;
+- external API quirks, protocol/data-shape constraints, migrations, or compatibility shims;
+- concurrency, transaction, idempotency, security, privacy, performance, or resource-lifetime constraints;
+- temporary workarounds and their removal condition;
+- public interfaces that need contract, side-effect, error, or lifecycle expectations.
+
+Avoid comments that restate obvious syntax. Update stale comments in the same slice as code changes.
 
 ## Project Log Rules
 

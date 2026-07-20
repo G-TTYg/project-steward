@@ -28,9 +28,19 @@ Copy and adapt these templates. Keep them short unless the project requires deta
 
 ## Project Map
 
-- `src/...` -
+- Source roots/packages:
 - `tests/...` -
+- `scripts/` or `tools/` -
+- `config/` -
+- `assets/` -
 - `docs/...` -
+
+## Project Structure Rules
+
+- Organize the whole project tree by clear layer, feature, bounded context, adapter, provider, artifact type, and verification scope.
+- Do not dump unrelated files directly under source, test, script, config, docs, assets, tooling, or root folders when boundaries are clear.
+- Keep shared/common/utils/tooling areas small and named by responsibility.
+- Keep tests near changed behavior or mirrored by project/code structure.
 
 ## Commands
 
@@ -54,10 +64,18 @@ Copy and adapt these templates. Keep them short unless the project requires deta
 
 - Default to modern maintainable engineering: layered architecture, modularity, decoupling, explicit interfaces/contracts, and clear abstraction boundaries.
 - Follow existing module boundaries; improve unclear boundaries when the change would otherwise spread across unrelated code.
+- Create or preserve meaningful folders for presentation, application/use cases, domain, infrastructure/adapters, persistence/schemas, features, tests, scripts/tools, config, docs, assets, and generated files when project scale warrants it.
 - Search for similar implementations before adding new modules.
 - Do not add dependencies/frameworks without a documented reason.
 - Keep public APIs backward-compatible unless explicitly changing them.
 - Keep domain/business logic independent from UI, framework, vendor, and infrastructure details where practical.
+
+## Code Comment Rules
+
+- Add comments/docstrings for non-obvious intent, domain invariants, external constraints, edge cases, concurrency, security, performance, migrations, and temporary workarounds.
+- Document public interfaces when callers need contract, side-effect, error, or lifecycle expectations.
+- Do not add comments that merely restate obvious syntax.
+- Update stale nearby comments when changing code.
 
 ## Documentation Rules
 
@@ -124,6 +142,8 @@ Subproject:
 - Existing layers/modules involved:
 - Interfaces/contracts affected:
 - New abstraction needed? Why/why not:
+- Project structure/folders affected:
+- Code comments/docstrings needed:
 
 ### Proposed Steps
 
@@ -185,6 +205,8 @@ Subproject:
 
 - Layers/modules affected:
 - Contracts/docs updated:
+- Project structure/folders changed:
+- Code comments/docstrings added or updated:
 
 ### Verification
 
@@ -307,6 +329,17 @@ flowchart LR
 |---|---|---|---|---|
 |  |  |  |  |  |
 
+## Project Structure
+
+- Source roots/packages:
+- `tests/...`:
+- `scripts/` or `tools/`:
+- `config/`:
+- `assets/`:
+- Generated outputs:
+- Shared/common areas:
+- Feature or bounded-context folders:
+
 ## Layering and Dependency Rules
 
 - Presentation/entrypoints:
@@ -314,6 +347,12 @@ flowchart LR
 - Domain/business logic:
 - Infrastructure/adapters:
 - Persistence/integration schemas:
+
+## Code Comment Policy
+
+- What must be commented near code:
+- Public interface documentation expectations:
+- Stale comment cleanup rule:
 
 ## Data / Control Flow
 
