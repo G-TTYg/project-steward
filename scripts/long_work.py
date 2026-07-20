@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create and update durable run state for long Codex work."""
+"""Manage Project Steward agent execution state for recovery and handoff."""
 
 from __future__ import annotations
 
@@ -88,17 +88,17 @@ def commit_run_state(project: Path, run: Path, message: str) -> str | None:
     staged_files = [line for line in staged.stdout.splitlines() if line.strip()]
     if staged_files:
         raise SystemExit(
-            "refusing to commit run state because staged changes already exist:\n"
+            "refusing to commit agent execution state because staged changes already exist:\n"
             + "\n".join(staged_files)
         )
 
     add = git(repo, "add", "--", run_rel.as_posix())
     if add.returncode != 0:
-        raise SystemExit(add.stderr.strip() or "failed to stage run state")
+        raise SystemExit(add.stderr.strip() or "failed to stage agent execution state")
 
     staged_after = git(repo, "diff", "--cached", "--name-only")
     if staged_after.returncode != 0:
-        raise SystemExit(staged_after.stderr.strip() or "failed to inspect staged run state")
+        raise SystemExit(staged_after.stderr.strip() or "failed to inspect staged agent execution state")
     files = [line for line in staged_after.stdout.splitlines() if line.strip()]
     if not files:
         return None
@@ -117,10 +117,10 @@ def commit_run_state(project: Path, run: Path, message: str) -> str | None:
         "-m",
         message,
         "-m",
-        "Agent-owned Project Steward run-state checkpoint. No business-code paths should be included.",
+        "Agent-owned Project Steward execution-state checkpoint. No business-code paths should be included.",
     )
     if commit.returncode != 0:
-        raise SystemExit(commit.stderr.strip() or "failed to commit run state")
+        raise SystemExit(commit.stderr.strip() or "failed to commit agent execution state")
 
     head = git(repo, "rev-parse", "--short", "HEAD")
     if head.returncode != 0:
@@ -200,7 +200,7 @@ Mode: {args.mode}
 
 ## {created_at}
 
-- Initialized run state.
+- Initialized agent execution state.
 - Project: `{project}`
 - Next: Fill PLAN.md and start the first verified slice.
 """,
@@ -266,7 +266,7 @@ Not run yet.
     if args.commit_run_state:
         commit = commit_run_state(project, run, f"chore(agent-run): initialize {slugify(args.task)}")
         if commit:
-            print(f"committed run state: {commit}")
+            print(f"committed agent execution state: {commit}")
     print(run)
 
 
@@ -350,7 +350,7 @@ Status: {args.status}
         task = str(state.get("task", run.name))
         commit = commit_run_state(run, run, f"chore(agent-run): checkpoint {slugify(task)}")
         if commit:
-            print(f"committed run state: {commit}")
+            print(f"committed agent execution state: {commit}")
     print(run / "HANDOFF.md")
 
 
@@ -376,7 +376,7 @@ def find_runs(args: argparse.Namespace) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Manage long-work run state.")
+    parser = argparse.ArgumentParser(description="Manage agent execution state for recovery and handoff.")
     sub = parser.add_subparsers(dest="command", required=True)
 
     init = sub.add_parser("init", help="create PLAN.md, LOG.md, HANDOFF.md, and STATE.json")

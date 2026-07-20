@@ -1,4 +1,4 @@
 interface:
   display_name: "Project Steward"
-  short_description: "Keep Codex project work stable and clear."
-  default_prompt: "Use $project-steward to keep this project change stable, clear, documented, verified, and easy to continue."
+  short_description: "Keep project work stable, structured, documented, verified, and Git-clean."
+  default_prompt: "Use $project-steward to preserve project structure, comments, docs, Git hygiene, verification, and handoff clarity."

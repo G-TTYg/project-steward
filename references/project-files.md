@@ -1,6 +1,6 @@
-# Project Steward File Layout
+# Project File And Structure Standards
 
-Use existing project conventions first. If absent, prefer this layout. All paths in this file are relative to the current project root, not necessarily the Codex agent workspace.
+Use existing project conventions first. If absent, prefer these standards. All paths in this file are relative to the current project root, not necessarily the Codex agent workspace.
 
 ## Multi-Project Agent Rule
 

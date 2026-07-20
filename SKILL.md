@@ -5,11 +5,33 @@ description: Project-scoped stewardship and anti-sprawl workflow for Codex and c
 
 # Project Steward
 
-Project Steward makes Codex act like a careful maintainer, not a drive-by coder. The first duty is to keep the project stable, clear, and continuable by both humans and future agents.
+Project Steward makes Codex act like a careful maintainer, not a drive-by coder. The first duty is to keep the project stable, clear, structured, verified, and continuable by both humans and future agents.
 
 This skill is project-scoped. Always identify the current project root first, and write governance artifacts inside that project. Do not let an agent workspace, global memory folder, or unrelated repository stand in for the actual project.
 
 Long-running execution support is included, but it is a means, not the identity of the skill. Checkpoints, handoffs, and agent-run logs exist to protect execution continuity; they are not the canonical home for durable project facts.
+
+## Skill Design Contract
+
+Project Steward has one identity: protect project continuity. Every rule in this skill should serve one of these responsibilities:
+
+1. bind work to the correct project root;
+2. preserve architecture, project structure, module boundaries, and code intent;
+3. place facts in canonical project files;
+4. maintain Git history that is attributable, reviewable, and reversible;
+5. record decisions, process facts, verification, and handoff state clearly.
+
+Use these terms consistently:
+
+- `Project Steward` - display name;
+- `project-steward` - folder and invocation name;
+- `project structure` - the whole project tree, not only source files;
+- `stable facts` - README, AGENTS, and docs facts;
+- `decision facts` - DECISIONS or ADR facts;
+- `process facts` - daily project log facts;
+- `agent execution state` - `docs/agent-runs/` recovery and handoff state.
+
+Do not describe this skill primarily as a long-work runner, memory store, documentation generator, or Git automation. Those are support mechanisms for stewardship.
 
 ## Stewardship Principle
 
@@ -206,7 +228,7 @@ Use `logs/YYYY-MM-DD.md` for process facts only. If a process log reveals a stab
 
 ### 7. Support Long-Running Codex Work
 
-Use durable run state when context loss, interruption, compaction, or continuation is plausible:
+Use agent execution state when context loss, interruption, compaction, or continuation is plausible:
 
 ```bash
 python <skill-root>/scripts/long_work.py init --project . --task "short task title"
@@ -271,7 +293,7 @@ Final response or handoff must include:
 - Git state: branch, commit(s), dirty status, unpushed work, PR/remote if relevant;
 - whether agent-owned completed work was committed; if not, why it remains dirty and what exact Git action should happen next;
 - remaining risks/TODOs;
-- ADR/log/spec/run-state location when created.
+- ADR/log/spec/agent-run state location when created.
 
 ## Common Rationalizations
 
@@ -313,7 +335,7 @@ Final response or handoff must include:
 - New project files are dumped into a catch-all directory when ownership, layer, feature, adapter, artifact type, or verification boundaries are already clear.
 - Non-obvious domain rules, invariants, integration constraints, migrations, workarounds, or risky edge cases are left uncommented.
 - Tests/build/lint are skipped with vague wording such as "should be fine."
-- Long-running run state replaces architecture docs instead of supporting them.
+- Agent execution state replaces architecture docs instead of supporting them.
 - The final answer does not name verification results or residual risk.
 
 ## Verification Gate
