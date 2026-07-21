@@ -50,7 +50,7 @@ Include:
 - Build/test/dev commands.
 - Architecture boundaries, layers, modules, and dependency direction.
 - Project structure rules: where source, tests, scripts, configs, docs, assets, adapters, migrations, generated files, and tooling belong.
-- Code comment rules: what must be commented near code and what comments are noise.
+- Code comment rules: what must be commented near code, when module/file headers are expected, and what comments are noise.
 - Coding conventions.
 - Documentation/logging requirements.
 - Verification requirements.
@@ -185,7 +185,9 @@ Write comments/docstrings near:
 - temporary workarounds and their removal condition;
 - public interfaces that need contract, side-effect, error, or lifecycle expectations.
 
-Avoid comments that restate obvious syntax. Update stale comments in the same slice as code changes.
+Use module/file header comments for non-trivial entrypoints, domain modules, orchestration modules, infrastructure adapters, public APIs, scripts, migrations, generated-code boundaries, and complex tests when the file responsibility or constraints are not obvious from the path and name. A useful header records responsibility, non-goals, layer/context, public entrypoints, invariants, side effects, external systems, lifecycle, security, privacy, concurrency, performance, or edit-policy constraints.
+
+Avoid comments that restate obvious syntax. Avoid mandatory boilerplate headers on trivial files. Update stale comments in the same slice as code changes.
 
 ## Project Log Rules
 

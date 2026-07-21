@@ -18,7 +18,7 @@ Keep every description and rule aligned with these pillars:
 
 1. Bind work to the correct project root.
 2. Preserve architecture, module boundaries, and project-wide structure.
-3. Keep code understandable through names, structure, and necessary comments/docstrings.
+3. Keep code understandable through names, structure, necessary comments/docstrings, and module/file headers where they clarify responsibility or risk.
 4. Store facts in canonical project files.
 5. Maintain production-grade Git hygiene and commit agent-owned completed work.
 6. Record durable decisions and process logs in the right places.
@@ -34,7 +34,7 @@ Do not let any part of the skill imply that agent execution state replaces READM
 - `agents/openai.yaml` - Codex UI metadata; keep it consistent with `SKILL.md`.
 - `scripts/long_work.py` - deterministic helper for agent execution state.
 - `references/project-files.md` - project-root, fact placement, project structure, and governance file rules.
-- `references/stewardship-standards.md` - architecture, anti-sprawl, project structure, comment, redesign, and review standards.
+- `references/stewardship-standards.md` - architecture, anti-sprawl, project structure, code comment/header, redesign, and review standards.
 - `references/git-stewardship.md` - production Git workflow, commits, rollback, PRs, and handoffs.
 - `references/operating-patterns.md` - long-running work, recovery, context, and handoff patterns.
 - `references/templates.md` - templates for AGENTS, plans, logs, ADRs, architecture notes, handoffs, blockers, and verification.

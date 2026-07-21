@@ -124,7 +124,7 @@ Fact placement is strict:
 Code and project-structure clarity are strict too:
 
 - Project structure should expose layer, feature, adapter, provider, artifact-type, verification-scope, or bounded-context ownership instead of dumping files into flat catch-all folders.
-- Comments/docstrings should capture non-obvious intent, invariants, external constraints, edge cases, risks, and public contracts close to the code.
+- Comments, docstrings, and module/file headers should capture non-obvious intent, module responsibility, invariants, external constraints, edge cases, risks, and public contracts close to the code.
 
 ## Repository Design
 

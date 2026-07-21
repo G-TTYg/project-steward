@@ -109,9 +109,13 @@ Rules:
 
 ## Code Comment Standards
 
-Code comments are part of project stewardship. Documentation outside the code is not enough when the most precise fact lives next to a branch, invariant, protocol translation, migration, or workaround.
+Code comments are part of project stewardship. Documentation outside the code is not enough when the most precise fact lives next to a module boundary, branch, invariant, protocol translation, migration, or workaround.
 
-Write comments/docstrings for:
+Treat comments as code-local contracts, not decoration. A useful comment explains what a future maintainer cannot safely infer from names, types, tests, or surrounding structure.
+
+### Inline And Local Comments
+
+Write inline or block comments for:
 
 - domain invariants and business rules that are not obvious from names;
 - why an unusual branch, fallback, retry, timeout, ordering, cache, or validation exists;
@@ -120,6 +124,59 @@ Write comments/docstrings for:
 - non-trivial algorithms, parsing, serialization, migrations, and lossiness;
 - temporary workarounds, feature flags, compatibility shims, and removal conditions;
 - public interfaces where callers need contract, side-effect, error, or lifecycle expectations.
+
+Place these comments immediately above the branch, transformation, invariant check, adapter call, query, migration step, or workaround they explain. Keep them close enough that code review naturally updates them with the code.
+
+### Function, Class, And Interface Docs
+
+Use function/class/interface docstrings when callers need more than a name and type signature:
+
+- purpose and responsibility;
+- parameters whose meaning is domain-specific;
+- return value semantics, especially empty/null/error cases;
+- side effects, I/O, transactions, retries, caching, idempotency, or lifecycle ownership;
+- exceptions/errors and retryability;
+- thread/concurrency, async ordering, security, privacy, or performance constraints;
+- compatibility or migration behavior.
+
+Do not write docstrings for every trivial private helper if the signature and body are already clear.
+
+### Module And File Header Comments
+
+Use a module/file header comment when the file is a meaningful unit of architecture or operation, especially for:
+
+- entrypoints, routes, workers, CLIs, jobs, scripts, and migrations;
+- domain modules with important invariants;
+- application/use-case orchestration modules;
+- infrastructure adapters for databases, queues, filesystems, browsers, model providers, or external APIs;
+- public API/client modules, SDK surfaces, schemas, or generated-code boundaries;
+- complex tests or fixtures where the scenario design is not obvious;
+- compatibility shims, feature-flagged paths, or temporary migration bridges.
+
+A good module/file header says only what helps maintainers use or change the file safely:
+
+- responsibility: what this file owns;
+- non-goals: what it deliberately does not own;
+- layer/bounded context and dependency direction;
+- main public entrypoints/exports;
+- key invariants, data ownership, transaction or lifecycle rules;
+- external systems, protocols, generated status, or edit policy;
+- security, privacy, concurrency, idempotency, performance, or operational constraints;
+- links to ADRs/specs/runbooks when the reason lives outside the code.
+
+Avoid mandatory headers on trivial re-exports, tiny configuration files, obvious component wrappers, or generated files that already carry generated metadata. Do not use file headers as changelogs, author/date stamps, duplicated README text, or a place to justify poor structure.
+
+Language-neutral shape:
+
+```text
+<module/file header>
+Responsibility: <what this file owns>
+Boundary: <layer/context and what must not leak in/out>
+Contracts: <important invariants, side effects, errors, lifecycle, data ownership>
+External constraints: <API quirks, generated status, security/performance/concurrency constraints>
+References: <ADR/spec/runbook links if useful>
+</module/file header>
+```
 
 Avoid comments that:
 
@@ -191,7 +248,7 @@ Before final delivery, check:
 - Is any new dependency justified?
 - Are naming and file placement consistent?
 - Does project structure avoid catch-all directories and reveal ownership/layer/feature/artifact boundaries?
-- Do comments/docstrings explain non-obvious intent, invariants, constraints, risks, and public contracts?
+- Do comments, docstrings, and module/file headers explain non-obvious intent, responsibilities, invariants, constraints, risks, and public contracts?
 - Did changed code update stale nearby comments?
 - If this area has been patched repeatedly, did you assess redesign/refactor instead of adding another patch?
 

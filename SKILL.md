@@ -1,6 +1,6 @@
 ---
 name: project-steward
-description: Project-scoped stewardship and anti-sprawl workflow for Codex and coding agents working in one or many repositories. Use when starting or continuing project work, entering an unfamiliar repo/subproject, creating or refactoring features, preserving architecture, enforcing maintainable engineering defaults, maintaining production-grade Git hygiene for multi-agent work, writing or repairing AGENTS.md/README/docs/logs/ADRs/specs, improving code comments and project structure, preventing architecture drift, placing durable project facts correctly, creating handoffs, or carrying long-running work through checkpoints and verification without mixing state across projects.
+description: Project-scoped stewardship and anti-sprawl workflow for Codex and coding agents working in one or many repositories. Use when starting or continuing project work, entering an unfamiliar repo/subproject, creating or refactoring features, preserving architecture, enforcing maintainable engineering defaults, maintaining production-grade Git hygiene for multi-agent work, writing or repairing AGENTS.md/README/docs/logs/ADRs/specs, improving code comments, module/file headers, and project structure, preventing architecture drift, placing durable project facts correctly, creating handoffs, or carrying long-running work through checkpoints and verification without mixing state across projects.
 ---
 
 # Project Steward
@@ -17,9 +17,10 @@ Project Steward has one identity: protect project continuity. Every rule in this
 
 1. bind work to the correct project root;
 2. preserve architecture, project structure, module boundaries, and code intent;
-3. place facts in canonical project files;
-4. maintain Git history that is attributable, reviewable, and reversible;
-5. record decisions, process facts, verification, and handoff state clearly.
+3. preserve code-local contracts through useful comments, docstrings, and module/file headers;
+4. place facts in canonical project files;
+5. maintain Git history that is attributable, reviewable, and reversible;
+6. record decisions, process facts, verification, and handoff state clearly.
 
 Use these terms consistently:
 
@@ -41,7 +42,7 @@ Optimize for the next competent maintainer:
 - readable architecture and ownership;
 - explicit contracts between modules;
 - clear project structure by responsibility, layer, feature, bounded context, or artifact type;
-- useful code comments where the code carries non-obvious intent, invariants, constraints, or operational risk;
+- useful code comments and module/file headers where the code carries non-obvious intent, invariants, contracts, constraints, or operational risk;
 - local, reversible changes when possible;
 - durable facts in the correct project files;
 - disciplined Git state that preserves collaboration, rollback, and ownership;
@@ -77,7 +78,7 @@ Default to:
 - **Explicit contracts**: define interfaces, schemas, command contracts, events, type boundaries, and data models where modules cross boundaries.
 - **Decoupling by default**: prevent framework, vendor, I/O, and UI details from leaking into domain logic.
 - **Progressive abstraction**: abstract only when a boundary, duplicated concept, or future change point is real.
-- **Commented intent**: add concise comments/docstrings for non-obvious rules, invariants, algorithms, integration constraints, migrations, concurrency, security, performance, and workarounds; avoid comments that merely restate obvious syntax.
+- **Code-local documentation**: add comments, docstrings, and module/file headers for non-obvious rules, invariants, public contracts, algorithms, integration constraints, migrations, concurrency, security, performance, and workarounds; avoid comments that merely restate obvious syntax.
 - **Change locality**: make changes so one feature or provider swap does not require unrelated edits.
 - **Fact-backed docs**: keep README, AGENTS, docs, ADRs/decisions, and process logs aligned with actual code and with their distinct responsibilities.
 
@@ -94,7 +95,7 @@ For non-trivial project work, do these unless the user explicitly says to skip s
 5. **Classify facts before writing**: stable facts go to README/AGENTS/docs, decision facts to DECISIONS/docs/adr, process facts to `logs/YYYY-MM-DD.md`, and agent execution state to `docs/agent-runs/`.
 6. **Plan in writing**: record scope, constraints, affected modules, verification, risks, and rollback before broad changes.
 7. **Protect structure**: preserve or create clear layers, modules, interfaces, and abstraction boundaries.
-8. **Keep code self-explaining and commented where needed**: names and structure should carry ordinary meaning; comments/docstrings should capture non-obvious intent, invariants, constraints, edge cases, and risk.
+8. **Keep code self-explaining and documented in place where needed**: names and structure should carry ordinary meaning; comments, docstrings, and module/file headers should capture non-obvious intent, responsibilities, invariants, public contracts, edge cases, and risk.
 9. **Document meaningful decisions**: write an ADR or decision note for hard-to-reverse, cross-cutting, surprising, or policy-level choices.
 10. **Log important work**: leave dated project-local process context for multi-step work, workarounds, risks, and continuation.
 11. **Verify**: run relevant tests/lints/builds/manual checks, or state exactly what could not be verified.
@@ -168,7 +169,7 @@ Before edits, answer internally or in a project note:
 - What layers/modules own the responsibility being changed?
 - What interfaces/contracts/data models are affected?
 - Does the project structure make ownership clear, or are files being dumped into catch-all folders?
-- Which non-obvious rules or risks need comments/docstrings close to the code?
+- Which non-obvious rules, risks, ownership boundaries, or public contracts need comments, docstrings, or module/file headers close to the code?
 - Where would a boundary reduce coupling rather than add ceremony?
 - What tests or manual checks prove success?
 - What docs/specs/logs must be updated?
@@ -197,13 +198,14 @@ While editing:
 - keep module boundaries explicit;
 - add or adjust folders/modules when a responsibility has a clear owner, layer, adapter, feature, artifact type, verification scope, or bounded context instead of dumping files into generic source, test, script, config, docs, assets, or root directories;
 - write comments/docstrings close to the code for non-obvious behavior, invariants, integration contracts, concurrency/security/performance constraints, migrations, and temporary workarounds;
+- add or update module/file header comments for complex modules, entrypoints, adapters, public APIs, generated-code boundaries, scripts, migrations, or files whose responsibility and constraints are not obvious from path and name alone;
 - prefer small cohesive changes over sweeping rewrites;
 - stop patching when evidence shows a local design is fundamentally wrong, repeatedly repaired, or too tangled to change safely;
 - introduce interfaces/contracts at real boundaries;
 - keep public contracts backward-compatible unless the task requires a break;
 - avoid parallel frameworks, duplicated modules, and cross-layer shortcuts;
 - avoid shallow project soup: unrelated files sitting side by side without feature, layer, adapter, artifact-type, verification, or domain ownership;
-- avoid comment starvation: code that encodes important intent but leaves the next maintainer to reverse-engineer why it exists;
+- avoid comment starvation: code that encodes important intent, ownership, invariants, or operational constraints but leaves the next maintainer to reverse-engineer why it exists;
 - do not add dependencies without recording why;
 - update tests near changed behavior;
 - update the correct project file when facts change: stable facts in README/AGENTS/docs, decision facts in DECISIONS/docs/adr, process facts in `logs/YYYY-MM-DD.md`, and agent execution state in `docs/agent-runs/`.
@@ -289,7 +291,7 @@ Final response or handoff must include:
 - files/docs updated;
 - verification run and results;
 - fact placement: stable facts, decision facts, process facts, and agent execution state were written to the correct places or intentionally skipped;
-- structure clarity: notable project-structure/module/comment changes, or why none were needed;
+- structure clarity: notable project-structure/module/comment/header changes, or why none were needed;
 - Git state: branch, commit(s), dirty status, unpushed work, PR/remote if relevant;
 - whether agent-owned completed work was committed; if not, why it remains dirty and what exact Git action should happen next;
 - remaining risks/TODOs;
@@ -304,7 +306,7 @@ Final response or handoff must include:
 | "The handoff has the facts, so docs/logs are covered." | Handoffs are execution state. Stable facts, decisions, and process history belong in their canonical project files. |
 | "The architecture issue is nearby, so I should fix it while I am here." | Stewardship is not drive-by renovation. Record unrelated cleanup as a follow-up unless it is required for the requested change. |
 | "One more patch will be safer than refactoring." | Sometimes yes, but repeated patches around the same failure are evidence that the design may be wrong. Stop and assess root cause before adding another layer. |
-| "Good code needs no comments." | Good code needs few obvious comments, but it still needs precise comments for hidden intent, invariants, external constraints, risks, and hard-won knowledge. |
+| "Good code needs no comments." | Good code needs few obvious comments, but it still needs precise code-local documentation for hidden intent, module responsibilities, invariants, public contracts, external constraints, risks, and hard-won knowledge. |
 | "Everything can live in one folder until it grows." | Flat project trees become project debt quickly. Create meaningful folders when responsibilities, layers, adapters, artifact types, verification scopes, or bounded contexts are already distinct. |
 | "A global note is enough." | Project facts belong in the project. Global memory cannot substitute for repo-local `AGENTS.md`, docs, logs, ADRs, or handoffs. |
 | "I can clean up Git at the end." | Dirty, mixed work destroys rollback and multi-agent coordination. Keep Git understandable throughout the work. |
@@ -333,7 +335,7 @@ Final response or handoff must include:
 - The code path is so tangled that a small requested change requires unrelated edits across many files.
 - Cross-layer shortcuts are introduced because they are faster than using or creating a contract.
 - New project files are dumped into a catch-all directory when ownership, layer, feature, adapter, artifact type, or verification boundaries are already clear.
-- Non-obvious domain rules, invariants, integration constraints, migrations, workarounds, or risky edge cases are left uncommented.
+- Non-obvious domain rules, invariants, integration constraints, migrations, workarounds, risky edge cases, or module responsibilities are left undocumented in code.
 - Tests/build/lint are skipped with vague wording such as "should be fine."
 - Agent execution state replaces architecture docs instead of supporting them.
 - The final answer does not name verification results or residual risk.
@@ -349,7 +351,7 @@ Before final delivery, confirm:
 - [ ] Fast Path or Full Stewardship choice matches the risk.
 - [ ] Affected layers/modules/contracts are understood and kept clear.
 - [ ] Project structure reflects responsibility, layer, feature, adapter, artifact type, verification scope, or bounded context instead of catch-all dumping.
-- [ ] Comments/docstrings capture non-obvious intent, invariants, constraints, risks, and workarounds without restating obvious code.
+- [ ] Comments, docstrings, and module/file headers capture non-obvious intent, responsibilities, invariants, constraints, risks, and workarounds without restating obvious code.
 - [ ] Repeatedly patched or fundamentally flawed areas were assessed for redesign/refactor instead of receiving another blind patch.
 - [ ] Required docs/logs/ADRs/handoffs were updated or intentionally skipped with a reason.
 - [ ] Stable facts, decision facts, process facts, and agent execution state were placed in their canonical locations.

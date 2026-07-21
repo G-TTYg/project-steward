@@ -74,7 +74,10 @@ Copy and adapt these templates. Keep them short unless the project requires deta
 
 - Add comments/docstrings for non-obvious intent, domain invariants, external constraints, edge cases, concurrency, security, performance, migrations, and temporary workarounds.
 - Document public interfaces when callers need contract, side-effect, error, or lifecycle expectations.
+- Add module/file header comments for complex modules, entrypoints, adapters, public APIs, scripts, migrations, generated-code boundaries, and complex tests when responsibility or constraints are not obvious from the path and name.
+- File headers should capture responsibility, non-goals, layer/context, public entrypoints, invariants, external systems, side effects, lifecycle, security/privacy/concurrency/performance constraints, and links to ADRs/specs when useful.
 - Do not add comments that merely restate obvious syntax.
+- Do not add boilerplate headers to trivial files.
 - Update stale nearby comments when changing code.
 
 ## Documentation Rules
@@ -351,6 +354,8 @@ flowchart LR
 ## Code Comment Policy
 
 - What must be commented near code:
+- When module/file headers are required:
+- What module/file headers should contain:
 - Public interface documentation expectations:
 - Stale comment cleanup rule:
 
