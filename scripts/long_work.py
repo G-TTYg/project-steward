@@ -214,6 +214,10 @@ Mode: {args.mode}
 - Process facts -> logs/YYYY-MM-DD.md:
 - Agent execution state -> this run directory only:
 
+## Plan-To-Milestone Mapping
+
+- Every implementation step maps to a milestone/slice, or is marked as non-commit work:
+
 ## Milestones
 
 Each milestone should be a recoverable slice with a goal, verification, commit decision, and rollback path.
@@ -222,6 +226,7 @@ Each milestone should be a recoverable slice with a goal, verification, commit d
    - Goal:
    - Files/modules:
    - Verification:
+   - Compression checkpoint:
    - Commit decision:
    - Rollback/safest undo:
 
@@ -255,6 +260,7 @@ Each milestone should be a recoverable slice with a goal, verification, commit d
 - Initialized agent execution state.
 - Project: `{project}`
 - Current milestone: none.
+- Compression checkpoint: initial handoff created.
 - Next: Fill PLAN.md and start the first verified slice.
 """,
     )
@@ -284,6 +290,14 @@ Project: `{project}`
 ## Milestones
 
 - None recorded.
+
+## Compression Checkpoint
+
+- Minimal continuation context: run state initialized; PLAN.md still needs slice details.
+- Latest verified slice: none.
+- Next command/edit: fill PLAN.md with milestones and start the first verified slice.
+- Facts still to promote: none recorded.
+- Risks/blockers: none recorded.
 
 ## Fact Placement
 
@@ -355,6 +369,7 @@ def checkpoint(args: argparse.Namespace) -> None:
         log_bits.append(f"- Verification: {args.verify}")
     if args.risk:
         log_bits.append(f"- Risk/blocker: {args.risk}")
+    log_bits.append("- Compression checkpoint: HANDOFF.md refreshed for continuation.")
     log_bits.append("")
 
     with (run / "LOG.md").open("a", encoding="utf-8", newline="\n") as f:
@@ -388,6 +403,14 @@ Status: {args.status}
 ## Verification
 
 {args.verify or state.get("verification", "Not recorded.")}
+
+## Compression Checkpoint
+
+- Minimal continuation context: {args.summary}
+- Latest verified slice: {args.milestone or state.get("current_milestone") or "Not recorded."}
+- Next command/edit: {args.next or state.get("next", "Not recorded.")}
+- Facts still to promote: check Fact Placement above.
+- Risks/blockers: {args.risk or state.get("risk", "None recorded.")}
 
 ## Fact Placement
 
@@ -460,6 +483,7 @@ def milestone(args: argparse.Namespace) -> None:
         f"- Summary: {args.summary}",
         f"- Verification: {args.verify}",
         f"- Next: {args.next}",
+        "- Compression checkpoint: HANDOFF.md refreshed for continuation.",
     ]
     if args.risk:
         log_bits.append(f"- Risk/blocker: {args.risk}")
@@ -496,6 +520,14 @@ Status: {args.status}
 ## Verification
 
 {args.verify}
+
+## Compression Checkpoint
+
+- Minimal continuation context: {args.summary}
+- Latest verified slice: {args.name}
+- Next command/edit: {args.next}
+- Facts still to promote: check Fact Placement above.
+- Risks/blockers: {args.risk or state.get("risk", "None recorded.")}
 
 ## Fact Placement
 

@@ -48,6 +48,7 @@ Optimize for the next competent maintainer:
 - disciplined Git state that preserves collaboration, rollback, and ownership;
 - local commits for completed agent-owned work so others can inspect, revert, or continue it;
 - milestone-based progress where each milestone is a recoverable, verified, locally committable work slice;
+- compression checkpoints after each verified slice so the next slice can start from compact durable state instead of chat memory;
 - decisions recorded where future work will find them;
 - verification that matches the risk of the change.
 - willingness to redesign or refactor a broken area when repeated patches would make the project less stable.
@@ -100,7 +101,7 @@ For non-trivial project work, do these unless the user explicitly says to skip s
 9. **Document meaningful decisions**: write an ADR or decision note for hard-to-reverse, cross-cutting, surprising, or policy-level choices.
 10. **Log important work**: leave dated project-local process context for multi-step work, workarounds, risks, and continuation.
 11. **Verify**: run relevant tests/lints/builds/manual checks, or state exactly what could not be verified.
-12. **Commit agent-owned completed work**: for non-trivial completed work in Git repositories, create explicit local commits for your own verified milestone slices unless the user or project workflow says not to commit.
+12. **Commit agent-owned completed work frequently**: for non-trivial completed work in Git repositories, create explicit local commits for every verified milestone slice unless the user or project workflow says not to commit.
 13. **Close the loop**: update docs/specs/diagrams when behavior, interfaces, setup, deployment, data, or architecture changes.
 
 ## Fast Path Vs Full Stewardship
@@ -115,7 +116,7 @@ Fast Path still requires:
 - verify if cheap;
 - mention when docs/logs were not needed.
 
-Use **Full Stewardship** for new features, refactors, migrations, infrastructure, data/schema changes, security/auth changes, public API changes, cross-module changes, ambiguous tasks, unfamiliar projects, or anything likely to affect future maintainability.
+Use **Full Stewardship** for new features, refactors, migrations, infrastructure, data/schema changes, security/auth changes, public API changes, cross-module changes, ambiguous tasks, unfamiliar projects, plan execution, or anything likely to affect future maintainability.
 
 ## Full Stewardship Workflow
 
@@ -157,7 +158,8 @@ For any work in a Git repository, establish at least a lightweight baseline. For
 - stage only intentional paths, not blind `git add -A`, unless the repository workflow explicitly expects it;
 - create local commits at stable, verified slices for agent-owned completed work unless commits are explicitly out of scope;
 - if you do not commit completed work, record why and list the remaining dirty files, ownership, verification state, and next Git action.
-- treat each milestone as a commit candidate only after verification passes and ownership is clear; use checkpoints for unverified progress.
+- treat each verified slice as a commit boundary after verification passes and ownership is clear; use checkpoints for unverified progress.
+- do not defer commits until the whole feature is done when smaller verified slices can be committed safely.
 
 Read `references/git-stewardship.md` for multi-agent branch/worktree, commit, push, rollback, and PR standards.
 
@@ -189,7 +191,9 @@ For Full Stewardship, write a short plan in the smallest durable place that fits
 
 Plan shape: Goal, Context read, Affected areas, Milestones, Steps, Verification, Risks, Docs to update.
 
-Milestones are the default unit of recoverable progress for broad or long-running work. A good milestone has:
+When working in Codex Plan Mode, produce plans with explicit milestones, verified-slice criteria, compression checkpoints, and commit cadence. When executing from a written plan, translate the plan into milestones before editing. Do not execute a non-trivial plan as a flat checklist. Each implementation step must either map to a milestone/slice or be marked as a non-commit checkpoint activity such as research, reproduction, or verification setup.
+
+Milestones are the required unit of recoverable progress for plan execution, broad work, or long-running work. A good milestone has:
 
 - a small user-visible or maintainer-visible outcome;
 - clear files/modules or boundaries involved;
@@ -197,13 +201,15 @@ Milestones are the default unit of recoverable progress for broad or long-runnin
 - an explicit local commit decision and commit hash, or the reason no commit was created;
 - rollback or next safest action.
 
+A verified slice must be small enough to commit independently. If one milestone would mix unrelated behavior, split it before implementation.
+
 ### 5. Implement With Architecture And Git Hygiene
 
 While editing:
 
 - keep Git status understandable; know which files you touched and why;
 - preserve user changes and unrelated agent changes in the worktree;
-- checkpoint freely inside a milestone, then commit your own completed, verified milestone slices with explicit staging so rollback and review do not depend on guessing;
+- checkpoint freely inside a milestone, then commit every completed, verified milestone slice with explicit staging so rollback and review do not depend on guessing;
 - search for existing patterns before adding abstractions;
 - keep module boundaries explicit;
 - add or adjust folders/modules when a responsibility has a clear owner, layer, adapter, feature, artifact type, verification scope, or bounded context instead of dumping files into generic source, test, script, config, docs, assets, or root directories;
@@ -268,6 +274,14 @@ Record a milestone when a recoverable slice is verified or intentionally paused:
 python <skill-root>/scripts/long_work.py milestone --run <run-dir> --name "parser compatibility" --summary "slice outcome" --verify "test result" --next "next milestone or handoff action"
 ```
 
+For each verified slice, use this closure sequence:
+
+1. Run the narrowest sufficient verification for the slice.
+2. Write a checkpoint or milestone entry with summary, verification, changed areas, next step, and risk.
+3. Treat the refreshed handoff as a compression checkpoint: make it compact enough that a fresh agent can continue without reading the full chat.
+4. Explicitly stage only agent-owned paths and create a local business-code commit for the verified slice, unless the user or project workflow says not to commit.
+5. Record the commit hash or no-commit reason before starting the next slice.
+
 A milestone is not a substitute for a Git commit. After a verified milestone that changed repository files, explicitly stage only agent-owned paths and create a local business-code commit unless the user or project workflow says not to commit. Record the commit hash in the handoff or explain why the verified milestone was left uncommitted. Use `--commit-run-state` only for committing the agent execution state directory.
 
 For agent execution state documentation you created yourself, the script can create an explicit local commit when requested:
@@ -278,9 +292,9 @@ python <skill-root>/scripts/long_work.py checkpoint --run <run-dir> --summary "w
 
 This only stages files inside that run directory, refuses to run when unrelated staged changes already exist, and never pushes. It must never include business-code paths.
 
-Keep `HANDOFF.md` compact and factual: current objective, completed work, active assumptions, important files, Git branch/status/commit state, commands run, decisions, risks, blockers, and the next safest step.
+Keep `HANDOFF.md` compact and factual: current objective, completed work, active assumptions, important files, Git branch/status/commit state, commands run, decisions, risks, blockers, compression checkpoint, and the next safest step.
 
-After resume or compaction, rebuild state from `HANDOFF.md`, `PLAN.md`, recent `LOG.md`, `git status`, relevant diffs, and latest terminal output before continuing.
+After every verified slice, reduce dependency on chat context by relying on `HANDOFF.md`, `PLAN.md`, recent `LOG.md`, `STATE.json`, `git status`, relevant diffs, and latest terminal output before continuing. After resume or compaction, rebuild state from those files before editing.
 
 Use `references/operating-patterns.md` for deeper long-running execution patterns.
 
@@ -314,7 +328,7 @@ Final response or handoff must include:
 - what changed;
 - files/docs updated;
 - verification run and results;
-- milestones completed, checkpoint/run-state location when used, and commit hash for each verified milestone or the reason no commit was created;
+- milestones completed, compression checkpoint/run-state location when used, and commit hash for each verified slice or the reason no commit was created;
 - fact placement: stable facts, decision facts, process facts, and agent execution state were written to the correct places or intentionally skipped;
 - structure clarity: notable project-structure/module/comment/header changes, or why none were needed;
 - Git state: branch, commit(s), dirty status, unpushed work, PR/remote if relevant;
@@ -337,6 +351,7 @@ Final response or handoff must include:
 | "I can clean up Git at the end." | Dirty, mixed work destroys rollback and multi-agent coordination. Keep Git understandable throughout the work. |
 | "AI agents should just leave files modified." | Completed agent-owned work should usually become explicit local commits so humans and agents can inspect, revert, cherry-pick, or continue it. |
 | "A checkpoint is enough; I do not need a commit." | Checkpoints protect execution recovery. Verified milestone commits protect Git history, review, rollback, and handoff ownership. |
+| "I can commit once after the whole plan is done." | Plan execution should commit each verified slice when ownership and verification are clear, so rollback and continuation stay local. |
 | "git add -A is faster." | Blind staging can capture user work, generated noise, secrets, or unrelated agent edits. Stage explicit paths unless the repo workflow says otherwise. |
 | "The code looks right." | Verification requires evidence: tests, build output, typecheck/lint, runtime/manual checks, or a stated unverified gap. |
 | "I can keep the plan in my head." | Long tasks cross context boundaries. A written plan/log/handoff is the continuity mechanism for the next maintainer. |
@@ -351,6 +366,8 @@ Final response or handoff must include:
 - A commit mixes feature work, refactor, formatting, generated files, and docs without a clear reason.
 - Completed agent-owned work is left dirty with no reason, no ownership note, and no next Git action.
 - A verified milestone has no local commit and no recorded reason.
+- A non-trivial plan was executed without milestone slices.
+- A verified slice was completed without a compression checkpoint before moving on.
 - A shared branch is rebased, reset, force-pushed, or conflict-resolved without explicit approval.
 - `AGENTS.md` is missing or stale during non-trivial work and nobody repairs or proposes it.
 - New modules, dependencies, services, schemas, or public contracts appear without docs or an ADR/decision note.
@@ -376,6 +393,8 @@ Before final delivery, confirm:
 - [ ] Git baseline was checked and user/unrelated changes were preserved.
 - [ ] Completed agent-owned work was locally committed at a verified slice, or the reason for leaving it dirty is explicit.
 - [ ] Broad or long-running work was divided into milestones, with checkpoints and Git commits tied to verified recovery boundaries.
+- [ ] Plan execution used milestone slices rather than a flat checklist.
+- [ ] Each verified slice produced a compression checkpoint before the next slice began.
 - [ ] Fast Path or Full Stewardship choice matches the risk.
 - [ ] Affected layers/modules/contracts are understood and kept clear.
 - [ ] Project structure reflects responsibility, layer, feature, adapter, artifact type, verification scope, or bounded context instead of catch-all dumping.

@@ -155,11 +155,15 @@ Subproject:
 2.
 3.
 
+### Plan-To-Milestone Mapping
+
+- Every implementation step maps to a milestone/slice, or is marked as non-commit work:
+
 ### Milestones
 
-| Milestone | Outcome | Verification | Commit/checkpoint decision | Rollback / next safest step |
-| --- | --- | --- | --- | --- |
-|  |  |  |  |  |
+| Milestone | Outcome | Verification | Compression checkpoint | Commit / no-commit reason | Rollback / next safest step |
+| --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |
 
 ### Verification
 
@@ -173,6 +177,8 @@ Subproject:
 ### Git / Collaboration
 
 - Commit/checkpoint plan by milestone:
+- Commit every verified slice unless:
+- Compression checkpoint plan:
 - Branch/PR plan:
 - Rollback plan:
 - Multi-agent ownership:
@@ -203,9 +209,9 @@ Current milestone:
 
 ### Milestones / Checkpoints
 
-| Milestone | Status | Verification | Commit / reason not committed | Next |
-| --- | --- | --- | --- | --- |
-|  |  |  |  |  |
+| Milestone | Status | Verification | Compression checkpoint | Commit / reason not committed | Next |
+| --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |
 
 ### Decision Pointers
 
@@ -236,6 +242,14 @@ Current milestone:
 - Milestone commits:
 - Dirty/untracked files:
 - Unpushed work:
+
+### Compression Checkpoint
+
+- Minimal continuation context:
+- Latest verified slice:
+- Next command/edit:
+- Facts still to promote:
+- Risks/blockers:
 
 ### Risks / TODO
 
@@ -404,9 +418,9 @@ Current milestone:
 
 ### Milestones
 
-| Milestone | Status | Verification | Commit / reason not committed | Next |
-| --- | --- | --- | --- | --- |
-|  |  |  |  |  |
+| Milestone | Status | Verification | Compression checkpoint | Commit / reason not committed | Next |
+| --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |
 
 ### Files Touched
 
@@ -423,6 +437,14 @@ Current milestone:
 - Unpushed commits:
 - Milestone commits:
 - PR/remote:
+
+### Compression Checkpoint
+
+- Minimal continuation context:
+- Latest verified slice:
+- Next command/edit:
+- Facts still to promote:
+- Risks/blockers:
 
 ### Next Safe Step
 ```

@@ -14,6 +14,7 @@ Write a plan that a fresh Codex instance could execute without remembering the c
 - facts discovered with file paths or command outputs;
 - ordered milestones and slices with verification for each milestone;
 - commit/checkpoint plan for each milestone;
+- compression checkpoint plan for each verified slice;
 - rollback path and risks;
 - current open questions.
 - fact placement: which stable facts, decision facts, process facts, and agent execution state must be written where.
@@ -44,6 +45,8 @@ Prefer a small end-to-end working path over a large partial rewrite. Good slices
 
 Promote a slice to a milestone when it is recoverable: the outcome is clear, the touched files are known, verification has run or is explicitly pending, and the commit or no-commit decision can be recorded.
 
+When executing an approved plan, require milestone slices. Do not treat plan steps as a flat checklist; map each step to a verified slice or label it as non-commit work such as research, reproduction, or setup.
+
 ## Context Budget Patterns
 
 ### Three ledgers
@@ -60,7 +63,7 @@ Place confirmed facts by type. Stable facts belong in README/AGENTS/docs, decisi
 
 ### Compression checkpoints
 
-Before context-heavy transitions, update `HANDOFF.md` with:
+After every verified milestone slice, update `HANDOFF.md` as a compression checkpoint before starting the next slice. Include:
 
 - active task and current slice;
 - current milestone and milestone status;
@@ -72,7 +75,7 @@ Before context-heavy transitions, update `HANDOFF.md` with:
 - user-facing commitments.
 - durable facts that still need promotion from the run directory into README/AGENTS/docs, DECISIONS/docs/adr, or `logs/YYYY-MM-DD.md`.
 
-After compaction, read the handoff before trusting memory.
+After writing the compression checkpoint, rely on the handoff, state file, logs, git status, and diffs as the working context for the next slice. After compaction, read the handoff before trusting memory.
 
 ### Search discipline
 
@@ -91,7 +94,7 @@ Record search conclusions only when they change the plan.
 
 Keep the repository runnable between slices when practical. If a slice must temporarily break the build, record why, keep the broken interval short, and checkpoint before and after.
 
-Use milestones as recovery boundaries. Checkpoint within a milestone when context may be lost, then create a local commit when the milestone is verified and the agent-owned staging set is clear.
+Use milestones as recovery boundaries. Checkpoint within a milestone when context may be lost, write a compression checkpoint when the milestone slice is verified, then create a local commit when the agent-owned staging set is clear.
 
 ### Reduce blast radius
 
