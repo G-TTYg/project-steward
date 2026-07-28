@@ -107,6 +107,36 @@ For non-trivial project work, do these unless the user explicitly says to skip s
 
 ## Fast Path Vs Full Stewardship
 
+Classify task size before choosing the workflow. Task size is about risk, blast radius, and recovery cost, not just line count. If the size is ambiguous or evidence is incomplete, classify it as a **Medium Task** first and shrink or expand after reading the code.
+
+### Task Size Classification
+
+**Small Task** uses Fast Path. It normally has all of these traits:
+
+- touches one or two local files;
+- changes a typo, comment, narrow test, obvious bug, or isolated config;
+- does not change public APIs, schemas, auth/security, data migrations, deployment, dependencies, or cross-module behavior;
+- can be verified cheaply and reverted easily;
+- does not need durable run state unless the session is likely to be interrupted.
+
+**Medium Task** uses milestone-lite stewardship. Use it when any of these are true:
+
+- touches a small module or about two to five related files;
+- changes real behavior but stays within one clear ownership boundary;
+- needs tests, docs, or more than one verification command;
+- may need one to three milestones or a `leg` branch loop;
+- is ambiguous after initial reading but does not yet show large-task risk.
+
+For Medium Tasks, plan milestones before editing, use checkpoints when context may be lost, create verified-slice commits, and use `leg` branch control when Git isolation is useful or requested. Keep docs/logs proportional.
+
+**Large Task** uses Full Stewardship. Treat a task as Large when it involves any high-risk boundary:
+
+- crosses multiple modules, packages, services, UI/API/persistence layers, or repositories;
+- changes public APIs, schemas, auth/security/permissions, migrations, deployments, dependencies, build systems, or runtime configuration;
+- requires refactoring, redesign, data migration, feature flags, compatibility shims, or rollout/rollback planning;
+- likely spans many milestones, long-running execution state, ADR/decision notes, project logs, or handoff to another human/agent;
+- has unclear ownership, repeated prior patches, high rollback cost, or broad verification needs.
+
 Use **Fast Path** for small, local, reversible edits: typos, one-line bug fixes, obvious config tweaks, or narrow test updates.
 
 Fast Path still requires:
@@ -117,7 +147,7 @@ Fast Path still requires:
 - verify if cheap;
 - mention when docs/logs were not needed.
 
-Use **Full Stewardship** for new features, refactors, migrations, infrastructure, data/schema changes, security/auth changes, public API changes, cross-module changes, ambiguous tasks, unfamiliar projects, plan execution, or anything likely to affect future maintainability.
+Use **Full Stewardship** for Large Tasks: new features with broad impact, refactors, migrations, infrastructure, data/schema changes, security/auth changes, public API changes, cross-module changes, unfamiliar projects, plan execution with high-risk boundaries, or anything likely to affect future maintainability.
 
 ## Full Stewardship Workflow
 

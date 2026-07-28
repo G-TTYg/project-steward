@@ -126,6 +126,13 @@ Code and project-structure clarity are strict too:
 - Project structure should expose layer, feature, adapter, provider, artifact-type, verification-scope, or bounded-context ownership instead of dumping files into flat catch-all folders.
 - Comments, docstrings, and module/file headers should capture non-obvious intent, module responsibility, invariants, external constraints, edge cases, risks, and public contracts close to the code.
 
+Task sizing is explicit:
+
+- Small tasks use Fast Path for narrow, low-risk, easily verified changes.
+- Medium tasks use milestone-lite stewardship for bounded behavior changes, related file sets, or initially ambiguous work.
+- Large tasks use Full Stewardship for cross-boundary, public-contract, migration, security, infrastructure, refactor, or long-running work.
+- If task size is unclear, default to Medium until repository evidence supports Small or Large.
+
 ## Repository Design
 
 - `SKILL.md` is the runtime contract loaded by Codex after the skill triggers.

@@ -119,6 +119,8 @@ Date: YYYY-MM-DD
 Owner/agent:
 Project root:
 Subproject:
+Task size: Small | Medium | Large
+Sizing reason:
 
 ### Goal
 
@@ -200,6 +202,7 @@ Time:
 Agent:
 Project root:
 Subproject:
+Task size:
 Current milestone:
 
 ### Intent
@@ -416,6 +419,7 @@ flowchart LR
 
 Project root:
 Subproject:
+Task size:
 Current milestone:
 
 ### Current State

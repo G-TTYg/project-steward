@@ -1,4 +1,4 @@
 interface:
   display_name: "Project Steward"
   short_description: "Keep project work structured, verified, branch-isolated, and resumable."
-  default_prompt: "Use $project-steward to preserve project structure, comments/headers, docs, verified-slice milestone commits on leg, compression checkpoints, Git hygiene, verification, and handoff clarity."
+  default_prompt: "Use $project-steward to classify task size, preserve project structure, comments/headers, docs, verified-slice milestone commits on leg, compression checkpoints, Git hygiene, verification, and handoff clarity."

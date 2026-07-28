@@ -194,12 +194,19 @@ def init_run(args: argparse.Namespace) -> None:
 Created: {created_at}
 Project: `{project}`
 Mode: {args.mode}
+Task size: Medium by default when ambiguous; update to Small, Medium, or Large after reading.
 
 ## Goal
 
 - User outcome:
 - Acceptance criteria:
 - Non-goals:
+
+## Task Size
+
+- Classification: Small | Medium | Large
+- Sizing reason:
+- If ambiguous, default to Medium until evidence supports Small or Large.
 
 ## Context Read
 
@@ -280,6 +287,7 @@ Each milestone should be a recoverable slice with a goal, verification, commit d
 Updated: {created_at}
 Status: active
 Project: `{project}`
+Task size: Medium by default until classified.
 
 ## Current Objective
 
@@ -292,6 +300,7 @@ Project: `{project}`
 ## Current State
 
 - PLAN.md needs slice details.
+- Task size needs confirmation.
 - No verification has run yet.
 - Current milestone: none.
 
