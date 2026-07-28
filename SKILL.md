@@ -48,6 +48,7 @@ Optimize for the next competent maintainer:
 - disciplined Git state that preserves collaboration, rollback, and ownership;
 - local commits for completed agent-owned work so others can inspect, revert, or continue it;
 - milestone-based progress where each milestone is a recoverable, verified, locally committable work slice;
+- milestone branch control where each milestone is developed on a local `leg` branch and merged back to the original branch after verification;
 - compression checkpoints after each verified slice so the next slice can start from compact durable state instead of chat memory;
 - decisions recorded where future work will find them;
 - verification that matches the risk of the change.
@@ -160,6 +161,7 @@ For any work in a Git repository, establish at least a lightweight baseline. For
 - if you do not commit completed work, record why and list the remaining dirty files, ownership, verification state, and next Git action.
 - treat each verified slice as a commit boundary after verification passes and ownership is clear; use checkpoints for unverified progress.
 - do not defer commits until the whole feature is done when smaller verified slices can be committed safely.
+- for milestone-controlled work, record the original branch, create `leg` from it, do the milestone work on `leg`, merge verified `leg` back into the original branch, then delete and recreate `leg` for the next milestone.
 
 Read `references/git-stewardship.md` for multi-agent branch/worktree, commit, push, rollback, and PR standards.
 
@@ -202,6 +204,23 @@ Milestones are the required unit of recoverable progress for plan execution, bro
 - rollback or next safest action.
 
 A verified slice must be small enough to commit independently. If one milestone would mix unrelated behavior, split it before implementation.
+
+### Milestone Branch Control
+
+For milestone-controlled work in a Git repository, use a short-lived local `leg` branch to isolate each milestone from the original working branch.
+
+Default sequence:
+
+1. Start on the original branch, for example `Alpha`, and record it as the base branch.
+2. Require a clean or fully understood worktree before branch changes.
+3. Create the milestone branch from the base branch: `git switch -c leg`.
+4. Do all milestone edits, checkpoints, verification, and the verified-slice business-code commit on `leg`.
+5. Refresh the compression checkpoint and record changed files, verification, and the `leg` commit hash.
+6. Switch back to the base branch and merge `leg`; prefer `git merge --ff-only leg` when the base did not move, unless the project explicitly wants merge commits.
+7. Delete the merged local `leg` with `git branch -d leg`.
+8. Recreate `leg` from the updated base branch before starting the next milestone.
+
+If `leg` already exists, do not overwrite it blindly. Inspect whether it is fully merged and clearly belongs to the current agent/task. If ownership or merge safety is unclear, stop and ask. If the base branch has moved and `--ff-only` cannot merge `leg`, inspect the divergence and resolve according to project Git rules before continuing.
 
 ### 5. Implement With Architecture And Git Hygiene
 
@@ -279,8 +298,9 @@ For each verified slice, use this closure sequence:
 1. Run the narrowest sufficient verification for the slice.
 2. Write a checkpoint or milestone entry with summary, verification, changed areas, next step, and risk.
 3. Treat the refreshed handoff as a compression checkpoint: make it compact enough that a fresh agent can continue without reading the full chat.
-4. Explicitly stage only agent-owned paths and create a local business-code commit for the verified slice, unless the user or project workflow says not to commit.
-5. Record the commit hash or no-commit reason before starting the next slice.
+4. Explicitly stage only agent-owned paths on `leg` and create a local business-code commit for the verified slice, unless the user or project workflow says not to commit.
+5. Merge verified `leg` back into the original branch, delete `leg`, and recreate it for the next milestone.
+6. Record the commit hash, merge result, and next `leg` state, or record the no-commit/no-merge reason before starting the next slice.
 
 A milestone is not a substitute for a Git commit. After a verified milestone that changed repository files, explicitly stage only agent-owned paths and create a local business-code commit unless the user or project workflow says not to commit. Record the commit hash in the handoff or explain why the verified milestone was left uncommitted. Use `--commit-run-state` only for committing the agent execution state directory.
 
@@ -328,7 +348,7 @@ Final response or handoff must include:
 - what changed;
 - files/docs updated;
 - verification run and results;
-- milestones completed, compression checkpoint/run-state location when used, and commit hash for each verified slice or the reason no commit was created;
+- milestones completed, compression checkpoint/run-state location when used, `leg` branch merge state, and commit hash for each verified slice or the reason no commit was created;
 - fact placement: stable facts, decision facts, process facts, and agent execution state were written to the correct places or intentionally skipped;
 - structure clarity: notable project-structure/module/comment/header changes, or why none were needed;
 - Git state: branch, commit(s), dirty status, unpushed work, PR/remote if relevant;
@@ -352,6 +372,7 @@ Final response or handoff must include:
 | "AI agents should just leave files modified." | Completed agent-owned work should usually become explicit local commits so humans and agents can inspect, revert, cherry-pick, or continue it. |
 | "A checkpoint is enough; I do not need a commit." | Checkpoints protect execution recovery. Verified milestone commits protect Git history, review, rollback, and handoff ownership. |
 | "I can commit once after the whole plan is done." | Plan execution should commit each verified slice when ownership and verification are clear, so rollback and continuation stay local. |
+| "I can keep working on the base branch between milestones." | Milestone-controlled work should happen on `leg`; merge verified `leg` back to the base branch, then recreate `leg` for the next milestone. |
 | "git add -A is faster." | Blind staging can capture user work, generated noise, secrets, or unrelated agent edits. Stage explicit paths unless the repo workflow says otherwise. |
 | "The code looks right." | Verification requires evidence: tests, build output, typecheck/lint, runtime/manual checks, or a stated unverified gap. |
 | "I can keep the plan in my head." | Long tasks cross context boundaries. A written plan/log/handoff is the continuity mechanism for the next maintainer. |
@@ -368,6 +389,8 @@ Final response or handoff must include:
 - A verified milestone has no local commit and no recorded reason.
 - A non-trivial plan was executed without milestone slices.
 - A verified slice was completed without a compression checkpoint before moving on.
+- Milestone work is done directly on the base branch when `leg` branch control is expected.
+- A stale or unmerged `leg` branch is deleted, reset, or reused without inspecting ownership and merge safety.
 - A shared branch is rebased, reset, force-pushed, or conflict-resolved without explicit approval.
 - `AGENTS.md` is missing or stale during non-trivial work and nobody repairs or proposes it.
 - New modules, dependencies, services, schemas, or public contracts appear without docs or an ADR/decision note.
@@ -395,6 +418,7 @@ Before final delivery, confirm:
 - [ ] Broad or long-running work was divided into milestones, with checkpoints and Git commits tied to verified recovery boundaries.
 - [ ] Plan execution used milestone slices rather than a flat checklist.
 - [ ] Each verified slice produced a compression checkpoint before the next slice began.
+- [ ] Milestone-controlled work used `leg`, merged verified `leg` back into the original branch, and recreated `leg` safely for the next milestone.
 - [ ] Fast Path or Full Stewardship choice matches the risk.
 - [ ] Affected layers/modules/contracts are understood and kept clear.
 - [ ] Project structure reflects responsibility, layer, feature, adapter, artifact type, verification scope, or bounded context instead of catch-all dumping.

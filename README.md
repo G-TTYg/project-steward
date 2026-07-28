@@ -1,6 +1,6 @@
 # Project Steward
 
-Project Steward is a Codex skill for maintainable project work. It makes agents bind to the right project root, preserve architecture and project structure, keep code intent visible, store facts in the right project files, maintain production-grade Git hygiene, and deliver verified milestone commits with compression checkpoints that humans and future agents can continue.
+Project Steward is a Codex skill for maintainable project work. It makes agents bind to the right project root, preserve architecture and project structure, keep code intent visible, store facts in the right project files, maintain production-grade Git hygiene, and deliver verified milestone commits with `leg` branch control and compression checkpoints that humans and future agents can continue.
 
 Its identity is project stewardship. Long-running checkpoints and handoffs are support tools, not the center of the skill.
 
@@ -159,7 +159,7 @@ Record a verified or intentionally paused milestone:
 python ~/.codex/skills/project-steward/scripts/long_work.py milestone --run <run-dir> --name "parser compatibility" --summary "slice outcome" --verify "test result" --next "next milestone or handoff action"
 ```
 
-During plan execution, every non-trivial implementation step should map to a milestone/slice or be marked as non-commit work. After every verified slice, refresh the run-state handoff as a compression checkpoint, then create a local commit for the verified agent-owned slice unless the user or project workflow says not to commit.
+During plan execution, every non-trivial implementation step should map to a milestone/slice or be marked as non-commit work. Milestone-controlled work uses a local `leg` branch: create `leg` from the original branch, commit the verified slice on `leg`, merge `leg` back to the original branch, then delete and recreate `leg` for the next milestone. After every verified slice, refresh the run-state handoff as a compression checkpoint, then create a local commit for the verified agent-owned slice unless the user or project workflow says not to commit.
 
 When the agent execution state files are agent-owned and ready to preserve in project history, add an explicit local run-state commit:
 

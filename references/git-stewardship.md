@@ -8,6 +8,7 @@ Use this reference for production-grade Git hygiene in projects touched by multi
 - Keep every change attributable, reviewable, and reversible.
 - Prefer small verified commits over large mixed snapshots.
 - Treat every verified milestone slice as the normal commit boundary for non-trivial agent-owned work.
+- Isolate milestone work on a short-lived local `leg` branch and merge it back after verification when milestone branch control is in use.
 - Make completed agent-owned work into explicit local commits so others can inspect, revert, cherry-pick, or continue it.
 - Use Git to communicate project state, not just to save files.
 - Never trade short-term convenience for lost rollback or unclear ownership.
@@ -74,6 +75,32 @@ If a milestone is too large to commit as one clear unit, split it into smaller v
 
 Do not treat `docs/agent-runs/` checkpoints as substitutes for business-code commits. A run-state commit preserves recovery files only; a milestone commit preserves the verified repository change itself.
 
+## Milestone Branch Loop
+
+When milestone branch control is requested or expected, keep the original branch as the base branch and use a local `leg` branch for each milestone.
+
+Default loop:
+
+```bash
+git status --short --branch
+git branch --show-current   # record base branch, for example Alpha
+git switch -c leg           # create milestone branch from the base branch
+# work, checkpoint, verify, and commit the milestone on leg
+git switch <base-branch>
+git merge --ff-only leg     # prefer fast-forward merge when the base has not moved
+git branch -d leg           # only after the merge succeeds
+git switch -c leg           # create the next milestone branch from updated base
+```
+
+Use `git merge --no-ff leg` only when the project explicitly wants merge commits for milestone branch boundaries. Do not force-delete or reset `leg`. If `leg` already exists, inspect it first:
+
+```bash
+git log --oneline --decorate <base-branch>..leg
+git branch --merged <base-branch>
+```
+
+Reuse or delete `leg` only when it is clearly the current task's milestone branch and fully merged or otherwise safe. If ownership, merge safety, or divergence is unclear, stop and ask.
+
 ## Multi-Agent Rules
 
 In multi-agent or multi-human work:
@@ -86,6 +113,7 @@ In multi-agent or multi-human work:
 - Pull/sync intentionally. Prefer `git pull --ff-only` on shared branches to avoid surprise merge commits.
 - Stop on merge conflicts unless conflict ownership and resolution are clear.
 - Handoffs must include branch, base commit, HEAD commit, dirty status, unpushed commits, and open PR/issue if relevant.
+- When using the `leg` loop, handoffs must also include base branch, current `leg` commit, merge status, and whether `leg` was deleted/recreated for the next milestone.
 
 ## Branch And Worktree Standards
 
@@ -94,6 +122,7 @@ Use the repository's existing branch strategy first. If absent:
 - create a short-lived feature branch for non-trivial changes;
 - keep branch names descriptive, for example `feat/auth-session-boundary` or `fix/payment-webhook-retry`;
 - avoid long-lived divergent branches;
+- for milestone branch control inside an already chosen working branch, use local `leg` as the short-lived milestone branch unless it conflicts with existing work;
 - use separate worktrees for parallel agents touching the same repo when practical;
 - never switch branches with dirty user changes unless you know they carry cleanly or the user approves.
 
@@ -235,6 +264,7 @@ Include Git state in any durable handoff:
 - why any agent-owned completed work was not committed;
 - milestone names, verification, and commit hashes or no-commit reasons;
 - compression checkpoint location for the latest verified slice;
+- base branch, `leg` branch commit, merge result, and next `leg` recreation state;
 - files not owned by this agent that must not be overwritten.
 
 ## Red Flags
@@ -246,6 +276,8 @@ Include Git state in any durable handoff:
 - A milestone is marked verified but has no local commit, no commit hash, and no no-commit reason.
 - A verified slice is followed by more implementation without a checkpoint/handoff refresh.
 - A plan waits until the end for one large commit even though smaller verified slices were available.
+- Milestone work is committed on the base branch instead of `leg` without a recorded reason.
+- `leg` is force-deleted, reset, or recreated without checking whether it contains unmerged or user-owned work.
 - A worktree has untracked files with unclear purpose.
 - Multiple agents edit the same files without coordination.
 - A shared branch is rebased or force-pushed casually.

@@ -133,6 +133,8 @@ Subproject:
 ### Git Baseline
 
 - Branch:
+- Base branch for milestone loop:
+- Current milestone branch (`leg`):
 - Upstream:
 - Dirty files before work:
 - Untracked files:
@@ -161,9 +163,9 @@ Subproject:
 
 ### Milestones
 
-| Milestone | Outcome | Verification | Compression checkpoint | Commit / no-commit reason | Rollback / next safest step |
-| --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |
+| Milestone | Branch (`leg`) | Outcome | Verification | Compression checkpoint | Commit / merge result | Rollback / next safest step |
+| --- | --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |  |
 
 ### Verification
 
@@ -178,6 +180,7 @@ Subproject:
 
 - Commit/checkpoint plan by milestone:
 - Commit every verified slice unless:
+- Milestone branch loop: create `leg`, commit on `leg`, merge to base, delete/recreate `leg`:
 - Compression checkpoint plan:
 - Branch/PR plan:
 - Rollback plan:
@@ -209,9 +212,9 @@ Current milestone:
 
 ### Milestones / Checkpoints
 
-| Milestone | Status | Verification | Compression checkpoint | Commit / reason not committed | Next |
-| --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |
+| Milestone | Branch (`leg`) | Status | Verification | Compression checkpoint | Commit / merge result | Next |
+| --- | --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |  |
 
 ### Decision Pointers
 
@@ -238,8 +241,11 @@ Current milestone:
 ### Git State
 
 - Branch:
+- Base branch:
+- Current/last `leg` branch:
 - Commits:
 - Milestone commits:
+- Milestone merge results:
 - Dirty/untracked files:
 - Unpushed work:
 
@@ -418,9 +424,9 @@ Current milestone:
 
 ### Milestones
 
-| Milestone | Status | Verification | Compression checkpoint | Commit / reason not committed | Next |
-| --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |
+| Milestone | Branch (`leg`) | Status | Verification | Compression checkpoint | Commit / merge result | Next |
+| --- | --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |  |
 
 ### Files Touched
 
@@ -431,11 +437,14 @@ Current milestone:
 ### Git State
 
 - Branch:
+- Base branch:
+- Current/last `leg` branch:
 - Base commit:
 - Current HEAD:
 - Dirty/untracked files:
 - Unpushed commits:
 - Milestone commits:
+- Milestone merge results:
 - PR/remote:
 
 ### Compression Checkpoint

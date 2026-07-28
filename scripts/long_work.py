@@ -218,6 +218,14 @@ Mode: {args.mode}
 
 - Every implementation step maps to a milestone/slice, or is marked as non-commit work:
 
+## Milestone Branch Loop
+
+- Base branch:
+- Milestone branch: `leg`
+- Start rule: create `leg` from the base branch before milestone edits.
+- Closure rule: commit verified slice on `leg`, merge `leg` back to base, delete and recreate `leg` for the next milestone.
+- Safety rule: do not overwrite an existing `leg` until ownership and merge safety are clear.
+
 ## Milestones
 
 Each milestone should be a recoverable slice with a goal, verification, commit decision, and rollback path.
@@ -227,7 +235,7 @@ Each milestone should be a recoverable slice with a goal, verification, commit d
    - Files/modules:
    - Verification:
    - Compression checkpoint:
-   - Commit decision:
+   - Commit/merge decision:
    - Rollback/safest undo:
 
 ## Slices
@@ -319,10 +327,13 @@ Fill PLAN.md with context, slices, and verification, then execute the first smal
 ## Git State
 
 - Branch:
+- Base branch:
+- Current/last `leg` branch:
 - Base commit:
 - Current HEAD:
 - Dirty/untracked files:
 - Unpushed commits:
+- Milestone merge results:
 
 ## Verification
 
@@ -422,10 +433,13 @@ Status: {args.status}
 ## Git State
 
 - Branch:
+- Base branch:
+- Current/last `leg` branch:
 - Base commit:
 - Current HEAD:
 - Dirty/untracked files:
 - Unpushed commits:
+- Milestone merge results:
 
 ## Risks Or Blockers
 
@@ -539,10 +553,13 @@ Status: {args.status}
 ## Git State
 
 - Branch:
+- Base branch:
+- Current/last `leg` branch:
 - Base commit:
 - Current HEAD:
 - Dirty/untracked files:
 - Unpushed commits:
+- Milestone merge results:
 - Milestone commit:
 
 ## Risks Or Blockers

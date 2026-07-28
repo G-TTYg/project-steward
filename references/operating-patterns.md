@@ -14,6 +14,7 @@ Write a plan that a fresh Codex instance could execute without remembering the c
 - facts discovered with file paths or command outputs;
 - ordered milestones and slices with verification for each milestone;
 - commit/checkpoint plan for each milestone;
+- milestone branch loop plan: base branch, `leg` branch, merge point, and next `leg` recreation;
 - compression checkpoint plan for each verified slice;
 - rollback path and risks;
 - current open questions.
@@ -47,6 +48,8 @@ Promote a slice to a milestone when it is recoverable: the outcome is clear, the
 
 When executing an approved plan, require milestone slices. Do not treat plan steps as a flat checklist; map each step to a verified slice or label it as non-commit work such as research, reproduction, or setup.
 
+For milestone-controlled Git work, each milestone slice runs on `leg`, then verified `leg` merges back into the recorded base branch before the next milestone begins.
+
 ## Context Budget Patterns
 
 ### Three ledgers
@@ -67,6 +70,7 @@ After every verified milestone slice, update `HANDOFF.md` as a compression check
 
 - active task and current slice;
 - current milestone and milestone status;
+- base branch, `leg` branch, merge result, and whether `leg` was recreated for the next milestone;
 - changed files;
 - tests run and results;
 - commit created for the verified milestone, or the reason no commit exists;
@@ -94,7 +98,7 @@ Record search conclusions only when they change the plan.
 
 Keep the repository runnable between slices when practical. If a slice must temporarily break the build, record why, keep the broken interval short, and checkpoint before and after.
 
-Use milestones as recovery boundaries. Checkpoint within a milestone when context may be lost, write a compression checkpoint when the milestone slice is verified, then create a local commit when the agent-owned staging set is clear.
+Use milestones as recovery boundaries. Checkpoint within a milestone when context may be lost, write a compression checkpoint when the milestone slice is verified, create a local commit on `leg` when the agent-owned staging set is clear, then merge `leg` back to the base branch.
 
 ### Reduce blast radius
 
@@ -159,6 +163,7 @@ A good handoff lets a human or fresh agent continue without guessing:
 - exact project root;
 - current objective and current slice;
 - current milestone, milestone history, verification, and commit/no-commit state;
+- base branch, current `leg` state, last merge result, and next branch action;
 - changed files and why;
 - commands run and results;
 - facts, assumptions, and decisions separated;
