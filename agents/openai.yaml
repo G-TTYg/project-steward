@@ -1,4 +1,4 @@
 interface:
   display_name: "Project Steward"
-  short_description: "Keep project work stable, structured, documented, verified, and Git-clean."
-  default_prompt: "Use $project-steward to preserve project structure, comments/headers, docs, Git hygiene, verification, and handoff clarity."
+  short_description: "Keep project work structured, verified, committed, and continuable."
+  default_prompt: "Use $project-steward to preserve project structure, comments/headers, docs, milestone commits, Git hygiene, verification, and handoff clarity."

@@ -55,6 +55,7 @@ Copy and adapt these templates. Keep them short unless the project requires deta
 - Default branch:
 - Branch naming:
 - Commit style:
+- Milestone commit cadence:
 - PR/review requirements:
 - Protected files/paths:
 - Multi-agent coordination rule:
@@ -154,6 +155,12 @@ Subproject:
 2.
 3.
 
+### Milestones
+
+| Milestone | Outcome | Verification | Commit/checkpoint decision | Rollback / next safest step |
+| --- | --- | --- | --- | --- |
+|  |  |  |  |  |
+
 ### Verification
 
 ### Docs/Logs/ADRs to Update
@@ -165,7 +172,7 @@ Subproject:
 
 ### Git / Collaboration
 
-- Commit/checkpoint plan:
+- Commit/checkpoint plan by milestone:
 - Branch/PR plan:
 - Rollback plan:
 - Multi-agent ownership:
@@ -184,6 +191,7 @@ Time:
 Agent:
 Project root:
 Subproject:
+Current milestone:
 
 ### Intent
 
@@ -192,6 +200,12 @@ Subproject:
 ### Changes
 
 -
+
+### Milestones / Checkpoints
+
+| Milestone | Status | Verification | Commit / reason not committed | Next |
+| --- | --- | --- | --- | --- |
+|  |  |  |  |  |
 
 ### Decision Pointers
 
@@ -219,6 +233,7 @@ Subproject:
 
 - Branch:
 - Commits:
+- Milestone commits:
 - Dirty/untracked files:
 - Unpushed work:
 
@@ -381,10 +396,17 @@ flowchart LR
 
 Project root:
 Subproject:
+Current milestone:
 
 ### Current State
 
 ### What Was Done
+
+### Milestones
+
+| Milestone | Status | Verification | Commit / reason not committed | Next |
+| --- | --- | --- | --- | --- |
+|  |  |  |  |  |
 
 ### Files Touched
 
@@ -399,6 +421,7 @@ Subproject:
 - Current HEAD:
 - Dirty/untracked files:
 - Unpushed commits:
+- Milestone commits:
 - PR/remote:
 
 ### Next Safe Step

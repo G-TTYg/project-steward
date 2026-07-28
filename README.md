@@ -1,6 +1,6 @@
 # Project Steward
 
-Project Steward is a Codex skill for maintainable project work. It makes agents bind to the right project root, preserve architecture and project structure, keep code intent visible, store facts in the right project files, maintain production-grade Git hygiene, and deliver verified changes that humans and future agents can continue.
+Project Steward is a Codex skill for maintainable project work. It makes agents bind to the right project root, preserve architecture and project structure, keep code intent visible, store facts in the right project files, maintain production-grade Git hygiene, and deliver verified milestone commits that humans and future agents can continue.
 
 Its identity is project stewardship. Long-running checkpoints and handoffs are support tools, not the center of the skill.
 
@@ -132,7 +132,7 @@ Code and project-structure clarity are strict too:
 - `AGENTS.md` is the maintenance contract for humans and agents editing this skill repository.
 - `README.md` is the install, update, usage, and design summary.
 - `references/` holds detailed standards loaded only when needed.
-- `scripts/long_work.py` manages agent execution state only; it does not own canonical durable facts.
+- `scripts/long_work.py` manages agent execution state only; it does not own canonical durable facts or business-code commits.
 - `agents/openai.yaml` is UI metadata and must stay aligned with `SKILL.md`.
 
 Use `scripts/long_work.py` when a task needs agent execution state for recovery or handoff:
@@ -147,10 +147,22 @@ Then checkpoint meaningful progress:
 python ~/.codex/skills/project-steward/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --next "next action" --verify "test result"
 ```
 
-When the agent execution state files are agent-owned and ready to preserve in project history, add an explicit local commit:
+Attach checkpoints to a milestone when the work is broad or likely to be resumed:
+
+```bash
+python ~/.codex/skills/project-steward/scripts/long_work.py checkpoint --run <run-dir> --milestone "parser compatibility" --summary "what changed" --next "next action" --verify "pending check"
+```
+
+Record a verified or intentionally paused milestone:
+
+```bash
+python ~/.codex/skills/project-steward/scripts/long_work.py milestone --run <run-dir> --name "parser compatibility" --summary "slice outcome" --verify "test result" --next "next milestone or handoff action"
+```
+
+When the agent execution state files are agent-owned and ready to preserve in project history, add an explicit local run-state commit:
 
 ```bash
 python ~/.codex/skills/project-steward/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --commit-run-state
 ```
 
-`--commit-run-state` stages only that run directory, refuses to continue if unrelated staged changes already exist, and never pushes.
+`--commit-run-state` stages only that run directory, refuses to continue if unrelated staged changes already exist, and never pushes. It never commits business-code paths; verified milestone code commits must use explicit Git staging outside the script.

@@ -12,7 +12,8 @@ Write a plan that a fresh Codex instance could execute without remembering the c
 - exact project root and relevant subprojects;
 - constraints from project instructions;
 - facts discovered with file paths or command outputs;
-- ordered slices with verification for each slice;
+- ordered milestones and slices with verification for each milestone;
+- commit/checkpoint plan for each milestone;
 - rollback path and risks;
 - current open questions.
 - fact placement: which stable facts, decision facts, process facts, and agent execution state must be written where.
@@ -41,6 +42,8 @@ Prefer a small end-to-end working path over a large partial rewrite. Good slices
 - update data model plus one read/write path, then broaden;
 - make UI state visible in one flow, then harden edge cases.
 
+Promote a slice to a milestone when it is recoverable: the outcome is clear, the touched files are known, verification has run or is explicitly pending, and the commit or no-commit decision can be recorded.
+
 ## Context Budget Patterns
 
 ### Three ledgers
@@ -60,8 +63,10 @@ Place confirmed facts by type. Stable facts belong in README/AGENTS/docs, decisi
 Before context-heavy transitions, update `HANDOFF.md` with:
 
 - active task and current slice;
+- current milestone and milestone status;
 - changed files;
 - tests run and results;
+- commit created for the verified milestone, or the reason no commit exists;
 - exact next command or edit;
 - known risks;
 - user-facing commitments.
@@ -85,6 +90,8 @@ Record search conclusions only when they change the plan.
 ### Preserve a working state
 
 Keep the repository runnable between slices when practical. If a slice must temporarily break the build, record why, keep the broken interval short, and checkpoint before and after.
+
+Use milestones as recovery boundaries. Checkpoint within a milestone when context may be lost, then create a local commit when the milestone is verified and the agent-owned staging set is clear.
 
 ### Reduce blast radius
 
@@ -148,6 +155,7 @@ A good handoff lets a human or fresh agent continue without guessing:
 
 - exact project root;
 - current objective and current slice;
+- current milestone, milestone history, verification, and commit/no-commit state;
 - changed files and why;
 - commands run and results;
 - facts, assumptions, and decisions separated;

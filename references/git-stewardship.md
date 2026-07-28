@@ -7,6 +7,7 @@ Use this reference for production-grade Git hygiene in projects touched by multi
 - Protect work you did not create.
 - Keep every change attributable, reviewable, and reversible.
 - Prefer small verified commits over large mixed snapshots.
+- Treat each verified milestone as the normal commit boundary for non-trivial agent-owned work.
 - Make completed agent-owned work into explicit local commits so others can inspect, revert, cherry-pick, or continue it.
 - Use Git to communicate project state, not just to save files.
 - Never trade short-term convenience for lost rollback or unclear ownership.
@@ -41,7 +42,7 @@ If the worktree is dirty, do not assume the changes are yours. Read relevant dif
 
 ## Agent-Owned Commit Closure
 
-For non-trivial completed work in a Git repository, the default stewarded outcome is a local commit for the changes the agent owns. Do this when the user requested implementation, the work reached a stable verified slice, and the project workflow does not forbid local commits.
+For non-trivial completed work in a Git repository, the default stewarded outcome is a local commit for the changes the agent owns. Do this when the user requested implementation, the work reached a stable verified milestone slice, and the project workflow does not forbid local commits.
 
 Do not commit when:
 
@@ -54,6 +55,21 @@ Do not commit when:
 If you leave completed work uncommitted, record the reason, exact dirty files, likely owner, verification state, and next Git action. Do not leave an ambiguous dirty worktree as the final project state.
 
 Local commits are not publication. Do not push unless the user requested it or the project workflow clearly requires it.
+
+## Milestone Commit Cadence
+
+A milestone is a recoverable work slice with a concrete outcome, known touched areas, verification, a commit decision, and a next or rollback path. Use checkpoints for intermediate or unverified progress; use local commits for verified milestone boundaries.
+
+For each milestone:
+
+- verify the slice before committing unless the commit is explicitly a documentation-only agent execution state checkpoint;
+- stage only paths owned by the agent for that milestone;
+- keep code, tests, docs, and migrations together when they prove one milestone outcome;
+- avoid mixing independent milestones, unrelated refactors, formatting churn, generated noise, or user-owned work;
+- record the commit hash in the handoff, run state, project log, or final response;
+- if no commit is created, record the exact reason, dirty files, ownership, verification state, and next Git action.
+
+Do not treat `docs/agent-runs/` checkpoints as substitutes for business-code commits. A run-state commit preserves recovery files only; a milestone commit preserves the verified repository change itself.
 
 ## Multi-Agent Rules
 
@@ -88,7 +104,7 @@ If dirty state exists, decide explicitly: keep working, commit, ask, or create a
 
 ## Commit Standards
 
-Commit agent-owned work at stable, verified slices. A good commit:
+Commit agent-owned work at stable, verified milestone slices. A good commit:
 
 - does one logical thing;
 - includes code, tests, docs, and migrations that belong to that slice;
@@ -134,6 +150,7 @@ chore(agent-state): checkpoint <task>
 ```
 
 Such commits must stage only the relevant `docs/agent-runs/<run>/` files and must never include business-code changes by accident.
+Milestone run-state commits are also acceptable before interruption or after milestone updates, but they still must be limited to the run directory and are separate from business-code milestone commits.
 
 ## Generated Files, Secrets, And Large Files
 
@@ -213,6 +230,7 @@ Include Git state in any durable handoff:
 - remote/PR URL if relevant;
 - files intentionally left modified;
 - why any agent-owned completed work was not committed;
+- milestone names, verification, and commit hashes or no-commit reasons;
 - files not owned by this agent that must not be overwritten.
 
 ## Red Flags
@@ -221,6 +239,7 @@ Include Git state in any durable handoff:
 - A broad `git add -A` stages unrelated work.
 - A commit includes unrelated formatting churn.
 - Completed agent-owned work remains dirty without a reason and next Git action.
+- A milestone is marked verified but has no local commit, no commit hash, and no no-commit reason.
 - A worktree has untracked files with unclear purpose.
 - Multiple agents edit the same files without coordination.
 - A shared branch is rebased or force-pushed casually.

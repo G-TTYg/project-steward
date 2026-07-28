@@ -54,6 +54,44 @@ def write_state(run: Path, state: dict[str, Any]) -> None:
     write_text(run / "STATE.json", json.dumps(state, indent=2, sort_keys=True) + "\n")
 
 
+def milestone_entry(
+    *,
+    name: str,
+    summary: str,
+    status: str,
+    verification: str,
+    next_step: str,
+    risk: str,
+    stamp: str,
+) -> dict[str, str]:
+    entry = {
+        "name": name,
+        "status": status,
+        "summary": summary,
+        "verification": verification,
+        "next": next_step,
+        "completed_at": stamp,
+    }
+    if risk:
+        entry["risk"] = risk
+    return entry
+
+
+def render_milestones(state: dict[str, Any], limit: int = 10) -> str:
+    milestones = state.get("milestones", [])
+    if not milestones:
+        return "- None recorded."
+
+    rows = []
+    for item in milestones[-limit:]:
+        name = item.get("name", "unnamed")
+        status = item.get("status", "unknown")
+        summary = item.get("summary", "No summary recorded.")
+        verification = item.get("verification", "No verification recorded.")
+        rows.append(f"- {status}: {name} - {summary} Verification: {verification}")
+    return "\n".join(rows)
+
+
 def git(project: Path, *args: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         ["git", "-C", str(project), *args],
@@ -145,6 +183,8 @@ def init_run(args: argparse.Namespace) -> None:
         "status": "active",
         "next": "Fill PLAN.md with slices and start the first verified slice.",
         "verification": "Not run yet.",
+        "current_milestone": "",
+        "milestones": [],
     }
 
     write_text(
@@ -174,9 +214,21 @@ Mode: {args.mode}
 - Process facts -> logs/YYYY-MM-DD.md:
 - Agent execution state -> this run directory only:
 
+## Milestones
+
+Each milestone should be a recoverable slice with a goal, verification, commit decision, and rollback path.
+
+1. Milestone:
+   - Goal:
+   - Files/modules:
+   - Verification:
+   - Commit decision:
+   - Rollback/safest undo:
+
 ## Slices
 
 1. Slice:
+   - Milestone:
    - Files/modules:
    - Verification:
    - Stop condition:
@@ -202,6 +254,7 @@ Mode: {args.mode}
 
 - Initialized agent execution state.
 - Project: `{project}`
+- Current milestone: none.
 - Next: Fill PLAN.md and start the first verified slice.
 """,
     )
@@ -226,6 +279,11 @@ Project: `{project}`
 
 - PLAN.md needs slice details.
 - No verification has run yet.
+- Current milestone: none.
+
+## Milestones
+
+- None recorded.
 
 ## Fact Placement
 
@@ -285,8 +343,12 @@ def checkpoint(args: argparse.Namespace) -> None:
         state["verification"] = args.verify
     if args.risk:
         state["risk"] = args.risk
+    if args.milestone:
+        state["current_milestone"] = args.milestone
 
     log_bits = [f"## {stamp}", "", f"- Summary: {args.summary}"]
+    if args.milestone:
+        log_bits.append(f"- Milestone: {args.milestone}")
     if args.next:
         log_bits.append(f"- Next: {args.next}")
     if args.verify:
@@ -310,6 +372,14 @@ Status: {args.status}
 ## Latest Checkpoint
 
 {args.summary}
+
+## Current Milestone
+
+{args.milestone or state.get("current_milestone") or "Not recorded."}
+
+## Milestones
+
+{render_milestones(state)}
 
 ## Next Safest Step
 
@@ -349,6 +419,116 @@ Status: {args.status}
     if args.commit_run_state:
         task = str(state.get("task", run.name))
         commit = commit_run_state(run, run, f"chore(agent-state): checkpoint {slugify(task)}")
+        if commit:
+            print(f"committed agent execution state: {commit}")
+    print(run / "HANDOFF.md")
+
+
+def milestone(args: argparse.Namespace) -> None:
+    run = Path(args.run).resolve()
+    if not run.exists():
+        raise SystemExit(f"run directory does not exist: {run}")
+
+    stamp = now_utc()
+    state = read_state(run)
+    state.setdefault("task", run.name)
+    state.setdefault("milestones", [])
+    state["status"] = args.status
+    state["current_milestone"] = args.name
+    state["next"] = args.next
+    state["verification"] = args.verify
+    if args.risk:
+        state["risk"] = args.risk
+
+    entry = milestone_entry(
+        name=args.name,
+        summary=args.summary,
+        status=args.status,
+        verification=args.verify,
+        next_step=args.next,
+        risk=args.risk,
+        stamp=stamp,
+    )
+    state["milestones"].append(entry)
+
+    log_bits = [
+        f"## {stamp}",
+        "",
+        f"### Milestone: {args.name}",
+        "",
+        f"- Status: {args.status}",
+        f"- Summary: {args.summary}",
+        f"- Verification: {args.verify}",
+        f"- Next: {args.next}",
+    ]
+    if args.risk:
+        log_bits.append(f"- Risk/blocker: {args.risk}")
+    log_bits.append("")
+
+    with (run / "LOG.md").open("a", encoding="utf-8", newline="\n") as f:
+        f.write("\n".join(log_bits))
+
+    handoff = f"""# Handoff: {state.get("task", run.name)}
+
+Updated: {stamp}
+Status: {args.status}
+
+## Current Objective
+
+{state.get("task", run.name)}
+
+## Current Milestone
+
+{args.name}
+
+## Latest Milestone
+
+{args.summary}
+
+## Milestones
+
+{render_milestones(state)}
+
+## Next Safest Step
+
+{args.next}
+
+## Verification
+
+{args.verify}
+
+## Fact Placement
+
+- Stable facts should be in README.md, AGENTS.md, or docs/.
+- Decision facts should be in DECISIONS.md or docs/adr/.
+- Process facts should be in logs/YYYY-MM-DD.md.
+- This run directory should contain only agent execution state that still matters for handoff.
+
+## Git State
+
+- Branch:
+- Base commit:
+- Current HEAD:
+- Dirty/untracked files:
+- Unpushed commits:
+- Milestone commit:
+
+## Risks Or Blockers
+
+{args.risk or state.get("risk", "None recorded.")}
+
+## Recovery Notes
+
+- Read PLAN.md for intended milestones and slices.
+- Read recent LOG.md entries for chronology.
+- Check git status and relevant diffs before editing.
+- Business-code commits must be created with explicit Git staging outside this script.
+"""
+    write_text(run / "HANDOFF.md", handoff)
+    write_state(run, state)
+    if args.commit_run_state:
+        task = str(state.get("task", run.name))
+        commit = commit_run_state(run, run, f"chore(agent-state): milestone {slugify(task)}")
         if commit:
             print(f"committed agent execution state: {commit}")
     print(run / "HANDOFF.md")
@@ -397,6 +577,7 @@ def build_parser() -> argparse.ArgumentParser:
     cp.add_argument("--next", default="", help="next safest action")
     cp.add_argument("--verify", default="", help="verification result or pending check")
     cp.add_argument("--risk", default="", help="risk, blocker, or residual uncertainty")
+    cp.add_argument("--milestone", default="", help="milestone this checkpoint belongs to")
     cp.add_argument("--status", default="active", choices=["active", "paused", "blocked", "verified", "complete"])
     cp.add_argument(
         "--commit-run-state",
@@ -404,6 +585,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="commit only this agent execution state directory; refuses existing staged changes and never pushes",
     )
     cp.set_defaults(func=checkpoint)
+
+    ms = sub.add_parser("milestone", help="record a recoverable verified work slice")
+    ms.add_argument("--run", required=True, help="run directory")
+    ms.add_argument("--name", required=True, help="milestone name")
+    ms.add_argument("--summary", required=True, help="what this milestone completed or established")
+    ms.add_argument("--verify", required=True, help="verification result for this milestone")
+    ms.add_argument("--next", required=True, help="next safest action")
+    ms.add_argument("--risk", default="", help="risk, blocker, or residual uncertainty")
+    ms.add_argument("--status", default="verified", choices=["active", "verified", "complete", "blocked"])
+    ms.add_argument(
+        "--commit-run-state",
+        action="store_true",
+        help="commit only this agent execution state directory; refuses existing staged changes and never pushes",
+    )
+    ms.set_defaults(func=milestone)
 
     status = sub.add_parser("status", help="print HANDOFF.md")
     status.add_argument("--run", required=True, help="run directory")
