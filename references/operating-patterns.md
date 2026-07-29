@@ -12,7 +12,10 @@ Write a plan that a fresh Codex instance could execute without remembering the c
 - exact project root and relevant subprojects;
 - constraints from project instructions;
 - facts discovered with file paths or command outputs;
-- ordered slices with verification for each slice;
+- ordered milestones and slices with verification for each milestone;
+- commit/checkpoint plan for each milestone;
+- milestone branch loop plan: base branch, `leg` branch, merge point, and next `leg` recreation;
+- compression checkpoint plan for each verified slice;
 - rollback path and risks;
 - current open questions.
 - fact placement: which stable facts, decision facts, process facts, and agent execution state must be written where.
@@ -41,6 +44,12 @@ Prefer a small end-to-end working path over a large partial rewrite. Good slices
 - update data model plus one read/write path, then broaden;
 - make UI state visible in one flow, then harden edge cases.
 
+Promote a slice to a milestone when it is recoverable: the outcome is clear, the touched files are known, verification has run or is explicitly pending, and the commit or no-commit decision can be recorded.
+
+When executing an approved plan, require milestone slices. Do not treat plan steps as a flat checklist; map each step to a verified slice or label it as non-commit work such as research, reproduction, or setup.
+
+For milestone-controlled Git work, each milestone slice runs on `leg`, then verified `leg` merges back into the recorded base branch before the next milestone begins.
+
 ## Context Budget Patterns
 
 ### Three ledgers
@@ -57,17 +66,20 @@ Place confirmed facts by type. Stable facts belong in README/AGENTS/docs, decisi
 
 ### Compression checkpoints
 
-Before context-heavy transitions, update `HANDOFF.md` with:
+After every verified milestone slice, update `HANDOFF.md` as a compression checkpoint before starting the next slice. Include:
 
 - active task and current slice;
+- current milestone and milestone status;
+- base branch, `leg` branch, merge result, and whether `leg` was recreated for the next milestone;
 - changed files;
 - tests run and results;
+- commit created for the verified milestone, or the reason no commit exists;
 - exact next command or edit;
 - known risks;
 - user-facing commitments.
 - durable facts that still need promotion from the run directory into README/AGENTS/docs, DECISIONS/docs/adr, or `logs/YYYY-MM-DD.md`.
 
-After compaction, read the handoff before trusting memory.
+After writing the compression checkpoint, rely on the handoff, state file, logs, git status, and diffs as the working context for the next slice. After compaction, read the handoff before trusting memory.
 
 ### Search discipline
 
@@ -85,6 +97,8 @@ Record search conclusions only when they change the plan.
 ### Preserve a working state
 
 Keep the repository runnable between slices when practical. If a slice must temporarily break the build, record why, keep the broken interval short, and checkpoint before and after.
+
+Use milestones as recovery boundaries. Checkpoint within a milestone when context may be lost, write a compression checkpoint when the milestone slice is verified, create a local commit on `leg` when the agent-owned staging set is clear, then merge `leg` back to the base branch.
 
 ### Reduce blast radius
 
@@ -148,6 +162,8 @@ A good handoff lets a human or fresh agent continue without guessing:
 
 - exact project root;
 - current objective and current slice;
+- current milestone, milestone history, verification, and commit/no-commit state;
+- base branch, current `leg` state, last merge result, and next branch action;
 - changed files and why;
 - commands run and results;
 - facts, assumptions, and decisions separated;

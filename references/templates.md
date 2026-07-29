@@ -55,6 +55,7 @@ Copy and adapt these templates. Keep them short unless the project requires deta
 - Default branch:
 - Branch naming:
 - Commit style:
+- Milestone commit cadence:
 - PR/review requirements:
 - Protected files/paths:
 - Multi-agent coordination rule:
@@ -118,6 +119,8 @@ Date: YYYY-MM-DD
 Owner/agent:
 Project root:
 Subproject:
+Task size: Small | Medium | Large
+Sizing reason:
 
 ### Goal
 
@@ -132,6 +135,8 @@ Subproject:
 ### Git Baseline
 
 - Branch:
+- Base branch for milestone loop:
+- Current milestone branch (`leg`):
 - Upstream:
 - Dirty files before work:
 - Untracked files:
@@ -154,6 +159,16 @@ Subproject:
 2.
 3.
 
+### Plan-To-Milestone Mapping
+
+- Every implementation step maps to a milestone/slice, or is marked as non-commit work:
+
+### Milestones
+
+| Milestone | Branch (`leg`) | Outcome | Verification | Compression checkpoint | Commit / merge result | Rollback / next safest step |
+| --- | --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |  |
+
 ### Verification
 
 ### Docs/Logs/ADRs to Update
@@ -165,7 +180,10 @@ Subproject:
 
 ### Git / Collaboration
 
-- Commit/checkpoint plan:
+- Commit/checkpoint plan by milestone:
+- Commit every verified slice unless:
+- Milestone branch loop: create `leg`, commit on `leg`, merge to base, delete/recreate `leg`:
+- Compression checkpoint plan:
 - Branch/PR plan:
 - Rollback plan:
 - Multi-agent ownership:
@@ -184,6 +202,8 @@ Time:
 Agent:
 Project root:
 Subproject:
+Task size:
+Current milestone:
 
 ### Intent
 
@@ -192,6 +212,12 @@ Subproject:
 ### Changes
 
 -
+
+### Milestones / Checkpoints
+
+| Milestone | Branch (`leg`) | Status | Verification | Compression checkpoint | Commit / merge result | Next |
+| --- | --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |  |
 
 ### Decision Pointers
 
@@ -218,9 +244,21 @@ Subproject:
 ### Git State
 
 - Branch:
+- Base branch:
+- Current/last `leg` branch:
 - Commits:
+- Milestone commits:
+- Milestone merge results:
 - Dirty/untracked files:
 - Unpushed work:
+
+### Compression Checkpoint
+
+- Minimal continuation context:
+- Latest verified slice:
+- Next command/edit:
+- Facts still to promote:
+- Risks/blockers:
 
 ### Risks / TODO
 
@@ -381,10 +419,18 @@ flowchart LR
 
 Project root:
 Subproject:
+Task size:
+Current milestone:
 
 ### Current State
 
 ### What Was Done
+
+### Milestones
+
+| Milestone | Branch (`leg`) | Status | Verification | Compression checkpoint | Commit / merge result | Next |
+| --- | --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |  |
 
 ### Files Touched
 
@@ -395,11 +441,23 @@ Subproject:
 ### Git State
 
 - Branch:
+- Base branch:
+- Current/last `leg` branch:
 - Base commit:
 - Current HEAD:
 - Dirty/untracked files:
 - Unpushed commits:
+- Milestone commits:
+- Milestone merge results:
 - PR/remote:
+
+### Compression Checkpoint
+
+- Minimal continuation context:
+- Latest verified slice:
+- Next command/edit:
+- Facts still to promote:
+- Risks/blockers:
 
 ### Next Safe Step
 ```
