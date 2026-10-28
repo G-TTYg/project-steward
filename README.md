@@ -4,51 +4,45 @@ Project Steward is a Codex skill for maintainable project work. It makes agents 
 
 Its identity is project stewardship. Long-running checkpoints and handoffs are support tools, not the center of the skill.
 
-This repository is the skill folder itself. Install it as `project-steward` so Codex can invoke it as `$project-steward`.
+The installable skill lives in `project-steward/`. Repository maintenance files stay at the root:
+
+```text
+project-steward/                 Development repository
+|-- AGENTS.md                   Maintenance instructions and routes
+|-- README.md                   Install, update, usage, and design summary
+|-- DECISIONS.md                Durable design rationale
+|-- logs/                       Maintenance process history
+|-- tests/                      Helper regressions
+`-- project-steward/            Install this directory only
+    |-- SKILL.md                Runtime instructions and reference index
+    |-- agents/openai.yaml      Codex UI metadata
+    |-- references/             On-demand standards and templates
+    `-- scripts/long_work.py     Recovery helper
+```
+
+In the global installation, `SKILL.md` sits directly at `~/.codex/skills/project-steward/SKILL.md`. Invoke it as `$project-steward`.
 
 ## Install For Codex
 
-Install into the user-level Codex skills directory when you want the skill available across projects.
+Install the repository's `project-steward` subdirectory into the user-level Codex skills directory when you want it available across projects. With the Codex system skill-installer available, use:
 
 ### Windows PowerShell
 
 ```powershell
-$skillRoot = Join-Path $env:USERPROFILE ".codex\skills"
-$dest = Join-Path $skillRoot "project-steward"
-New-Item -ItemType Directory -Force -Path $skillRoot | Out-Null
-
-if (Test-Path (Join-Path $dest ".git")) {
-  git -C $dest pull --ff-only
-} else {
-  git clone https://github.com/G-TTYg/project-steward.git $dest
-}
+python -X utf8 "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-skill-from-github.py" --repo G-TTYg/project-steward --path project-steward
 ```
 
 ### macOS Or Linux
 
 ```bash
-skill_root="$HOME/.codex/skills"
-dest="$skill_root/project-steward"
-mkdir -p "$skill_root"
-
-if [ -d "$dest/.git" ]; then
-  git -C "$dest" pull --ff-only
-else
-  git clone https://github.com/G-TTYg/project-steward.git "$dest"
-fi
+python -X utf8 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo G-TTYg/project-steward --path project-steward
 ```
 
-If this repository is private, authenticate with GitHub first:
-
-```bash
-gh auth login
-```
-
-or make sure `git clone` has access through Git Credential Manager, SSH, or a token.
+The installer exports only that directory and refuses to overwrite an existing installation. Use the Update procedure below for an existing copy. Add `--ref <commit>` to install an exact published version; otherwise the installer uses `main`. If the system installer is unavailable, copy only the `project-steward/` directory from a trusted checkout into the skills directory. Do not clone the whole repository into the runtime path.
 
 ## Use
 
-Start a new Codex session or refresh Codex if the skill is not detected immediately, then invoke:
+The installed skill is available on your next turn. If it is not detected, start a new Codex session or refresh Codex, then invoke:
 
 ```text
 Use $project-steward to keep this project change stable, clear, documented, verified, and easy for the next maintainer to continue.
@@ -66,15 +60,19 @@ Use $project-steward to continue this migration from the existing handoff, prote
 
 ## Update
 
-```bash
-git -C ~/.codex/skills/project-steward pull --ff-only
-```
-
-Windows PowerShell:
+Runtime installations are package snapshots without Git history. Update from a published commit using the system installer into a new staging parent outside the scanned skills directory. For example, on Windows PowerShell:
 
 ```powershell
-git -C "$env:USERPROFILE\.codex\skills\project-steward" pull --ff-only
+$stage = Join-Path ([System.IO.Path]::GetTempPath()) ("project-steward-update-" + [guid]::NewGuid())
+python -X utf8 "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-skill-from-github.py" --repo G-TTYg/project-steward --path project-steward --ref <published-commit> --dest $stage
+python -X utf8 "$env:USERPROFILE\.codex\skills\.system\skill-creator\scripts\quick_validate.py" (Join-Path $stage "project-steward")
 ```
+
+Before activation, compare the current installation with the previously installed package or recorded file hashes to detect local edits. For an older whole-repository Git installation, check its Git status and commit first. Preserve unexpected changes rather than overwriting them.
+
+After staging succeeds, verify that the package matches the published subdirectory, move the existing installation intact to a unique backup outside `~/.codex/skills`, and move the staged `project-steward` directory to `~/.codex/skills/project-steward`. Check absolute source/destination paths before moves. Validate and compare the activated package again; restore the backup if activation fails. Keep the published commit, file baseline, and backup location in local maintenance notes. macOS/Linux use the same staging, backup, and activation sequence with their native file tools.
+
+This procedure also migrates older installations that cloned the whole repository. A Git pull in that old runtime path would leave the package nested one level too deep. Future updates replace validated package snapshots; the development checkout retains the Git history.
 
 ## Develop And Publish From A Separate Checkout
 
@@ -95,7 +93,7 @@ When publication is requested, push the reviewed maintenance branch:
 git push -u origin codex/describe-change
 ```
 
-Update the runtime installation separately after the desired changes reach the branch it tracks, using the Update commands above. Check that installation's Git status first and preserve any local work. Machine-specific maintenance notes belong in `.git/info/maintenance.md` and are not published.
+Update the runtime installation from the desired published commit using the Update procedure above. This repository's maintainer has requested paired publication to `main` and runtime updates for completed improvements, as recorded in AGENTS; a review-only or local-draft request overrides that standing workflow. Machine-specific maintenance notes belong in `.git/info/maintenance.md` and are not published.
 
 ## Validate
 
@@ -120,7 +118,7 @@ Skill is valid!
 When developing this skill, validate the current checkout instead of the installed copy. From the project root on Windows PowerShell:
 
 ```powershell
-python -X utf8 "$env:USERPROFILE\.codex\skills\.system\skill-creator\scripts\quick_validate.py" .
+python -X utf8 "$env:USERPROFILE\.codex\skills\.system\skill-creator\scripts\quick_validate.py" project-steward
 git diff --check
 ```
 
@@ -134,11 +132,11 @@ The tests use disposable directories and local Git repositories; they do not cha
 
 ## Context And Document Ownership
 
-The runtime entry point is [SKILL.md](SKILL.md#1-bind-and-inspect): start with the task and applicable project instructions, reuse context already supplied, and query only the evidence needed for the next decision. A known target can be inspected directly; an unknown owner is located through existing routes or scoped search. There is no required README/architecture/ADR/log reading bundle.
+The runtime entry point is [SKILL.md](project-steward/SKILL.md#1-bind-and-inspect): start with the task and applicable project instructions, reuse context already supplied, and query only the evidence needed for the next decision. A known target can be inspected directly; an unknown owner is located through existing routes or scoped search. There is no required README/architecture/ADR/log reading bundle.
 
 For maintenance of this skill package, [AGENTS.md](AGENTS.md#context-routes) supplies this repository's routes and verification commands. Installation and update questions use the corresponding sections of this README. Those are different tasks from using the skill in another project.
 
-Each Markdown has a defined owner and read trigger in [project file responsibilities](references/project-files.md#markdown-responsibilities). [Context retrieval](references/context-management.md#retrieve-by-question) explains how to query files and stop; [the template index](references/templates.md#template-index) provides optional index and document skeletons. These links are lookup routes, not a reading list.
+Each Markdown has a defined owner and read trigger in [project file responsibilities](project-steward/references/project-files.md#markdown-responsibilities). [Context retrieval](project-steward/references/context-management.md#retrieve-by-question) explains how to query files and stop; [the template index](project-steward/references/templates.md#template-index) provides optional index and document skeletons. These links are lookup routes, not a reading list.
 
 A project's AGENTS holds core constraints and a few direct routes. An optional `docs/index.md` routes a larger documentation set; a project map identifies implementation ownership; architecture explains current boundaries; decisions preserve rationale; logs preserve history; a handoff records only current continuation state. Link to each canonical fact instead of copying it across these files.
 
@@ -175,14 +173,14 @@ Task sizing is explicit:
 
 ## Repository Design
 
-- `SKILL.md` is the runtime contract loaded by Codex after the skill triggers.
+- `project-steward/SKILL.md` is the runtime contract loaded by Codex after the skill triggers.
 - `AGENTS.md` is the maintenance contract for humans and agents editing this skill repository.
 - `README.md` is the install, update, usage, and design summary.
-- `references/` holds detailed standards retrieved by question through the SKILL reference index. Context retrieval mechanics and project Markdown responsibilities have separate owners.
-- `scripts/long_work.py` manages agent execution state only; it does not own canonical durable facts or business-code commits.
-- `agents/openai.yaml` is UI metadata and must stay aligned with `SKILL.md`.
+- `project-steward/references/` holds detailed standards retrieved by question through the SKILL reference index. Context retrieval mechanics and project Markdown responsibilities have separate owners.
+- `project-steward/scripts/long_work.py` manages agent execution state only; it does not own canonical durable facts or business-code commits. `tests/` verifies it from the repository root.
+- `project-steward/agents/openai.yaml` is UI metadata and must stay aligned with the package's `SKILL.md`.
 
-Use `scripts/long_work.py` when a task needs agent execution state for recovery or handoff:
+Use the installed `scripts/long_work.py` when a task needs agent execution state for recovery or handoff. For development, its repository-relative path is `project-steward/scripts/long_work.py`:
 
 ```bash
 python ~/.codex/skills/project-steward/scripts/long_work.py init --project . --task "short task title"

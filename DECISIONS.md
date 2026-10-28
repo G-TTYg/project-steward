@@ -4,7 +4,7 @@
 
 Milestones describe verifiable progress. They do not require a new branch, a fixed `leg` name, or a run directory. Use existing project conventions and keep an appropriate task branch; introduce a branch/worktree when isolation helps. Preserve the `leg` loop when explicitly requested.
 
-The previous universal-sounding loop conflicted with Medium task guidance and could collide with branches owned by other tasks. Keeping progress and isolation separate preserves verified-slice commits without branch churn. Detailed Git procedures remain in `references/git-stewardship.md`.
+The previous universal-sounding loop conflicted with Medium task guidance and could collide with branches owned by other tasks. Keeping progress and isolation separate preserves verified-slice commits without branch churn. Detailed Git procedures remain in `project-steward/references/git-stewardship.md`.
 
 ## 2026-10-28: Reported Verification And Preserved Recovery Context
 
@@ -18,8 +18,16 @@ Run-state commits include only the four managed recovery files, refuse pre-exist
 
 The startup core is the current request, the skill contract, and applicable project instructions, reusing content already supplied. Additional scoped instructions and explicit reading requirements remain binding. There is no universal README/architecture/decision/log reading bundle; retrieve the evidence needed for a concrete unresolved question.
 
-Keep skill-reference routing in SKILL and this repository's maintenance routes in AGENTS. Retrieval mechanics belong to `references/context-management.md`; project Markdown responsibilities and index shape belong to `references/project-files.md`. Templates and generated recovery guidance follow those contracts. README remains a human entry point, not another runtime instruction layer.
+Keep skill-reference routing in SKILL and this repository's maintenance routes in AGENTS. Retrieval mechanics belong to `project-steward/references/context-management.md`; project Markdown responsibilities and index shape belong to `project-steward/references/project-files.md`. Templates and generated recovery guidance follow those contracts. README remains a human entry point, not another runtime instruction layer.
 
 Use existing AGENTS/README/index routes first; known targets can bypass navigation. Add a separate index only when the real documentation set warrants it. An index owns paths, sections/symbols, retrieval keys, and read triggers; canonical files own facts. A project map locates code ownership, architecture explains current relationships, decisions preserve rationale, logs preserve history, and a handoff points to the next action.
 
 This avoids front-loading unrelated documents or duplicating their contents in multiple summaries. A missing/stale route falls back to scoped search and targeted repair. Stop expanding when task constraints, affected contracts, implementation, and verification have adequate evidence; never use an arbitrary file/token limit to omit necessary context. On resume, open the handoff first and consult PLAN/LOG/STATE selectively for remaining gaps.
+
+## 2026-10-28: Separate Runtime Package And Maintenance Repository
+
+Keep the installable skill in `project-steward/`: SKILL, references, UI metadata, and the recovery helper. Root AGENTS, README, decisions, process logs, and tests belong to repository maintenance and are excluded from the runtime installation. Internal skill links remain relative to the package so it works independently of the checkout.
+
+Install only the published subdirectory as a package snapshot with SKILL directly inside the global skill folder. A whole-repository runtime clone would now place that entry point too deep and include unrelated maintenance content. A link to the mutable development checkout would expose unfinished changes immediately, so use a pinned published package instead.
+
+Stage, validate, and compare the package before activation; preserve the previous installation outside skill discovery. Record version/file baselines and backup paths locally. This replaces runtime Git fast-forwards while preserving the maintainer's standing paired publication/install workflow. Shared Git history and future development stay in the maintenance checkout.

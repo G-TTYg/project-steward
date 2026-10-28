@@ -8,8 +8,8 @@ The minimum core is the current request, the loaded skill contract, and applicab
 
 Distinguish the skill package from the project using it:
 
-- In the skill package, SKILL supplies the runtime protocol and reference index; its AGENTS governs maintenance of the package. Package README and references are queried for the matching skill question.
-- In a user's project, that project's AGENTS and scoped instructions govern the work. Its existing routes lead to its own code/docs. The skill package's maintenance AGENTS is not an extra startup read for another project.
+- In the installed skill package, SKILL supplies the runtime protocol and reference index; references answer matching stewardship questions. Repository-root AGENTS and README govern development and installation of the skill and are outside the installed package.
+- In a user's project, that project's AGENTS and scoped instructions govern the work. Its existing routes lead to its own code/docs. The skill repository's maintenance instructions do not govern an unrelated project using the skill.
 
 There is no universal second core file. Open README for missing orientation/setup, a project map for unknown ownership, a spec for the relevant intended contract, or an active handoff when resuming that run. Known targets can be reached directly. Routine tasks do not require a new context index or ledger.
 
@@ -29,16 +29,16 @@ Adapt directories and symbols to discovered paths; these examples do not prescri
 
 ```text
 rg --files -g 'AGENTS.md' -g 'README.md' -g '*index*.md' -g '*map*.md'
-rg --files scripts tests -g '*.py'
-rg -n '^#{1,3} ' references/project-files.md
-rg -n '^def (update_run|render_handoff)' scripts/long_work.py
-rg -n -C 8 -F 'last_verified' scripts/long_work.py
+rg --files project-steward/scripts tests -g '*.py'
+rg -n '^#{1,3} ' project-steward/references/project-files.md
+rg -n '^def (update_run|render_handoff)' project-steward/scripts/long_work.py
+rg -n -C 8 -F 'last_verified' project-steward/scripts/long_work.py
 rg -n -C 6 -F 'test_pending_checkpoint' tests/test_long_work.py
 ```
 
 The last commands illustrate this skill repository. Choose the equivalent area/symbol in another project. Scope content searches to selected files or directories; use fixed-string searches for literal errors/keys. If `rg` is unavailable, use the environment's file discovery and text search tools with the same narrowing strategy.
 
-For a large matched file, list headings or locate a symbol, then request a bounded excerpt. For example, in PowerShell, `Get-Content -LiteralPath scripts/long_work.py | Select-Object -Skip 330 -First 75` shows one region; choose bounds from the current match, not from saved line numbers. Ask the file/browser tool for the equivalent range when appropriate. A small relevant file can be read in full.
+For a large matched file, list headings or locate a symbol, then request a bounded excerpt. For example, in PowerShell, `Get-Content -LiteralPath project-steward/scripts/long_work.py | Select-Object -Skip 330 -First 75` shows one region in this skill's development checkout; choose bounds from the current match, not from saved line numbers. Ask the file/browser tool for the equivalent range when appropriate. A small relevant file can be read in full.
 
 Do not mistake limited/truncated output for complete evidence. Narrow a noisy query or request the missing surrounding region. Read the whole relevant contract when its conditions span multiple sections; context management must not hide constraints.
 
