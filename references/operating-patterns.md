@@ -14,7 +14,7 @@ Write a plan that a fresh Codex instance could execute without remembering the c
 - facts discovered with file paths or command outputs;
 - ordered milestones and slices with verification for each milestone;
 - commit/checkpoint plan for each milestone;
-- milestone branch loop plan: base branch, `leg` branch, merge point, and next `leg` recreation;
+- branch/worktree strategy when isolation is needed; an optional user-requested milestone loop includes its base and merge point;
 - compression checkpoint plan for each verified slice;
 - rollback path and risks;
 - current open questions.
@@ -48,7 +48,7 @@ Promote a slice to a milestone when it is recoverable: the outcome is clear, the
 
 When executing an approved plan, require milestone slices. Do not treat plan steps as a flat checklist; map each step to a verified slice or label it as non-commit work such as research, reproduction, or setup.
 
-For milestone-controlled Git work, each milestone slice runs on `leg`, then verified `leg` merges back into the recorded base branch before the next milestone begins.
+Use the current task branch for sequential milestones unless project workflow or isolation needs call for a separate branch/worktree. An explicitly requested `leg` loop follows the optional procedure in `git-stewardship.md`.
 
 ## Context Budget Patterns
 
@@ -66,11 +66,11 @@ Place confirmed facts by type. Stable facts belong in README/AGENTS/docs, decisi
 
 ### Compression checkpoints
 
-After every verified milestone slice, update `HANDOFF.md` as a compression checkpoint before starting the next slice. Include:
+When recovery state is in use, update `HANDOFF.md` after each verified milestone slice and before interruption. Do not create a run directory solely to satisfy this checklist. A compression checkpoint is a compact durable handoff, not automatic conversation compaction. Include:
 
 - active task and current slice;
 - current milestone and milestone status;
-- base branch, `leg` branch, merge result, and whether `leg` was recreated for the next milestone;
+- observed branch/HEAD and, when relevant, base branch, slice commit, and merge result;
 - changed files;
 - tests run and results;
 - commit created for the verified milestone, or the reason no commit exists;
@@ -98,7 +98,7 @@ Record search conclusions only when they change the plan.
 
 Keep the repository runnable between slices when practical. If a slice must temporarily break the build, record why, keep the broken interval short, and checkpoint before and after.
 
-Use milestones as recovery boundaries. Checkpoint within a milestone when context may be lost, write a compression checkpoint when the milestone slice is verified, create a local commit on `leg` when the agent-owned staging set is clear, then merge `leg` back to the base branch.
+Use milestones as recovery boundaries. Checkpoint when context may be lost, distinguish pending checks from verified results, and create an explicit local commit when verification and ownership are clear. Refresh existing recovery state with that outcome; merge only when the chosen branch workflow requires it.
 
 ### Reduce blast radius
 
@@ -138,7 +138,7 @@ Write the reproduction into the run log if another agent might need it.
 
 ## Subagent Patterns
 
-Use subagents for independent passes, not as a substitute for ownership.
+When delegation is authorized and useful, use subagents for independent passes with explicit ownership and isolated side effects. Do not infer authorization to spawn agents from this reference.
 
 Good subagent tasks:
 
@@ -163,7 +163,7 @@ A good handoff lets a human or fresh agent continue without guessing:
 - exact project root;
 - current objective and current slice;
 - current milestone, milestone history, verification, and commit/no-commit state;
-- base branch, current `leg` state, last merge result, and next branch action;
+- observed Git state and any base branch, slice commit, or merge outcome relevant to the chosen workflow;
 - changed files and why;
 - commands run and results;
 - facts, assumptions, and decisions separated;

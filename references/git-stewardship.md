@@ -8,7 +8,7 @@ Use this reference for production-grade Git hygiene in projects touched by multi
 - Keep every change attributable, reviewable, and reversible.
 - Prefer small verified commits over large mixed snapshots.
 - Treat every verified milestone slice as the normal commit boundary for non-trivial agent-owned work.
-- Isolate milestone work on a short-lived local `leg` branch and merge it back after verification when milestone branch control is in use.
+- Use a task branch or worktree when isolation helps; milestones alone do not require extra branches.
 - Make completed agent-owned work into explicit local commits so others can inspect, revert, cherry-pick, or continue it.
 - Use Git to communicate project state, not just to save files.
 - Never trade short-term convenience for lost rollback or unclear ownership.
@@ -55,7 +55,7 @@ Do not commit when:
 
 If you leave completed work uncommitted, record the reason, exact dirty files, likely owner, verification state, and next Git action. Do not leave an ambiguous dirty worktree as the final project state.
 
-Local commits are not publication. Do not push unless the user requested it or the project workflow clearly requires it.
+Local commits are not publication. Publish only within the user's requested scope and existing authorization; the skill does not grant permission to push.
 
 ## Milestone Commit Cadence
 
@@ -77,7 +77,9 @@ Do not treat `docs/agent-runs/` checkpoints as substitutes for business-code com
 
 ## Milestone Branch Loop
 
-When milestone branch control is requested or expected, keep the original branch as the base branch and use a local `leg` branch for each milestone.
+Follow the existing project branch strategy. A current task branch is sufficient for sequential verified slices. Use a dedicated branch/worktree when isolation helps. Branch names follow project conventions; a fixed `leg` name can collide across agents and worktrees sharing Git refs.
+
+Only when the user explicitly requests the `leg` loop, keep the original branch as the base branch and use a local `leg` branch for each milestone. The following is that optional workflow, not a prerequisite for milestones.
 
 Default loop:
 
@@ -122,7 +124,7 @@ Use the repository's existing branch strategy first. If absent:
 - create a short-lived feature branch for non-trivial changes;
 - keep branch names descriptive, for example `feat/auth-session-boundary` or `fix/payment-webhook-retry`;
 - avoid long-lived divergent branches;
-- for milestone branch control inside an already chosen working branch, use local `leg` as the short-lived milestone branch unless it conflicts with existing work;
+- do not add nested per-milestone branches inside an appropriate task branch without a concrete isolation need or explicit request;
 - use separate worktrees for parallel agents touching the same repo when practical;
 - never switch branches with dirty user changes unless you know they carry cleanly or the user approves.
 
@@ -181,7 +183,7 @@ For agent execution state documentation created by Project Steward, it is accept
 chore(agent-state): checkpoint <task>
 ```
 
-Such commits must stage only the relevant `docs/agent-runs/<run>/` files and must never include business-code changes by accident.
+The helper stages only `PLAN.md`, `LOG.md`, `HANDOFF.md`, and `STATE.json` in the relevant run directory. Such commits must contain only agent-owned recovery files and must never include business-code changes by accident.
 Milestone run-state commits are also acceptable before interruption or after milestone updates, but they still must be limited to the run directory and are separate from business-code milestone commits.
 
 ## Generated Files, Secrets, And Large Files
@@ -202,7 +204,7 @@ Use remote operations deliberately:
 - `git fetch` is safe for inspection.
 - `git pull --ff-only` is preferred on shared branches.
 - Avoid merge commits from accidental pulls unless the repo expects them.
-- Do not push unless the user requested publication or the workflow clearly requires it.
+- Publish only within the user's requested scope and existing authorization.
 - Never force-push, rewrite shared history, delete remote branches, or change protected branch settings without explicit approval.
 
 Before pushing:
@@ -222,7 +224,7 @@ Use destructive commands only with explicit approval and a confirmed target:
 
 - `git reset --hard`
 - `git clean -fd`
-- branch deletion
+- deletion of unmerged, shared, remote, or ownership-unclear branches (normal cleanup of your own fully merged local branch follows the chosen workflow)
 - force push
 - history rewrite
 
@@ -264,7 +266,7 @@ Include Git state in any durable handoff:
 - why any agent-owned completed work was not committed;
 - milestone names, verification, and commit hashes or no-commit reasons;
 - compression checkpoint location for the latest verified slice;
-- base branch, `leg` branch commit, merge result, and next `leg` recreation state;
+- base/task branch, slice commit, and merge result when a separate branch workflow is used;
 - files not owned by this agent that must not be overwritten.
 
 ## Red Flags
@@ -274,9 +276,9 @@ Include Git state in any durable handoff:
 - A commit includes unrelated formatting churn.
 - Completed agent-owned work remains dirty without a reason and next Git action.
 - A milestone is marked verified but has no local commit, no commit hash, and no no-commit reason.
-- A verified slice is followed by more implementation without a checkpoint/handoff refresh.
+- Recovery state is in use but a verified slice is followed by more implementation without refreshing it.
 - A plan waits until the end for one large commit even though smaller verified slices were available.
-- Milestone work is committed on the base branch instead of `leg` without a recorded reason.
+- Branch churn is imposed without an isolation need, or branch switches ignore dirty work and project conventions.
 - `leg` is force-deleted, reset, or recreated without checking whether it contains unmerged or user-owned work.
 - A worktree has untracked files with unclear purpose.
 - Multiple agents edit the same files without coordination.

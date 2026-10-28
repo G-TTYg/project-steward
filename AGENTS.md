@@ -41,6 +41,7 @@ Do not let any part of the skill imply that agent execution state replaces READM
 - `README.md` - install, update, use, validate, and design summary for humans and agents.
 - `agents/openai.yaml` - Codex UI metadata; keep it consistent with `SKILL.md`.
 - `scripts/long_work.py` - deterministic helper for agent execution state.
+- `tests/test_long_work.py` - isolated CLI and Git-boundary regressions for that helper.
 - `references/project-files.md` - project-root, fact placement, project structure, and governance file rules.
 - `references/stewardship-standards.md` - architecture, anti-sprawl, project structure, code comment/header, redesign, and review standards.
 - `references/git-stewardship.md` - production Git workflow, commits, rollback, PRs, and handoffs.
@@ -59,9 +60,11 @@ Do not let any part of the skill imply that agent execution state replaces READM
 ## Commands
 
 - Validate skill:
-  `python -X utf8 "%USERPROFILE%\.codex\skills\.system\skill-creator\scripts\quick_validate.py" .`
+  `python -X utf8 "$env:USERPROFILE\.codex\skills\.system\skill-creator\scripts\quick_validate.py" .`
 - Check whitespace:
   `git diff --check`
+- Run helper regressions:
+  `python -X utf8 -m unittest discover -s tests -v`
 - Check Git state:
   `git status --short --branch`
 
@@ -70,7 +73,7 @@ Do not let any part of the skill imply that agent execution state replaces READM
 - Check `git status --short --branch` before edits.
 - Stage only intentional files.
 - Commit verified agent-owned changes.
-- Push only when requested or when updating this skill repo as part of the task.
+- Publish only within the user's requested scope and existing authorization; editing this skill does not itself authorize a push.
 - Do not rewrite shared history or discard user work without explicit approval.
 
 ## Verification Rules
@@ -79,6 +82,6 @@ Before delivery, run:
 
 - `quick_validate.py` for the skill folder.
 - `git diff --check`.
-- A targeted script smoke test when `scripts/long_work.py` changes.
+- Helper regression tests when `scripts/long_work.py` changes.
 
 Report validation, Git commit, push state, and any residual risk.

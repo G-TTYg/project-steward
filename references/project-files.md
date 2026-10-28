@@ -149,6 +149,8 @@ Alternative names are fine if the project already uses them:
 
 If a repo is small, avoid bureaucracy. Use:
 
+The following is a menu of canonical locations, not a requirement to create every file. A small task should not generate new governance, decision, or log files without a concrete need.
+
 ```text
 AGENTS.md
 README.md

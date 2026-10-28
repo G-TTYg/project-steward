@@ -1,6 +1,6 @@
 # Project Steward
 
-Project Steward is a Codex skill for maintainable project work. It makes agents bind to the right project root, preserve architecture and project structure, keep code intent visible, store facts in the right project files, maintain production-grade Git hygiene, and deliver verified milestone commits with `leg` branch control and compression checkpoints that humans and future agents can continue.
+Project Steward is a Codex skill for maintainable project work. It makes agents bind to the right project root, preserve architecture and project structure, keep code intent visible, store facts in the right project files, maintain production-grade Git hygiene, and deliver verified slices with proportional branch isolation and durable handoff checkpoints that humans and future agents can continue.
 
 Its identity is project stewardship. Long-running checkpoints and handoffs are support tools, not the center of the skill.
 
@@ -124,6 +124,14 @@ python -X utf8 "$env:USERPROFILE\.codex\skills\.system\skill-creator\scripts\qui
 git diff --check
 ```
 
+For helper changes, run the standard-library regression suite from the development checkout:
+
+```bash
+python -X utf8 -m unittest discover -s tests -v
+```
+
+The tests use disposable directories and local Git repositories; they do not change the installed skill or publish anything.
+
 ## What Agents Should Read
 
 For installation or updates, read this README first. For changes to this skill repository, read `AGENTS.md` first.
@@ -158,7 +166,7 @@ Task sizing is explicit:
 
 - Small tasks use Fast Path for narrow, low-risk, easily verified changes.
 - Medium tasks use milestone-lite stewardship for bounded behavior changes, related file sets, or initially ambiguous work.
-- Large tasks use Full Stewardship for cross-boundary, public-contract, migration, security, infrastructure, refactor, or long-running work.
+- Large tasks use Full Stewardship for cross-boundary changes, public contracts, migrations, security, infrastructure, broad refactors, or other work with high recovery cost.
 - If task size is unclear, default to Medium until repository evidence supports Small or Large.
 
 ## Repository Design
@@ -188,13 +196,17 @@ Attach checkpoints to a milestone when the work is broad or likely to be resumed
 python ~/.codex/skills/project-steward/scripts/long_work.py checkpoint --run <run-dir> --milestone "parser compatibility" --summary "what changed" --next "next action" --verify "pending check"
 ```
 
-Record a verified or intentionally paused milestone:
+Record a verified milestone (use `--status active`, `paused`, or `blocked` for unfinished work):
 
 ```bash
 python ~/.codex/skills/project-steward/scripts/long_work.py milestone --run <run-dir> --name "parser compatibility" --summary "slice outcome" --verify "test result" --next "next milestone or handoff action"
 ```
 
-During plan execution, every non-trivial implementation step should map to a milestone/slice or be marked as non-commit work. Milestone-controlled work uses a local `leg` branch: create `leg` from the original branch, commit the verified slice on `leg`, merge `leg` back to the original branch, then delete and recreate `leg` for the next milestone. After every verified slice, refresh the run-state handoff as a compression checkpoint, then create a local commit for the verified agent-owned slice unless the user or project workflow says not to commit.
+For multi-step implementation, map steps to verifiable slices and commit completed agent-owned work unless the user or project workflow says otherwise. Keep the current task branch when it is appropriate; separate branches/worktrees are optional isolation tools. The fixed `leg` loop is supported only when explicitly requested. Refresh recovery state after verified slices when that state is in use.
+
+The helper records verification supplied by the caller; it does not run tests, compact conversations, or create/merge implementation branches. Milestone status applies to a slice; close the entire run with `checkpoint --status complete --verify "observed results"`. `HANDOFF.md` keeps generated status between markers and preserves manual text outside them. Git observations are refreshed automatically before writing/committing the checkpoint; no upstream means the unpushed count is unknown. Attach an existing implementation commit with `--commit <hash>` and optional workflow context with `--base-branch <branch>` / `--merge-result <text>`.
+
+On the first update of an older run, the helper preserves the unmarked legacy handoff in full. Do not relocate a run outside its recorded project; updates require its initialized state and four regular managed files. A new checkpoint without `--verify` reports its verification as unreported rather than inheriting an older slice's success. Use `--risk ""` to clear a resolved risk.
 
 When the agent execution state files are agent-owned and ready to preserve in project history, add an explicit local run-state commit:
 
@@ -202,4 +214,4 @@ When the agent execution state files are agent-owned and ready to preserve in pr
 python ~/.codex/skills/project-steward/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --commit-run-state
 ```
 
-`--commit-run-state` stages only that run directory, refuses to continue if unrelated staged changes already exist, and never pushes. It never commits business-code paths; verified milestone code commits must use explicit Git staging outside the script.
+`--commit-run-state` stages only the four managed recovery files (`PLAN.md`, `LOG.md`, `HANDOFF.md`, `STATE.json`), refuses pre-existing staged changes, and never pushes. It never commits business-code paths; verified milestone code commits must use explicit Git staging outside the script.

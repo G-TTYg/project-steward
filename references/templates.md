@@ -135,8 +135,8 @@ Sizing reason:
 ### Git Baseline
 
 - Branch:
-- Base branch for milestone loop:
-- Current milestone branch (`leg`):
+- Base branch (if using separate milestone branches):
+- Task/milestone branch (if separately used):
 - Upstream:
 - Dirty files before work:
 - Untracked files:
@@ -165,7 +165,7 @@ Sizing reason:
 
 ### Milestones
 
-| Milestone | Branch (`leg`) | Outcome | Verification | Compression checkpoint | Commit / merge result | Rollback / next safest step |
+| Milestone | Branch (if separate) | Outcome | Verification | Compression checkpoint | Commit / merge result | Rollback / next safest step |
 | --- | --- | --- | --- | --- | --- | --- |
 |  |  |  |  |  |  |  |
 
@@ -182,7 +182,7 @@ Sizing reason:
 
 - Commit/checkpoint plan by milestone:
 - Commit every verified slice unless:
-- Milestone branch loop: create `leg`, commit on `leg`, merge to base, delete/recreate `leg`:
+- Optional branch/worktree isolation and merge plan (only when needed or requested):
 - Compression checkpoint plan:
 - Branch/PR plan:
 - Rollback plan:
@@ -215,7 +215,7 @@ Current milestone:
 
 ### Milestones / Checkpoints
 
-| Milestone | Branch (`leg`) | Status | Verification | Compression checkpoint | Commit / merge result | Next |
+| Milestone | Branch (if separate) | Status | Verification | Compression checkpoint | Commit / merge result | Next |
 | --- | --- | --- | --- | --- | --- | --- |
 |  |  |  |  |  |  |  |
 
@@ -245,7 +245,7 @@ Current milestone:
 
 - Branch:
 - Base branch:
-- Current/last `leg` branch:
+- Task/milestone branch (if separate):
 - Commits:
 - Milestone commits:
 - Milestone merge results:
@@ -255,7 +255,7 @@ Current milestone:
 ### Compression Checkpoint
 
 - Minimal continuation context:
-- Latest verified slice:
+- Latest verified slice (exclude pending/failed work):
 - Next command/edit:
 - Facts still to promote:
 - Risks/blockers:
@@ -428,7 +428,7 @@ Current milestone:
 
 ### Milestones
 
-| Milestone | Branch (`leg`) | Status | Verification | Compression checkpoint | Commit / merge result | Next |
+| Milestone | Branch (if separate) | Status | Verification | Compression checkpoint | Commit / merge result | Next |
 | --- | --- | --- | --- | --- | --- | --- |
 |  |  |  |  |  |  |  |
 
@@ -442,7 +442,7 @@ Current milestone:
 
 - Branch:
 - Base branch:
-- Current/last `leg` branch:
+- Task/milestone branch (if separate):
 - Base commit:
 - Current HEAD:
 - Dirty/untracked files:
@@ -454,7 +454,7 @@ Current milestone:
 ### Compression Checkpoint
 
 - Minimal continuation context:
-- Latest verified slice:
+- Latest verified slice (exclude pending/failed work):
 - Next command/edit:
 - Facts still to promote:
 - Risks/blockers:
