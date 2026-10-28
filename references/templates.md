@@ -1,113 +1,107 @@
 # Project Steward Templates
 
-Copy and adapt these templates. Keep them short unless the project requires detail.
+Use the heading index to select one needed skeleton. Keep only fields that serve the task; do not read or create every artifact. Markdown responsibilities are defined in `project-files.md`.
+
+## Template Index
+
+Open/copy only the template matching a document that is actually needed. Remove unused fields. Paths in skeletons are placeholders to replace with verified existing targets, not documents to generate in bulk.
+
+| Need | Template | Boundary |
+| --- | --- | --- |
+| Core project instructions and direct routes | [AGENTS](#agentsmd-template) | Project-specific constraints, not a copied skill manual. |
+| Navigation for a larger doc set | [Context index](#context-index-template) | Routes to facts, not repeated facts. |
+| Find code ownership | [Project map](#project-map-template) | Responsibilities and entrypoints, not a complete tree. |
+| Planned work and missing evidence | [Work plan](#work-plan-template) | Current scope and next questions. |
+| Project process history | [Daily log](#daily-project-log-template) | Short chronology and evidence pointers. |
+| Durable choice | [ADR](#adr-template) | Rationale and consequences. |
+| Focused redesign | [Refactor plan](#redesign--refactor-plan-template) | Affected boundary and migration. |
+| Current system relationships | [Architecture](#architecture-overview-template) | Flows and invariants; link to code owners. |
+| Resume a specific run | [Handoff](#handoff-template) | Current next step and retrieval pointers. |
+| Concrete blocker | [Blocker](#blocker-note) | Impact, attempts, and next action. |
+| Risk-driven checks | [Verification matrix](#verification-matrix) | Relevant checks, not a mandatory test catalog. |
 
 ## `AGENTS.md` Template
+
+Keep only project-specific constraints and essential commands. Already supplied instructions do not need a second disk read; additional instructions governing target files still apply.
 
 ```markdown
 # AGENTS.md
 
-## Project Scope
+## Scope And Purpose
 
-- Project root:
-- Monorepo subproject, if any:
+- Project root / subproject:
+- Purpose / non-goals:
 
-## Project Purpose
+## Core Working Constraints
 
-- What this project does:
-- Non-goals:
-- Primary users/systems:
+- Project-specific boundaries and invariants:
+- Local structure / ownership rules:
+- Protected user work, generated files, or data:
+- Git/commit/publication conventions within user authorization:
 
-## Required Reading Before Work
+## Essential Commands
 
-1. `README.md`
-2. `docs/architecture.md` or `docs/architecture/overview.md`
-3. Relevant files under `docs/`, `specs/`, or `.claude/specs/`
-4. Nearby source code and tests for the area being changed
-5. Recent project-local logs under `logs/` when continuing prior work
+- Relevant verification:
+- Common development command, if needed:
+- Details and prerequisites: <existing canonical guide#section>
 
-## Project Map
+## Context Routes
 
-- Source roots/packages:
-- `tests/...` -
-- `scripts/` or `tools/` -
-- `config/` -
-- `assets/` -
-- `docs/...` -
+Use the task and applicable instructions as the core. Reuse supplied context.
+Known target: inspect it directly. Unknown owner: use the relevant route below,
+then scoped filename/symbol search. Do not read every linked file by default.
 
-## Project Structure Rules
+| Question / read when | Existing target + heading/symbol | Scope / query |
+| --- | --- | --- |
+| <actual recurring question> | <canonical path#heading or code symbol> | <narrow search> |
 
-- Organize the whole project tree by clear layer, feature, bounded context, adapter, provider, artifact type, and verification scope.
-- Do not dump unrelated files directly under source, test, script, config, docs, assets, tooling, or root folders when boundaries are clear.
-- Keep shared/common/utils/tooling areas small and named by responsibility.
-- Keep tests near changed behavior or mirrored by project/code structure.
+Discover applicable scoped instructions before editing. Expand context only for
+an unresolved contract, dependency, or verification question. Repair affected
+routes when paths/headings/ownership change.
 
-## Commands
+## Fact Owners And Delivery
 
-- Install:
-- Dev:
-- Test:
-- Lint/typecheck:
-- Build:
+- Working constraints here; setup/usage in README or its linked guide.
+- Current contracts/architecture in their owning docs/code; decisions in the
+  existing decisions/ADR area; process history in project logs when needed.
+- Handoff is current continuation state; open plan/history only for a missing
+  question. Link to canonical facts instead of copying them.
+- Verification evidence, residual risk, Git state, and next action at delivery.
+```
 
-## Git Rules
+## Context Index Template
 
-- Default branch:
-- Branch naming:
-- Commit style:
-- Milestone commit cadence:
-- PR/review requirements:
-- Protected files/paths:
-- Multi-agent coordination rule:
-- Required Git checks before handoff:
+Use in an existing README/index, or `docs/index.md` only when a separate routing level is useful. Keep high-frequency routes direct from AGENTS. A small repository does not need another file.
 
-## Architecture Rules
+```markdown
+# Context Index
 
-- Default to modern maintainable engineering: layered architecture, modularity, decoupling, explicit interfaces/contracts, and clear abstraction boundaries.
-- Follow existing module boundaries; improve unclear boundaries when the change would otherwise spread across unrelated code.
-- Create or preserve meaningful folders for presentation, application/use cases, domain, infrastructure/adapters, persistence/schemas, features, tests, scripts/tools, config, docs, assets, and generated files when project scale warrants it.
-- Search for similar implementations before adding new modules.
-- Do not add dependencies/frameworks without a documented reason.
-- Keep public APIs backward-compatible unless explicitly changing them.
-- Keep domain/business logic independent from UI, framework, vendor, and infrastructure details where practical.
+Navigation only. Select the row answering the current question. Targets own the
+facts; this index owns paths, retrieval keys, and discovery. Verify paths and use
+scoped search if a route is missing or stale.
 
-## Code Comment Rules
+| Question / read when | Canonical target + heading/symbol | Scope / query | Update when |
+| --- | --- | --- | --- |
+| <actual question> | <existing path and stable section/symbol> | <keyword or scoped command> | <path/heading/ownership changes> |
+```
 
-- Add comments/docstrings for non-obvious intent, domain invariants, external constraints, edge cases, concurrency, security, performance, migrations, and temporary workarounds.
-- Document public interfaces when callers need contract, side-effect, error, or lifecycle expectations.
-- Add module/file header comments for complex modules, entrypoints, adapters, public APIs, scripts, migrations, generated-code boundaries, and complex tests when responsibility or constraints are not obvious from the path and name.
-- File headers should capture responsibility, non-goals, layer/context, public entrypoints, invariants, external systems, side effects, lifecycle, security/privacy/concurrency/performance constraints, and links to ADRs/specs when useful.
-- Do not add comments that merely restate obvious syntax.
-- Do not add boilerplate headers to trivial files.
-- Update stale nearby comments when changing code.
+## Project Map Template
 
-## Documentation Rules
+Use the existing equivalent if present. Include meaningful owners/entrypoints, not every file; architecture is linked only for the boundary explanation.
 
-- Stable facts live in `README.md`, `AGENTS.md`, and `docs/`.
-- Decision facts live in `DECISIONS.md` or `docs/adr/`.
-- Process facts live in `logs/YYYY-MM-DD.md`.
-- Agent execution state lives in `docs/agent-runs/<date-task>/` and must not be the only copy of durable project facts.
-- Update README/docs when commands, behavior, APIs, setup, or architecture change.
-- Record significant decisions in `docs/adr/` or `DECISIONS.md`.
-- Update diagrams when system boundaries or dependencies change.
+```markdown
+# Project Map
 
-## Logging Rules
+This map locates implementation ownership. For a known target, go directly there.
 
-- For non-trivial work, append this project's `logs/YYYY-MM-DD.md` with process facts: plan summary, discoveries, verification, and risks.
-- Promote stable facts from logs or agent execution state into README/AGENTS/docs.
-- Promote durable decisions from logs or agent execution state into DECISIONS/docs/adr.
-- Do not mix logs from other repos/projects managed by the same agent.
-- Do not log secrets or sensitive personal data.
+| Responsibility / boundary | Source entrypoint / symbol | Contract / test pointer | Lookup keys |
+| --- | --- | --- | --- |
+| <actual area> | <existing path/symbol> | <existing contract/test> | <domain terms> |
 
-## Verification Rules
+## Cross-Boundary Routes
 
-- Run the narrowest relevant test first.
-- Run lint/typecheck/build when touching shared code or before handoff.
-- If checks cannot run, explain why and what is unverified.
-
-## Safety Rules
-
-- Ask before destructive migrations, data deletion, deployments, or security posture changes.
+- <affected relationship> -> <canonical architecture/contract#section>
+- Scoped working instructions: <actual applicable location, if any>
 ```
 
 ## Work Plan Template
@@ -124,13 +118,15 @@ Sizing reason:
 
 ### Goal
 
-### Context Read
+### Evidence And Next Queries
 
-- [ ] `AGENTS.md`
-- [ ] `README.md`
-- [ ] Relevant docs/specs
-- [ ] Nearby code/tests
-- [ ] Similar implementations searched
+- Applicable instructions / confirmed context already available:
+
+| Unanswered question | Canonical file + section/symbol | Scope / next query | Resolved evidence |
+| --- | --- | --- | --- |
+| | | | |
+
+Retrieve only what the current step needs; this is not a file-reading checklist.
 
 ### Git Baseline
 
@@ -370,16 +366,11 @@ flowchart LR
 |---|---|---|---|---|
 |  |  |  |  |  |
 
-## Project Structure
+## Ownership Routes
 
-- Source roots/packages:
-- `tests/...`:
-- `scripts/` or `tools/`:
-- `config/`:
-- `assets/`:
-- Generated outputs:
-- Shared/common areas:
-- Feature or bounded-context folders:
+- Code/module ownership: <existing project map#area or relevant source symbol>
+- Verification ownership: <relevant test/guide pointer>
+- If no separate map is needed, include only the ownership rows needed to explain this system.
 
 ## Layering and Dependency Rules
 
@@ -389,13 +380,11 @@ flowchart LR
 - Infrastructure/adapters:
 - Persistence/integration schemas:
 
-## Code Comment Policy
+## Code-Local Contract Pointers
 
-- What must be commented near code:
-- When module/file headers are required:
-- What module/file headers should contain:
-- Public interface documentation expectations:
-- Stale comment cleanup rule:
+- Non-obvious invariant -> owning source module/symbol:
+- Working/comment conventions -> existing applicable instructions:
+- Link to precise contracts; do not duplicate AGENTS policy or source comments here.
 
 ## Data / Control Flow
 
@@ -414,52 +403,40 @@ flowchart LR
 
 ## Handoff Template
 
+Make this the continuation entry. Read PLAN for missing acceptance/scope, a queried LOG entry for chronology, or STATE for structured detail only when this handoff leaves a question. Link to history instead of replaying it.
+
 ```markdown
 ## Handoff: <task>
 
-Project root:
-Subproject:
-Task size:
-Current milestone:
+Project root / subproject:
+Current objective / slice:
 
 ### Current State
 
-### What Was Done
+- Brief confirmed outcome:
+- Latest verified slice and command/result:
+- Pending checks, blockers, and assumptions:
 
-### Milestones
+### Next Action And Context Routes
 
-| Milestone | Branch (if separate) | Status | Verification | Compression checkpoint | Commit / merge result | Next |
-| --- | --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |  |
+- Exact next edit/command:
 
-### Files Touched
+| Missing question for that action | Canonical path + section/symbol | Scoped query / read trigger |
+| --- | --- | --- |
+| | | |
 
-### Verification
+### Git And Ownership
 
-### Open Questions
+- Branch / HEAD:
+- Slice commit(s), or no-commit reason:
+- Dirty/untracked files and ownership:
+- Unpushed work / relevant merge result:
 
-### Git State
+### Durable Fact Pointers
 
-- Branch:
-- Base branch:
-- Task/milestone branch (if separate):
-- Base commit:
-- Current HEAD:
-- Dirty/untracked files:
-- Unpushed commits:
-- Milestone commits:
-- Milestone merge results:
-- PR/remote:
-
-### Compression Checkpoint
-
-- Minimal continuation context:
-- Latest verified slice (exclude pending/failed work):
-- Next command/edit:
-- Facts still to promote:
-- Risks/blockers:
-
-### Next Safe Step
+- Canonical docs/decisions updated:
+- Process history pointer (query only if needed):
+- Facts still to promote / remaining risks:
 ```
 
 ## Blocker Note

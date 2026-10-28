@@ -166,7 +166,9 @@ def merge_handoff(run: Path, state: dict[str, Any], generated: str) -> str:
         content = before + block + after
     else:
         notes = ("## Preserved Legacy Handoff\n\n" + previous) if previous else (
-            "## Maintainer Notes\n\nKeep manual continuation context outside the generated status block.\n"
+            "## Maintainer Notes\n\nKeep manual continuation context outside the generated status block. "
+            "Record the next action, unresolved question, and canonical file/section/symbol "
+            "or scoped query; link to detailed history.\n"
         )
         content = f"# Handoff: {state['task']}\n\n{block}\n\n{notes}"
     if content.count(START) != 1 or content.count(END) != 1:
@@ -241,9 +243,13 @@ This is caller-reported evidence; the helper does not execute or certify tests.
 
 ## Fact Placement And Recovery
 
-Read PLAN.md, recent LOG.md, STATE.json, and current Git status/diffs before editing.
-Promote stable facts to README/AGENTS/docs, decisions to DECISIONS/ADRs, and process
-history to project logs. This directory holds agent execution state only.
+Start with this handoff and current Git status/relevant diffs. Reuse applicable
+instructions already in context; discover any missing ones for the target path.
+Open PLAN.md only for missing scope/acceptance, query LOG.md for a chronology gap,
+or inspect relevant STATE.json fields for structured details absent here. Follow
+next-action source pointers/queries instead of loading every run file or old log.
+Promote stable facts to their README/AGENTS/docs owner, decisions to DECISIONS/ADRs,
+and process history to project logs. Keep manual retrieval pointers below.
 """
 
 
@@ -295,8 +301,17 @@ Mode: {args.mode}
 
 - User outcome / acceptance criteria:
 - Constraints / non-goals:
-- Context read:
+- Applicable instructions / confirmed evidence already available:
 - Task size and risk (start Medium if uncertain):
+
+## Next Context Queries
+
+| Question blocking the next slice | Canonical path + section/symbol | Scope / query |
+| --- | --- | --- |
+| | | |
+
+Retrieve only missing evidence. Keep stable facts at their canonical owner and
+link to them; a plan does not require preloading README, architecture, or logs.
 
 ## Milestones And Verification
 

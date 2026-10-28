@@ -132,11 +132,15 @@ python -X utf8 -m unittest discover -s tests -v
 
 The tests use disposable directories and local Git repositories; they do not change the installed skill or publish anything.
 
-## What Agents Should Read
+## Context And Document Ownership
 
-For installation or updates, read this README first. For changes to this skill repository, read `AGENTS.md` first.
+The runtime entry point is [SKILL.md](SKILL.md#1-bind-and-inspect): start with the task and applicable project instructions, reuse context already supplied, and query only the evidence needed for the next decision. A known target can be inspected directly; an unknown owner is located through existing routes or scoped search. There is no required README/architecture/ADR/log reading bundle.
 
-For task execution, read `SKILL.md` first. Load `references/project-files.md` when deciding project root, monorepo layout, or governance file placement. Load `references/git-stewardship.md` when coordinating branches, commits, dirty worktrees, rollback, PRs, or multi-agent Git ownership. Load `references/stewardship-standards.md` when judging architecture/anti-sprawl risk. Load `references/operating-patterns.md` only for deeper long-running workflow guidance, and load `references/templates.md` only when creating durable plans, logs, ADRs, handoffs, blocker notes, or verification matrices.
+For maintenance of this skill package, [AGENTS.md](AGENTS.md#context-routes) supplies this repository's routes and verification commands. Installation and update questions use the corresponding sections of this README. Those are different tasks from using the skill in another project.
+
+Each Markdown has a defined owner and read trigger in [project file responsibilities](references/project-files.md#markdown-responsibilities). [Context retrieval](references/context-management.md#retrieve-by-question) explains how to query files and stop; [the template index](references/templates.md#template-index) provides optional index and document skeletons. These links are lookup routes, not a reading list.
+
+A project's AGENTS holds core constraints and a few direct routes. An optional `docs/index.md` routes a larger documentation set; a project map identifies implementation ownership; architecture explains current boundaries; decisions preserve rationale; logs preserve history; a handoff records only current continuation state. Link to each canonical fact instead of copying it across these files.
 
 ## Design Vocabulary
 
@@ -174,7 +178,7 @@ Task sizing is explicit:
 - `SKILL.md` is the runtime contract loaded by Codex after the skill triggers.
 - `AGENTS.md` is the maintenance contract for humans and agents editing this skill repository.
 - `README.md` is the install, update, usage, and design summary.
-- `references/` holds detailed standards loaded only when needed.
+- `references/` holds detailed standards retrieved by question through the SKILL reference index. Context retrieval mechanics and project Markdown responsibilities have separate owners.
 - `scripts/long_work.py` manages agent execution state only; it does not own canonical durable facts or business-code commits.
 - `agents/openai.yaml` is UI metadata and must stay aligned with `SKILL.md`.
 

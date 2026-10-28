@@ -1,6 +1,6 @@
 ---
 name: project-steward
-description: Maintain project continuity during repository changes, refactors, reviews, and handoffs. Use to preserve project boundaries, architecture, code intent, canonical documentation, reviewable Git history, and verified progress across sessions.
+description: Maintain project continuity during repository changes, refactors, reviews, and handoffs. Use for question-driven context retrieval, architecture and code-intent preservation, canonical documentation, reviewable Git history, and verified progress.
 ---
 
 # Project Steward
@@ -33,16 +33,33 @@ A narrow read-only question or review does not authorize implementation, new gov
 
 Prefer the user's path or current project root. When starting below it, inspect parent project markers and applicable instructions; remember `.git` may be a file in a worktree. State the selected root if ambiguous and ask only when the choice materially affects the work.
 
-Read relevant material in this order when present:
+Start with the **minimum core**: the current request, this skill, and applicable project instructions. Reuse instructions already supplied in context; do not reread them just to satisfy a checklist. Discover any additional instructions governing the target path before editing. Explicit reading requirements in those instructions still apply.
 
-1. Applicable `AGENTS.md`, `CLAUDE.md`, or equivalent project instructions.
-2. README, architecture/project map, relevant specs and decisions.
-3. Build/test configuration, nearby implementation, similar patterns, and tests.
-4. Recent project logs when continuing work; a run handoff only when resuming that run.
+Then retrieve evidence for the task, not a standard bundle of files:
+
+- If the target is known, inspect the relevant passage, implementation, or contract directly and identify checks appropriate to the requested action.
+- If ownership is unknown, use a concise existing route in AGENTS, README, or the project index. Follow only the relevant row; an index is not a required extra hop.
+- Before each lookup, name the unanswered question. Search filenames, then headings/symbols and surrounding passages in the smallest plausible scope. Expand when evidence exposes another boundary or the first scope is insufficient.
+- Stop expanding when the requested answer/action has adequate evidence, including applicable constraints and affected contracts, implementation, or verification where relevant. Avoid arbitrary file/token limits, recursive link following, and bulk-reading documentation or logs.
+
+README, architecture, specs, decisions, logs, and references are **conditional sources**, not startup prerequisites. Task size changes the depth of necessary evidence, not the number of files to preload. Missing or stale indexes fall back to scoped search; they do not require a documentation project before work can proceed.
+
+### Skill Reference Index
+
+This table routes questions about stewardship itself. Open the matching section only if the core instructions leave a relevant question; do not load every reference. Project-specific facts are located through that project's own routes.
+
+| Unanswered question | Reference / section | Useful search terms |
+| --- | --- | --- |
+| How do I discover, narrow, or stop a context lookup? | [Context retrieval](references/context-management.md#retrieve-by-question) | `Retrieve By Question`, `Working Context`, `Missing Or Stale` |
+| Which Markdown owns a fact, or where should an index live? | [Project file responsibilities](references/project-files.md#markdown-responsibilities) | `Markdown Responsibilities`, `Index Contract`, `Change Propagation` |
+| Which architecture, structure, or code-comment standard applies? | [Stewardship standards](references/stewardship-standards.md) | `Default Architecture Shape`, `Code Comment Standards`, `ADR Triggers` |
+| How should this Git ownership, staging, branch, or publication case work? | [Git stewardship](references/git-stewardship.md) | `Agent-Owned Commit Closure`, `Milestone Branch Loop`, `Remote Safety` |
+| How do I resume a specific run or handle a long execution? | [Operating patterns](references/operating-patterns.md#selective-recovery) | `Selective Recovery`, `Compression checkpoints` |
+| Which skeleton should I use for a needed document? | [Template index](references/templates.md#template-index) | exact template heading; copy only that template |
 
 Before editing a Git repository, inspect `git status --short --branch`, current branch/upstream, relevant diffs, and existing changes. Identify ownership before touching dirty files. Do not auto-stash, stage, discard, or mix another person's work.
 
-Repair a missing project contract when major work would otherwise lack necessary guidance; do not generate a documentation tree for a small task. Read [project file rules](references/project-files.md) for root selection, monorepos, or governance placement.
+Repair a missing project contract when major work would otherwise lack necessary guidance; keep its core constraints and routes concise. Reuse existing names and locations. File responsibilities and index design live in the reference index above; do not copy detailed manuals into the entry point.
 
 ## 2. Plan Recoverable Progress
 
@@ -105,7 +122,7 @@ python <skill-root>/scripts/long_work.py milestone --run <run-dir> --name "slice
 
 For agent-owned recovery files, `--commit-run-state` explicitly commits only `PLAN.md`, `LOG.md`, `HANDOFF.md`, and `STATE.json`. It refuses pre-existing staged changes and never pushes. Record implementation commits outside that operation.
 
-After interruption, read the handoff, plan, recent log, state, Git status/diffs, and relevant command output before editing. Read [operating patterns](references/operating-patterns.md) for deeper recovery and handoff guidance.
+After interruption, start with the active handoff and current Git status/diffs. Query PLAN only for missing scope/acceptance details, LOG for a specific chronology gap, and STATE for structured details the handoff does not contain. Follow the next-action file/section/symbol pointers; do not reload all recovery files or project history by default. The operating-patterns route above covers selective recovery.
 
 ## Deliver
 

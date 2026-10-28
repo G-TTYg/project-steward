@@ -23,7 +23,7 @@ Design targets:
 
 Documentation target:
 
-- Maintain `docs/architecture.md` and/or `docs/project-map.md` as factual navigation maps of current code. Future agents should be able to identify the relevant layer/module from docs first, then inspect only the needed implementation files.
+- When needed, keep the project map as the owner-to-code/test lookup and architecture as the explanation of current boundaries and invariants. A known target may be inspected directly. Use the map only to resolve an ownership/boundary question; neither document is a universal startup read. See `project-files.md` for their distinct responsibilities.
 
 ## Anti-Sprawl Rules
 

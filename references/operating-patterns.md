@@ -2,6 +2,20 @@
 
 Use this reference when stewardship work becomes long-running, risky, ambiguous, or likely to survive context compaction. These patterns support project stability; they do not replace architecture and documentation discipline.
 
+## Selective Recovery
+
+Start a resumed run with its active `HANDOFF.md` and current Git status/relevant diffs. Reuse applicable instructions already in context and discover missing ones for the target path. Do not read every run file, old daily log, or architecture document merely because the run was interrupted.
+
+| Missing information | Query next | Avoid |
+| --- | --- | --- |
+| Scope, acceptance, or intended slice? | Relevant section of this run's `PLAN.md`. | Reloading completed plans for other tasks. |
+| What command failed or why was a path chosen? | This run's `LOG.md`, searched by command, error, symbol, or checkpoint. | Reading the entire chronology. |
+| Precise milestone history or Git snapshot fields? | Relevant keys/entries in `STATE.json`. | Recopying the JSON into the handoff. |
+| Current module contract or implementation? | Canonical project doc or code/test pointer from the handoff. | Treating historical notes as current code facts. |
+| A past durable choice? | Matching DECISIONS/ADR section, only when rationale affects the next step. | Loading all decisions. |
+
+A useful handoff carries the next action, blockers, actual verification/commit state, and direct file/section/symbol pointers or exact queries. Keep history in LOG/STATE and durable rules in their canonical owners. If evidence is missing or stale, follow [question-driven retrieval](context-management.md#retrieve-by-question) and inspect current code/tests before editing.
+
 ## Planning Patterns
 
 ### Self-contained plan
@@ -26,11 +40,11 @@ Keep the plan live. If reality changes, edit the plan before continuing.
 
 Use this order for unfamiliar systems:
 
-1. Read project instructions and build/test config.
-2. Search for existing similar behavior.
-3. Trace the runtime path from entrypoint to affected domain logic.
-4. Identify tests or missing tests.
-5. Only then choose the design.
+1. Reuse applicable instructions; identify the concrete unknown blocking the next decision.
+2. Locate the relevant owner/entrypoint through an existing route or scoped filename/symbol search.
+3. Inspect the affected runtime path and contracts, following dependencies when needed.
+4. Query the relevant tests/configuration to establish a verification path.
+5. Choose the design when those questions are answered; widen the scope if a real boundary remains unresolved.
 
 Avoid designing from filenames alone. Prefer evidence from code, tests, docs, and runtime output.
 
@@ -79,18 +93,11 @@ When recovery state is in use, update `HANDOFF.md` after each verified milestone
 - user-facing commitments.
 - durable facts that still need promotion from the run directory into README/AGENTS/docs, DECISIONS/docs/adr, or `logs/YYYY-MM-DD.md`.
 
-After writing the compression checkpoint, rely on the handoff, state file, logs, git status, and diffs as the working context for the next slice. After compaction, read the handoff before trusting memory.
+After writing the compression checkpoint, use the handoff as the continuation entry and check current Git state. Open plan/log/state sections only to answer a missing question, using the Selective Recovery table. Do not reread stable context that is already available.
 
 ### Search discipline
 
-Use targeted searches rather than broad rereads:
-
-- symbols, routes, commands, config keys, error strings;
-- test names and fixtures;
-- API paths, database tables, event names;
-- package names and build scripts.
-
-Record search conclusions only when they change the plan.
+Use [context retrieval](context-management.md#retrieve-by-question) for the question → route → scoped search → evidence loop. In run state, retain the next useful query and the canonical source pointer, not copied manuals or raw search output.
 
 ## Stewarded Execution Techniques
 

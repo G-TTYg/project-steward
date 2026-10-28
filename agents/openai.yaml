@@ -1,4 +1,4 @@
 interface:
   display_name: "Project Steward"
   short_description: "Keep project changes clear, verified, and resumable."
-  default_prompt: "Use $project-steward to preserve project boundaries, architecture, code intent, durable facts, verified commits, and proportional handoffs."
+  default_prompt: "Use $project-steward to retrieve task-relevant context on demand, preserve project boundaries and code intent, and deliver verified, resumable changes."

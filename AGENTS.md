@@ -35,18 +35,28 @@ Keep every description and rule aligned with these pillars:
 
 Do not let any part of the skill imply that agent execution state replaces README/AGENTS/docs, ADRs, process logs, project structure, code comments, tests, or Git commits.
 
-## Repository Map
+## Context Entry
 
-- `SKILL.md` - primary skill instructions and trigger-facing workflow.
-- `README.md` - install, update, use, validate, and design summary for humans and agents.
-- `agents/openai.yaml` - Codex UI metadata; keep it consistent with `SKILL.md`.
-- `scripts/long_work.py` - deterministic helper for agent execution state.
-- `tests/test_long_work.py` - isolated CLI and Git-boundary regressions for that helper.
-- `references/project-files.md` - project-root, fact placement, project structure, and governance file rules.
-- `references/stewardship-standards.md` - architecture, anti-sprawl, project structure, code comment/header, redesign, and review standards.
-- `references/git-stewardship.md` - production Git workflow, commits, rollback, PRs, and handoffs.
-- `references/operating-patterns.md` - long-running work, recovery, context, and handoff patterns.
-- `references/templates.md` - templates for AGENTS, plans, logs, ADRs, architecture notes, handoffs, blockers, and verification.
+Use the current request and these applicable instructions as the maintenance core. If they are already supplied in context, do not reread them. Follow only the route needed for an unanswered task question; a known target can be inspected directly. Do not preload README, decisions, logs, all references, or the whole helper to begin every task. Discover any nested instructions governing target files before editing.
+
+## Context Routes
+
+| Task question | Canonical target | Query / section |
+| --- | --- | --- |
+| Runtime behavior or task sizing? | [SKILL.md](SKILL.md) | `Core Contract`, `Choose Proportional Stewardship`, relevant numbered workflow section |
+| Context retrieval or stopping rules? | [context-management.md](references/context-management.md) | `Retrieve By Question`, `Working Context`, `Missing Or Stale Routes` |
+| Markdown responsibilities or project index shape? | [project-files.md](references/project-files.md) | `Markdown Responsibilities`, `Index Contract` |
+| Recovery helper behavior? | `scripts/long_work.py`, `tests/test_long_work.py` | `rg -n '^def ' scripts/long_work.py`; search the affected function or test name |
+| Architecture, structure, or comment standard? | `references/stewardship-standards.md` | matching architecture/structure/comment heading |
+| Git ownership, staging, branch, or publication edge case? | `references/git-stewardship.md` | matching Git workflow heading |
+| Creating a needed artifact? | `references/templates.md` | `Template Index`, then only the selected skeleton |
+| Resuming a run? | `references/operating-patterns.md` | `Selective Recovery` |
+| Install/update? | `README.md` | matching install/update section |
+| UI metadata? | `agents/openai.yaml` | the relevant interface key |
+| Why was a policy chosen? | `DECISIONS.md` | matching policy heading |
+| What happened in a prior task? | `logs/YYYY-MM-DD.md` | search the task/date/result; historical lookup only |
+
+The route table points to owners; it does not duplicate their contents. Update its target or query when a path, heading, symbol, or responsibility changes.
 
 ## Writing Rules
 

@@ -1,228 +1,83 @@
-# Project File And Structure Standards
+# Project File Responsibilities
 
-Use existing project conventions first. If absent, prefer these standards. All paths in this file are relative to the current project root, not necessarily the Codex agent workspace.
+Use existing project conventions and names first. This reference owns project-root rules, Markdown responsibilities, canonical placement, and index structure. It is a lookup contract, not a list of documents to create or read. For retrieval mechanics, use [context management](context-management.md#retrieve-by-question).
 
-## Multi-Project Agent Rule
+## Project Scope
 
-One Codex agent may manage many unrelated projects from one workspace. Before applying this layout, bind to the current project root.
+Prefer the explicit user-selected repository/subproject, otherwise use the current repository root or nearest credible project marker. `.git` can be a directory or worktree file. Resolve genuine ambiguity before changes that depend on it.
 
-Project root selection priority:
+Keep project docs, decisions, logs, and execution state inside that project; use monorepo/subproject conventions for scoped ownership. Keep unrelated repositories' state separate. Do not create global project memory or parallel stores such as `docs/logs/` or `memory/` when canonical equivalents already exist.
 
-1. Explicit path/repo requested by the user or coding session.
-2. Current working directory if it is clearly a repository root.
-3. Nearest parent containing `.git/`, `package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, a project `README.md`, or a project-local `AGENTS.md`.
-4. Ask the user if multiple plausible roots exist.
+## Markdown Responsibilities
 
-Rules:
+The paths below are conventional roles. Existing equivalents are valid; use one canonical owner per fact. Applicable instructions and explicit reading requirements take precedence over the default read triggers.
 
-- Keep `AGENTS.md`, `docs/`, `logs/`, ADRs, specs, and architecture diagrams inside that project root.
-- Do not mix logs from different projects in a shared agent-level `logs/` directory.
-- Do not put project facts into global agent memory unless they are intentionally cross-project or the user asks to remember them globally.
-- Do not create parallel fact stores such as `docs/logs/`, `memory/`, or `.agents/logs/` unless the repository already uses them and `AGENTS.md` names them.
-- If a monorepo has multiple apps/packages, either follow the monorepo root governance or create subproject notes under `docs/projects/<name>/` / `packages/<name>/docs/` according to existing conventions.
-- Handoffs must include `project_root` and, for monorepos, `subproject`.
+| File / role | Owns and updates | Read when | Keep out |
+| --- | --- | --- | --- |
+| Root `AGENTS.md` | Concise scope, hard working constraints, essential commands, direct context routes. | Applicable at entry; reuse it when already supplied. | Complete architecture manuals, source copies, history, exhaustive reading lists. |
+| Scoped `AGENTS.md` / equivalent | Additional instructions for files in its scope. | Before edits under that scope, even if a root index omits it. | Unrelated project rules or duplicated parent instructions. |
+| `README.md` | Human-facing purpose, setup, common usage, and links. | Missing project orientation, setup, or usage knowledge. | Agent execution history and an assumed mandatory preflight for every edit. |
+| `docs/index.md` or existing index | Question/topic → canonical path + heading/symbol + retrieval keys. | The next source is unknown and a direct root route is insufficient. | Copies of canonical facts, a full file listing, a second architecture document. |
+| `docs/project-map.md` | Responsibility/owner → source entrypoints, contracts, tests, relevant scoped docs. | Locating an unknown owner or assessing affected modules. | Full architecture explanations or every file in the tree. |
+| `docs/architecture.md` / architecture area | Current boundaries, dependency directions, flows, and cross-module invariants. | A change touches those boundaries or a map alone cannot explain the contract. | Work chronology, detailed source inventory, or the history of every rejected design. |
+| `specs/` / contract documentation | Intended behavior, API/schema contracts, acceptance, compatibility constraints. | The affected intended contract is needed. | Assertions that current implementation already matches without evidence. |
+| `docs/testing.md` / verification guide | Supported verification commands, scopes, fixtures, prerequisites. | The right check or its prerequisites are unknown. | Historical pass/fail output for individual runs. |
+| `docs/runbook.md` / operations guide | Operational procedures, diagnosis, recovery constraints. | Runtime/operational work requires those procedures. | General implementation history or authorization to deploy. |
+| `DECISIONS.md` or `docs/adr/*.md` | Durable choice, rationale, alternatives, consequences, supersession. | The relevant rationale constrains the current decision. | Every small implementation step; duplicated decisions in both formats. |
+| `CHANGELOG.md` when used | User-visible released changes. | Release work or a compatibility question requires it. | Internal agent progress or a requirement to add a changelog to every repo. |
+| `logs/YYYY-MM-DD.md` | Project process history: discoveries, verification, risks, commit/result pointers. | A specific previous task/date/result needs reconstruction. | Canonical stable facts, full transcripts, or an always-read recent-log bundle. |
+| Task document / run `PLAN.md` | Current objective, scope, acceptance, slices, verification and rollback plan. | Starting that planned work or resolving missing scope on resume. | Permanent architecture facts or copies of all inspected documents. |
+| Run `HANDOFF.md` | Current continuation entry: next action, blockers, evidence/commit state, retrieval pointers. | Resuming or handing off that active run. | Complete chronology, copied manuals, or a second durable fact store. |
+| Run `LOG.md` | Append-only execution events and command/result pointers for that run. | A precise chronology/error/checkpoint gap remains after the handoff. | Current-status duplication or durable facts with no canonical promotion. |
+
+`STATE.json` is the helper's structured run state, not another mandatory human reading file. Query its relevant fields/history only when the handoff lacks the needed detail. Source comments/docstrings own code-local intent and invariants; code/config/tests remain necessary evidence for affected behavior.
+
+AGENTS answers **how to work here**; an index answers **where to ask**; a project map answers **which code owns this**; architecture answers **how components relate**. README serves users, specs define intended contracts, decisions explain choices, logs preserve history, and handoffs identify the next step. A small project may combine roles in clearly named sections of existing files instead of creating every path above.
 
 ## Canonical Fact Placement
 
-Use this classification before creating or updating files:
+- **Stable facts:** README/AGENTS/docs, according to their distinct roles above.
+- **Decision facts:** DECISIONS or ADRs; choose the repository's format, link rather than duplicate.
+- **Process facts:** dated project logs or the existing equivalent.
+- **Agent execution state:** the active run's PLAN/LOG/HANDOFF/STATE only when recovery is needed.
 
-| Fact type | Canonical location | Examples | Do not put only in |
-|---|---|---|---|
-| Stable facts | `README.md`, `AGENTS.md`, `docs/` | Purpose, commands, setup, architecture, project map, module ownership, APIs, data contracts, testing rules, runbooks. | `logs/`, `docs/agent-runs/`, chat. |
-| Decision facts | `DECISIONS.md`, `docs/adr/` | Chosen design, rejected alternatives, dependency choices, migration strategy, security posture, public contract changes. | Daily logs, handoffs, chat. |
-| Process facts | `logs/YYYY-MM-DD.md` | Work chronology, discoveries, files changed/planned, verification, risks, next steps. | README/AGENTS as narrative history, `docs/agent-runs/` only. |
-| Agent execution state | `docs/agent-runs/<date-task>/` | Active plan, checkpoints, handoff, current slice, recovery notes, local machine state. | Stable docs as noisy execution detail. |
+When a log or run discovers a durable fact, update its canonical owner and leave a short link/pointer in the process record. Do not make the owner depend on reading execution history. Do not record secrets or unrelated projects' details.
 
-Promotion rule: when an execution log or daily log discovers a stable fact, move that fact to README/AGENTS/docs. When it records a durable choice, move that choice to DECISIONS/docs/adr. Leave only the chronology and pointers in `logs/YYYY-MM-DD.md`.
+## Index Contract
 
-## Core Contract
+Use a small route table in AGENTS or an existing README/index first. Add `docs/index.md` only when the documentation set actually needs another routing level, and make it discoverable from the existing entry. Keep frequent routes direct; avoid obligatory AGENTS → README → index → map chains.
 
-Per-project files should make the codebase navigable by facts. For non-trivial projects, `AGENTS.md`, architecture docs, and project maps should describe actual layers, modules, public contracts, and dependency rules so future agents can load the map first and then inspect only relevant implementation files.
+A useful route has:
 
-### `AGENTS.md`
+| Field | Meaning |
+| --- | --- |
+| Question / read trigger | The uncertainty this target resolves, in task language. |
+| Canonical target | Actual path plus stable heading or code symbol when useful. |
+| Query | Narrow directory/file scope and useful symbol, keyword, or example command. |
+| Update trigger | Change of path, heading, responsibility, command, or contract that affects this route. |
 
-Required for agent-heavy projects. It should tell coding agents how to work in this repo/project, not every repo the agent can access.
+Only index useful entrypoints and important boundaries. A route is not an instruction to open all targets. Avoid summaries that duplicate canonical content, exhaustive tree dumps, invented paths, and speculative future documents. Validate targets against the actual checkout. Optional owner tags are useful only if the project maintains real ownership data.
 
-Include:
+The task that changes a routed path/heading/ownership repairs that row. Query by current heading/symbol rather than frozen line numbers. If an index is missing/stale, use scoped search and continue with evidence; do not make a complete index a prerequisite for an unrelated edit.
 
-- Project purpose and non-goals.
-- Required reading order.
-- Build/test/dev commands.
-- Architecture boundaries, layers, modules, and dependency direction.
-- Project structure rules: where source, tests, scripts, configs, docs, assets, adapters, migrations, generated files, and tooling belong.
-- Code comment rules: what must be commented near code, when module/file headers are expected, and what comments are noise.
-- Coding conventions.
-- Documentation/logging requirements.
-- Verification requirements.
-- Safety and deployment rules.
-- Where to write plans, logs, ADRs, diagrams.
+Use the [context index and project-map skeletons](templates.md#template-index) only when those artifacts are needed. For whole-project source/test/config/doc structure and code-comment standards, query the corresponding section of [stewardship standards](stewardship-standards.md).
 
-### `README.md`
+## Change Propagation
 
-Human-facing overview:
+Update the canonical owner of each changed fact, then repair affected navigation. Do not touch every Markdown on every task.
 
-- What the project does.
-- Quick start.
-- Common commands.
-- Links to docs/architecture/runbooks.
+| Change | Canonical update | Navigation follow-up |
+| --- | --- | --- |
+| A working constraint or essential command | AGENTS; detailed setup/testing procedure in its owning guide. | Repair the route if the detailed target changes. |
+| Module/entrypoint ownership | Project map or existing equivalent. | Fix affected root/index routes; architecture only if boundaries also change. |
+| Boundary, flow, or cross-module invariant | Architecture or the relevant contract. | Repair its section route; record a decision when rationale is durable. |
+| Public behavior/API/schema | Owning spec/API docs and relevant tests. | Update index keys only when discoverability changes. |
+| Durable design choice | DECISIONS/ADR. | Link from the relevant contract/map where needed. |
+| Task progress or observed verification result | Project log; active run state if in use. | Handoff points at the next action/evidence without copying the history. |
+| Only a typo or local implementation detail | The affected file/code-local comment. | No global documentation/index refresh unless a route actually broke. |
 
-## Project Structure
+## Small Projects And Existing Layouts
 
-Use existing project conventions first. If absent, avoid a flat project pile. Prefer a layout that makes ownership visible across source, tests, scripts, configs, docs, assets, migrations, generated files, and tooling.
+Keep the root entry sufficient for its scale. No index, map, architecture document, ADR directory, or run-state area is mandatory merely because the skill is active. Create or repair a missing contract only when the current work exposes a real continuity need. Preserve established equivalents such as `architecture/`, `docs/decisions/`, `.claude/specs/`, or package-local documentation rather than creating parallel stores.
 
-Layer-oriented default:
-
-```text
-<source-root>/
-  presentation/                  # UI, HTTP routes, CLI, workers, handlers
-  application/                   # use cases, orchestration, transactions, policies
-  domain/                        # core rules, entities, value objects, domain services
-  infrastructure/                # adapters for DB, APIs, queues, filesystem, model providers
-  persistence/                   # schemas, migrations, repositories, data contracts
-  shared/                        # small shared kernel; not a dumping ground
-tests/
-  unit/
-  integration/
-  e2e/
-scripts/ or tools/               # project automation and maintenance commands
-config/                          # project/runtime/tool configuration if not framework-owned
-docs/                            # stable facts and architecture docs
-assets/                          # source assets; keep generated outputs separate when possible
-```
-
-Feature-oriented alternative when the project is organized by bounded context:
-
-```text
-<source-root>/
-  features/
-    <feature>/
-      presentation/
-      application/
-      domain/
-      infrastructure/
-  shared/
-tests/
-  <feature>/
-docs/
-  projects/ or features/
-```
-
-Rules:
-
-- Do not put unrelated files directly under source, test, script, config, docs, assets, tooling, or project-root directories when ownership is already clear.
-- Create folders for real responsibilities, not empty ceremony.
-- Keep tests discoverable near the changed code or mirrored by project/code structure.
-- Keep shared/common/utils/tooling folders small and named by responsibility where possible.
-- Document the chosen structure in `AGENTS.md` and `docs/project-map.md` when it is non-trivial.
-
-## Documentation
-
-Recommended:
-
-```text
-docs/
-  architecture.md                 # current system overview
-  project-map.md                  # directories/modules/layers, public contracts, and responsibilities
-  testing.md                      # how to verify changes
-  runbook.md                      # operations/troubleshooting if relevant
-  adr/
-    YYYY-MM-DD-title.md           # architecture decision records
-  tasks/
-    YYYY-MM-DD-task-name.md       # larger implementation plans when useful
-  agent-runs/
-    YYYY-MM-DD-task/              # optional execution state for long-running agent work
-logs/
-  YYYY-MM-DD.md                   # durable work log
-```
-
-Alternative names are fine if the project already uses them:
-
-- `architecture/`
-- `specs/`
-- `.claude/specs/`
-- `decisions/`
-- `CHANGELOG.md`
-- `DECISIONS.md`
-- `notes/`
-
-## Minimal Governance For Small Repos
-
-If a repo is small, avoid bureaucracy. Use:
-
-The following is a menu of canonical locations, not a requirement to create every file. A small task should not generate new governance, decision, or log files without a concrete need.
-
-```text
-AGENTS.md
-README.md
-DECISIONS.md
-logs/YYYY-MM-DD.md
-```
-
-Small repos still use the same fact placement. They simply keep stable facts compact in README/AGENTS, decisions in DECISIONS.md, and process facts in one daily log instead of many docs.
-
-## What Must Be Updated When
-
-| Change type | Required artifact |
-|---|---|
-| New dev/build/test command | `README.md` and/or `AGENTS.md` |
-| New module/service/boundary/interface/layer | `docs/architecture.md` or `docs/project-map.md` |
-| New project structure/folder convention | `AGENTS.md` and `docs/project-map.md` |
-| API/CLI behavior change | API docs, README, tests |
-| Data/schema migration | migration docs, ADR if strategic |
-| New dependency/framework | ADR or `DECISIONS.md` entry |
-| Cross-cutting refactor | plan + log + architecture update |
-| Security/auth/permissions | ADR + runbook/security notes |
-| Workaround or known risk | log + TODO/issue reference |
-
-## Code Comment Rules
-
-Comments belong close to the code when they protect facts that are too specific for external docs alone.
-
-Write comments/docstrings near:
-
-- domain invariants and business rules;
-- non-obvious branches, fallbacks, retries, ordering, caches, timeouts, and validation;
-- external API quirks, protocol/data-shape constraints, migrations, or compatibility shims;
-- concurrency, transaction, idempotency, security, privacy, performance, or resource-lifetime constraints;
-- temporary workarounds and their removal condition;
-- public interfaces that need contract, side-effect, error, or lifecycle expectations.
-
-Use module/file header comments for non-trivial entrypoints, domain modules, orchestration modules, infrastructure adapters, public APIs, scripts, migrations, generated-code boundaries, and complex tests when the file responsibility or constraints are not obvious from the path and name. A useful header records responsibility, non-goals, layer/context, public entrypoints, invariants, side effects, external systems, lifecycle, security, privacy, concurrency, performance, or edit-policy constraints.
-
-Avoid comments that restate obvious syntax. Avoid mandatory boilerplate headers on trivial files. Update stale comments in the same slice as code changes.
-
-## Project Log Rules
-
-Project logs are project-local, not agent-global. They are not chat transcripts and not stable documentation. They should preserve process facts useful to future maintainers of this specific project:
-
-- Date/time.
-- Task intent.
-- Key discoveries.
-- Files changed or planned.
-- Decision summaries and links to `DECISIONS.md` or `docs/adr/` when durable.
-- Verification results.
-- Remaining risks and next steps.
-- Links to stable docs, decisions, ADRs, commits, issues, or agent-runs when relevant.
-
-Do not bury stable project facts or durable decisions only in daily logs. Promote them to the canonical stable or decision files and leave a short pointer in the log.
-
-## Agent Execution State Rules
-
-Use `docs/agent-runs/<date-task>/` only when a task needs checkpointing, recovery after context loss, or handoff to another agent.
-
-Agent execution state files may contain temporary execution detail:
-
-- active plan and slice;
-- checkpoints;
-- current assumptions and blockers;
-- handoff state;
-- commands run during the run;
-- machine-readable `STATE.json`.
-
-Before final delivery, promote durable facts out of `docs/agent-runs/`:
-
-- stable facts -> `README.md`, `AGENTS.md`, or `docs/`;
-- decision facts -> `DECISIONS.md` or `docs/adr/`;
-- process summary -> `logs/YYYY-MM-DD.md`.
-
-Do not log secrets. Redact credentials, tokens, personal data, and private messages.
+For multi-project work, maintain separate roots and fact owners; a coordination note may link them without becoming their shared fact store. For monorepos, root routes point to package ownership and applicable scoped instructions; open only the package context relevant to the task.
