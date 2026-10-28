@@ -6,6 +6,14 @@
 - Install target: `~/.codex/skills/project-steward` or `%USERPROFILE%\.codex\skills\project-steward`.
 - Public repository: `https://github.com/G-TTYg/project-steward`.
 
+## Maintenance Checkout
+
+- Use the user-selected development checkout as the source for future improvements, verification, commits, and GitHub pushes.
+- The installed copy under the Codex skills directory is a runtime installation. Do not edit it as the development source or overwrite it during repository maintenance.
+- Keep machine-specific checkout paths and installation notes in `.git/info/maintenance.md`, outside published repository content.
+- Validate the development checkout with `.` as the target. Validate an installed copy separately when intentionally updating that installation.
+- Use `codex/` for new maintenance branch names. Publishing commits and updating the installed copy are separate actions; follow the user's requested scope for each.
+
 ## Project Purpose
 
 Project Steward is a Codex skill that makes agents act like maintainers of a project, not drive-by code editors. Its core job is to protect project stability, clarity, structure, Git history, durable facts, and verified handoff.
@@ -51,7 +59,7 @@ Do not let any part of the skill imply that agent execution state replaces READM
 ## Commands
 
 - Validate skill:
-  `python "%USERPROFILE%\.codex\skills\.system\skill-creator\scripts\quick_validate.py" "%USERPROFILE%\.codex\skills\project-steward"`
+  `python -X utf8 "%USERPROFILE%\.codex\skills\.system\skill-creator\scripts\quick_validate.py" .`
 - Check whitespace:
   `git diff --check`
 - Check Git state:

@@ -76,6 +76,27 @@ Windows PowerShell:
 git -C "$env:USERPROFILE\.codex\skills\project-steward" pull --ff-only
 ```
 
+## Develop And Publish From A Separate Checkout
+
+Use a dedicated project checkout for improvements and GitHub pushes. Keep the copy under `~/.codex/skills/project-steward` as the runtime installation. When a project checkout already exists, continue there.
+
+Run these commands from the development checkout:
+
+```bash
+git status --short --branch
+git fetch origin
+git switch -c codex/describe-change
+# Edit, validate this checkout, and commit explicit paths.
+```
+
+When publication is requested, push the reviewed maintenance branch:
+
+```bash
+git push -u origin codex/describe-change
+```
+
+Update the runtime installation separately after the desired changes reach the branch it tracks, using the Update commands above. Check that installation's Git status first and preserve any local work. Machine-specific maintenance notes belong in `.git/info/maintenance.md` and are not published.
+
 ## Validate
 
 When the Codex system skill creator utilities are available:
@@ -94,6 +115,13 @@ Expected result:
 
 ```text
 Skill is valid!
+```
+
+When developing this skill, validate the current checkout instead of the installed copy. From the project root on Windows PowerShell:
+
+```powershell
+python -X utf8 "$env:USERPROFILE\.codex\skills\.system\skill-creator\scripts\quick_validate.py" .
+git diff --check
 ```
 
 ## What Agents Should Read
