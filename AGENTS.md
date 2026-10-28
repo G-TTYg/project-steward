@@ -9,10 +9,12 @@
 ## Maintenance Checkout
 
 - Use the user-selected development checkout as the source for future improvements, verification, commits, and GitHub pushes.
-- The installed copy under the Codex skills directory is a runtime installation. Do not edit it as the development source or overwrite it during repository maintenance.
+- The installed copy under the Codex skills directory is a runtime installation. Do not edit it as the development source; synchronize it deliberately from the published branch after checking its Git state.
 - Keep machine-specific checkout paths and installation notes in `.git/info/maintenance.md`, outside published repository content.
 - Validate the development checkout with `.` as the target. Validate an installed copy separately when intentionally updating that installation.
-- Use `codex/` for new maintenance branch names. Publishing commits and updating the installed copy are separate actions; follow the user's requested scope for each.
+- Use `codex/` for new maintenance branch names.
+- Standing maintainer workflow, requested on 2026-10-28: after completing and verifying improvements to this skill, publish them to `origin/main` and then fast-forward the clean local runtime installation to the same commit. Do this together for future completed improvements unless the user requests review-only work, a local draft, or a different publication target.
+- This standing workflow applies only to this skill repository. Preserve local installation changes and shared history; if clean fast-forward synchronization is unavailable, inspect and report the obstacle without discarding work or force-pushing. Machine-specific paths and network preferences remain in `.git/info/maintenance.md`.
 
 ## Project Purpose
 
