@@ -118,6 +118,9 @@ Sizing reason:
 
 ### Goal
 
+Acceptance contract (keep only useful fields): requested outcome, authorized
+effects, preserved invariants, evidence that detects the primary risks, non-goals.
+
 ### Evidence And Next Queries
 
 - Applicable instructions / confirmed context already available:
@@ -408,18 +411,20 @@ Make this the continuation entry. Read PLAN for missing acceptance/scope, a quer
 ```markdown
 ## Handoff: <task>
 
-Project root / subproject:
+Project / subproject (portable path relative to this file):
 Current objective / slice:
 
 ### Current State
 
 - Brief confirmed outcome:
 - Latest verified slice and command/result:
+- Evidence source, observed code version/dirty state, scope and recheck trigger:
 - Pending checks, blockers, and assumptions:
+- Do not assume (unverified behavior or external effects):
 
 ### Next Action And Context Routes
 
-- Exact next edit/command:
+- First next action and source pointer (review any recorded command before executing):
 
 | Missing question for that action | Canonical path + section/symbol | Scoped query / read trigger |
 | --- | --- | --- |

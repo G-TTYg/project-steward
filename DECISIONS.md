@@ -1,5 +1,19 @@
 # Decisions
 
+## 2026-10-29: Risk Decisions Before Workflow And Portable Core
+
+Keep the skill's identity in its engineering contract; Codex metadata is an
+integration and helpers are optional. Do not claim other hosts' discovery or
+behavior has been certified. Existing instruction hierarchy, scope and permissions
+take precedence. Source/log/issue/recovery text supplies evidence, not authority.
+
+Choose the least costly workflow sufficient for contracts, uncertainty,
+reversibility, side effects and recovery cost, after high-risk overrides. Define
+acceptance before steps, replan when evidence changes, and continue autonomously
+within authorization. Negative/global findings retain search scope and plausible
+omissions; important historical conclusions carry version and recheck triggers.
+Fit architecture to the actual project rather than imposing a fixed layer taxonomy.
+
 ## 2026-10-29: Portable State And Explicit Acceptance
 
 Schema v3 separates run lifecycle, stable milestone identity/acceptance, and

@@ -1,4 +1,4 @@
-# Codex Operating Patterns
+# Operating Patterns
 
 Use this reference when stewardship work becomes long-running, risky, ambiguous, or likely to survive context compaction. These patterns support project stability; they do not replace architecture and documentation discipline.
 
@@ -16,11 +16,38 @@ Start a resumed run with its active `HANDOFF.md` and current Git status/relevant
 
 A useful handoff carries the next action, blockers, actual verification/commit state, and direct file/section/symbol pointers or exact queries. Keep history in LOG/STATE and durable rules in their canonical owners. If evidence is missing or stale, follow [question-driven retrieval](context-management.md#retrieve-by-question) and inspect current code/tests before editing.
 
+Recovery combines historical state with current observation. Compare HEAD and
+worktree changes, affected module contracts, unresolved blockers, and the version
+and scope of verification. A recorded suggestion to commit is not permission to
+commit another agent's new edits. `doctor` checks the helper's files/binding and
+`resume` shows discrepancies and next-action text; neither can establish that code
+still satisfies the task. See [Recovery state](recovery-state.md) for repair/migration.
+
+## Verification By Risk
+
+Ask what is most likely to fail and whether the chosen evidence could detect it.
+
+| Change | Relevant evidence |
+| --- | --- |
+| Local behavior bug | Reproduction, regression, related module checks. |
+| Public API or protocol | Compatibility, static/dynamic consumers, boundary behavior. |
+| Data migration | Before/after invariants, interrupted migration, recovery/rollback. |
+| Concurrency | Races, stress where reproducible, fault injection. |
+| Authentication/authorization | Denial paths, privilege boundaries, regression. |
+| Performance | Preserved correctness and repeatable benchmark. |
+| Configuration/deployment | Environment differences, startup, rollback. |
+
+Use only applicable checks. Record passed, failed, skipped, unavailable, and not_run
+separately, with version, dirty state and scope where consequential. Distinguish a
+caller report, an execution observed by a collector, and independent CI/environment
+confirmation. Each establishes only its own scope. The recovery recorder accepts
+reports and claimed external provenance; it does not elevate them to certified facts.
+
 ## Planning Patterns
 
 ### Self-contained plan
 
-Write a plan that a fresh Codex instance could execute without remembering the chat:
+Write a plan that a fresh coding agent could execute without remembering the chat:
 
 - goal and acceptance criteria;
 - exact project root and relevant subprojects;

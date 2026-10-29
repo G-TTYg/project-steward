@@ -4,7 +4,12 @@ Use these standards to keep projects maintainable and prevent architecture rot.
 
 ## Default Architecture Shape
 
-For non-trivial software, default to a modern layered and modular design. Adapt names to the project's stack, but keep responsibilities distinct:
+Prefer cohesive responsibilities, explicit dependencies, visible invariants, and
+controlled change impact. Fit the existing project, language, runtime, performance
+constraints, and problem scale before choosing an architecture style. A small CLI
+may stay in one module; a renderer may follow data/execution phases; research code
+may separate models, data, training, and evaluation. Layering is one useful option
+for an application with those actual boundaries:
 
 - **Presentation / entrypoints**: UI, HTTP routes, CLI commands, workers, or message handlers. They translate inputs/outputs and should not own core business rules.
 - **Application / use cases**: orchestrate workflows, transactions, policies, and calls across domain services and ports.
