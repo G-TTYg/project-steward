@@ -47,6 +47,17 @@ class VerificationTests(RecoveryCase):
             return copy.deepcopy(jobs if "/jobs?" in path else run)
         record = verify.github_evidence("a/b", 12, run["path"], "a" * 40, fetch)
         self.assertEqual(record["source"], "independently_confirmed")
+        local_run = self.init_run()
+        self.cli("milestone", "add", "--run", local_run, "--name", "CI", "--summary", "goal")
+        state = self.state(local_run)
+        record.update(id="V-001", milestone_id="M-001", summary="CI API observation", recorded_at=verify.now_utc())
+        state["evidence"].append(record)
+        verify.append_event(state, "CI observed")
+        from steward_core.state import validate
+        validate(state)
+        record["provenance"]["jobs"][0]["conclusion"] = "failure"
+        with self.assertRaises(SystemExit):
+            validate(state)
         jobs["jobs"][0]["conclusion"] = "skipped"
         self.assertEqual(verify.github_evidence("a/b", 12, run["path"], "a" * 40, fetch)["status"], "failed")
         for field, value in (("head_sha", "b" * 40), ("path", ".github/workflows/evil.yml"), ("status", "in_progress")):

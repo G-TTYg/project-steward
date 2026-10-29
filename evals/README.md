@@ -4,8 +4,9 @@ This pilot separates helper correctness from Skill effectiveness. There are 24
 deterministic engineering scenarios in eight related fixture families: local bugs,
 cross-module refactors, features, dirty Git, interrupted recovery, stale context,
 data migration, and alternating ownership. They are small code-development tasks,
-not 24 independent production repositories. Add real incident-derived fixtures as
-evidence warrants. No Agent success-rate benefit has yet been measured here.
+not 24 independent production repositories. A separate pinned corpus now contains
+24 real upstream packaging bug-fix tasks; see the historical section below.
+No Agent success-rate benefit has yet been measured here.
 
 ## Conditions And Isolation
 
@@ -83,7 +84,8 @@ and confirmation requests, with the concrete event and why it was unnecessary.
 For maintainability, blind reviewers to condition and inspect code responsibility,
 contract clarity, and change cohesion with the same rubric. Do not replace hidden
 behavioral grading with an LLM's impression of professionalism. These audit/review
-judgments are not currently automated by the harness.
+judgments are supplied by reviewers; the controller tools below validate their
+references, retain reasons and produce separate audit/review records.
 
 Compare C against **both** A and B. A benefit over A alone does not justify the full
 Skill's cost. Diagnose failures by decision point and cause (model, rule, helper,
@@ -96,6 +98,93 @@ only establish harness behavior; they are never counted as Agent trials.
 Repository tests check that all 24 broken baselines fail their hidden acceptance,
 all 24 reference solutions pass acceptance/regression/ownership, and ownership
 violations and duplicate/mixed reports are rejected. These are fixture self-tests.
-No A/B/C experiment results are published with this release. Cross-host semantic
-conformance and real Agent performance remain empirical work requiring controlled
-host/model runs, not a capability claimed by the helper tests.
+No A/B/C experiment results are published with this release. Public cross-host
+installation and continuity contracts are provided, with read-only file/Git checks;
+actual model behavior on each host remains unmeasured.
+
+## Real Historical Repository Tasks
+
+`historical-tasks.json` pins 24 upstream bug fixes from `pypa/packaging`, with full
+parent/fix SHAs, source PR/commit URLs, upstream license identity, changed test blob
+IDs and affected test modules. These are genuine historical repository tasks across
+parser, requirements, markers, tags, versions, metadata, licenses and dependency
+groups, all from one ecosystem. They supplement rather than replace the eight
+synthetic families; they do not by themselves represent production migrations,
+concurrency, large features or the diversity of software engineering as a whole.
+
+Upstream source/tests remain under Apache-2.0 OR BSD-2-Clause; retain its LICENSE,
+LICENSE.APACHE and LICENSE.BSD. No upstream source is vendored into this MIT package.
+Hidden tests and oracle identities are controller material, not agent context.
+
+Prepare an isolated controller environment using `historical-requirements.txt`,
+then explicitly clone `https://github.com/pypa/packaging.git` into a controller-only
+cache. Do not expose that history, manifest, graders, public fix URLs or network to
+the evaluated agent. The prepared workspace is a fresh archive/Git history of the
+parent commit; it contains no future fix objects. Grading restores trusted upstream
+tests and uses an independent pytest configuration in disposable candidate copies.
+The source-cache boundary alone does not enforce isolation: the host must do so.
+
+```text
+python evals/historical.py list
+python evals/historical.py oracle --cache UPSTREAM_CACHE --python CONTROLLER_PYTHON --out NEW_ORACLE_REPORT.json
+python evals/historical.py prepare --task packaging-01 --cache UPSTREAM_CACHE --group C --profile PROFILE.json --out NEW_TRIAL
+python evals/historical.py grade --trial TRIAL --cache UPSTREAM_CACHE --python CONTROLLER_PYTHON --out NEW_RESULT.json
+python evals/benchmark.py schedule --corpus historical --profile PROFILE.json --seed 29 --repetitions 3 --out SCHEDULE.json
+```
+
+The oracle command requires baseline **test failure** (exit 1, not collection or
+environment error) and fixed-version success. It never launches an agent.
+`historical-validation.json` records the local oracle checks; the manual Historical
+oracle checks workflow repeats them on Linux. Ordinary six-platform/Python matrix
+jobs remain network-independent except checkout/setup. Real task runs are graded
+against updated hidden tests and the parent regression modules separately. Outcomes
+use the same report format as the pilot. Historical clean-workspace tasks check
+baseline ancestry; dirty/index ownership coverage remains in the synthetic corpus.
+
+## Collected Metrics And Process Audit
+
+`control.py` accepts explicit host argv for a bounded local capture and reads Codex
+JSONL or installer-provided `steward-host-v1` events. It never reads commands from a
+trial or recovery file. Configure model, permissions, tools and the sandbox outside
+this utility. Capture itself is not a sandbox or permission grant. Its output is a
+local controller artifact that may contain sensitive host text; do not publish it.
+
+```text
+python evals/control.py capture --workspace WORKSPACE --trial-id TRIAL_ID --out NEW_CAPTURE.json -- HOST EXPLICIT_ARGS
+python evals/control.py metrics --events EVENTS.jsonl --adapter codex-jsonl-v1 --trial-id TRIAL_ID --capture CAPTURE.json --out NEW_METRICS.json
+python evals/benchmark.py grade --trial TRIAL --metrics METRICS.json --result RESULT.json
+```
+
+Extract the captured stdout `output` JSON string verbatim to EVENTS.jsonl; stderr
+diagnostics are bounded separately and never parsed as usage. Platform newline
+normalization is accepted. The metrics
+importer binds it to capture/trial ID and checks truncation; incomplete, failed or
+missing usage remains unknown. Capture measures monotonic wall time, not CPU time;
+cached input is counted once. Imported logs without capture have unknown duration.
+Counters are host observations, not signed billing records. Historical grading also
+accepts `--metrics`. Raw event IDs in audits are one-based JSONL positions.
+
+```text
+python evals/control.py audit --events EVENTS.jsonl --judgments JUDGMENTS.json --out NEW_AUDIT.json
+python evals/control.py blind --trials TRIAL_1 TRIAL_2 --mapping PRIVATE_MAPPING.json --out NEW_REVIEW_DIR
+python evals/control.py review --bundle REVIEW_DIR --mapping PRIVATE_MAPPING.json --reviews REVIEWS.json --out NEW_REVIEW_RESULTS.json
+python evals/control.py failure --before FAILED_RESULT.json --diagnosis DIAGNOSIS.json --out NEW_RETEST_QUEUE.json
+python evals/control.py failure --before FAILED_RESULT.json --after RETEST_RESULT.json --diagnosis DIAGNOSIS.json --out NEW_FAILURE_RECORD.json
+```
+
+Audit judgments are a list of objects with `event_id`, `category` (document, branch,
+command, confirmation), `unnecessary` (boolean), `reason` and `reviewer`. Unreviewed
+events remain explicit; the tool does not label every command or document wasteful.
+Review bundles use random IDs, omit condition/trial/commit metadata, exclude AGENTS
+and recovery guidance, and retain a controller-private hash-bound mapping. Reviewers
+score responsibility, contract clarity and change cohesion 1–3 with rationale. Style
+may still suggest a condition; disclose potential unblinding. Do not share the mapping
+until review submission. Bundles include tracked diffs and untracked text additions;
+binary additions/symlinks are marked for separate review. Never infer that a marker
+establishes maintainability of a binary artifact.
+
+Diagnoses require `decision_point`, `cause` (model, rule, helper, environment), concrete
+`evidence` and smallest `intervention`. A matched retest must use a new trial ID and
+the same task, condition and fixed profile; the tool records resolved/unresolved
+without executing the queue. Compare changed Skill fingerprints explicitly. Human
+judgments and retest results supplement independent behavior/regression grading.

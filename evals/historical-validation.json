@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "measurement": "historical_oracle_self_test",
+  "environment": {
+    "python": "3.13.5",
+    "platform": "win32",
+    "pytest": "9.0.2",
+    "requirements": "historical-requirements.txt"
+  },
+  "tasks": 24,
+  "valid": 24,
+  "results": [
+    {
+      "task": "packaging-01",
+      "base": "2c87a33f665828b7aa0f650b1b50243b3ab95695",
+      "fixed": "2aada00b158feb36109d77dc91d62baa91f7d400",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-02",
+      "base": "0625596e502163179b9a82796aee82c178efc16d",
+      "fixed": "2c87a33f665828b7aa0f650b1b50243b3ab95695",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-03",
+      "base": "959bb79c06cb883bf1ecd1ddc94a079294907e0f",
+      "fixed": "0625596e502163179b9a82796aee82c178efc16d",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-04",
+      "base": "d17cfaf0b77a5690f03087359e7c8d665a3c728d",
+      "fixed": "959bb79c06cb883bf1ecd1ddc94a079294907e0f",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-05",
+      "base": "1f334c04c6918789974207733f194e11a47698f5",
+      "fixed": "022ae6c6fe5c2ef9615875d0ecfab1ae4024720f",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-06",
+      "base": "23669b1b69fb5fffbc773a68fc099166fc847356",
+      "fixed": "2602dd07d8bd5d6c54a3ce0e212f52eb2e127f3e",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-07",
+      "base": "de6580e6f077a82b2b10161fd2e80e57b8d52854",
+      "fixed": "f14a0933259121eb9b986bc1b7924910755d535d",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-08",
+      "base": "b097450461523502ada842f98274449ad74ff1ff",
+      "fixed": "4e79787a31c99348649bb0dafee2a5078d3595be",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-09",
+      "base": "413d006fadf5b9b14d78ad444201d8189bff8c64",
+      "fixed": "2d873eb6002021a8c007c933fbdab58b37a5079b",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-10",
+      "base": "826426fc88773515fab149a5f6bde85761e57fbb",
+      "fixed": "26fa1d42ccd98010d5fcf701dd10069e761b034c",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-11",
+      "base": "0bfc3cea4f9fe1b1b0c80ce06f02bd2433500c81",
+      "fixed": "189a76d54d64899adbca907c2a3efa5b6befdb28",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-12",
+      "base": "9c652e4b4ced3c94f133a1b91c726023f0950b4f",
+      "fixed": "fe18f139c5b3d73cd9fdd9b25f1eda1b6fd7ba15",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-13",
+      "base": "9c6f09ba6b313a561d6a64d988647ff3115e82ae",
+      "fixed": "8af75907bf1140071a6a706874fcf1d73cc39c71",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-14",
+      "base": "5b583e309996a085ad3b5b045f3bf50a09c11b58",
+      "fixed": "206834025040aca6f8a2fdfc4039dbfa2a9861a6",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-15",
+      "base": "2497782b2bb03812d2a12ae882a4390c61ec5061",
+      "fixed": "5b583e309996a085ad3b5b045f3bf50a09c11b58",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-16",
+      "base": "58c6cd700bdfd33cb3ebfbb9ad5d8cfde4e82f08",
+      "fixed": "abf000549c2ec5b31357046498d6e4f0f9d7d743",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-17",
+      "base": "1a9c4cb6b6aac7fb6137fcdc4f440af912d8d87f",
+      "fixed": "9d0ec47b36a1bcdf705b397b84cd89272410a00d",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-18",
+      "base": "458b0ae53e5a4261df851657d147e590b4546eb2",
+      "fixed": "1a9c4cb6b6aac7fb6137fcdc4f440af912d8d87f",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-19",
+      "base": "30824d9e3b33372a81af5e7a1d7e2ceb95e348c6",
+      "fixed": "458b0ae53e5a4261df851657d147e590b4546eb2",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-20",
+      "base": "cf100d20e09c270cb6e19e72edbd0d40728de501",
+      "fixed": "30824d9e3b33372a81af5e7a1d7e2ceb95e348c6",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-21",
+      "base": "c411a96fea8dd0091db7044c52d26bfb2e70cfa8",
+      "fixed": "4c663c9ef5e1ec4f64b01ea9a61c981890a56407",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-22",
+      "base": "a33b2941bf334823ab48b059611158d37da5846e",
+      "fixed": "f0620a997147fefd6844af9745c7bf28b43cce29",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-23",
+      "base": "9d4927b661d44a5a74d31890c9a777838fe31760",
+      "fixed": "a33b2941bf334823ab48b059611158d37da5846e",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    },
+    {
+      "task": "packaging-24",
+      "base": "d5fedc90bba333ed0962ba5dfb7072d38f2c1d84",
+      "fixed": "9d4927b661d44a5a74d31890c9a777838fe31760",
+      "baseline_exit_code": 1,
+      "oracle_exit_code": 0,
+      "regression_exit_code": 0
+    }
+  ],
+  "limitations": "Controller/oracle checks only; no Agent trials or A/B/C efficacy comparison. One upstream ecosystem; not a representative production-task distribution.",
+  "manifest_text_sha256": "19a05314be1854172c0998adaba2a6dee3e3c307a14ac50793f34800ec2b5b42"
+}

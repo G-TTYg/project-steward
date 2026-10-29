@@ -7,7 +7,7 @@ facts in their canonical files, and hand off maintainable work across sessions.
 
 Its identity is project stewardship. Long-running checkpoints and handoffs are support tools, not the center of the skill.
 
-Current release: `v0.3.1` (schema v3). See [changes and compatibility](CHANGELOG.md).
+Current release: `v0.4.0` (schema v3). See [changes and compatibility](CHANGELOG.md).
 Licensed under [MIT](LICENSE); the exported package carries the same license notice.
 
 The installable skill lives in `project-steward/`. Repository maintenance files stay at the root:
@@ -23,7 +23,7 @@ project-steward/                 Development repository
     |-- SKILL.md                Runtime instructions and reference index
     |-- agents/openai.yaml      Codex UI metadata
     |-- references/             On-demand standards and templates
-    `-- scripts/long_work.py     Recovery helper
+    `-- scripts/                Optional recovery, evidence and host checks
 ```
 
 In the global installation, `SKILL.md` sits directly at `~/.codex/skills/project-steward/SKILL.md`. Invoke it as `$project-steward`.
@@ -49,7 +49,10 @@ The installer exports only that directory and refuses to overwrite an existing i
 The core contract/references do not require Codex APIs. Other Agent Skills hosts can
 use the same complete package in their documented discovery directory; no alternate
 SKILL is maintained. `agents/openai.yaml` is optional host metadata. Discovery and
-behavior on other hosts have not been independently certified. Python 3.10+ is
+behavior on other hosts have not been independently certified. Follow the
+[host integration contract](project-steward/references/host-integration.md) for
+Claude Code, Pi, OpenClaw, custom adapters and cross-host handoffs. Installers own
+host-specific setup and authorization. Python 3.10+ is
 needed only for the optional recovery helper; Git 2.36+ is needed for its opt-in
 state commits. Without those tools, follow the contract with existing project tools.
 
@@ -151,10 +154,13 @@ stage and validate that exact tag/commit before replacing a runtime snapshot.
 
 ## Agent Evaluation
 
-[The evaluation protocol](evals/README.md) defines 24 code-development scenarios,
+[The evaluation protocol](evals/README.md) defines 24 synthetic code-development scenarios
+and 24 pinned historical upstream bug tasks,
 controller-only hidden checks, A/B/C conditions (native agent, brief AGENTS, full
 Skill), seeded scheduling, independent behavioral/ownership grading, and cost
-reporting. The fixture self-tests establish grader behavior; no controlled Agent
+reporting. Controller tools collect host usage/time, validate process audits, export
+blinded review bundles and record matched failure/retests. The fixture and upstream
+oracle self-tests establish grader behavior; no controlled Agent
 performance benefit is claimed. Run real trials with a fixed model/host/resource
 profile and isolated agent access before drawing efficacy conclusions.
 
@@ -224,8 +230,9 @@ python project-steward/scripts/long_work.py run close --run <run-dir> --reason "
 ```
 
 `complete` ends a Run; it does not certify outstanding milestones. Evidence is
-caller-reported, with explicit outcome, code version, scope, and claimed external
-provenance available through `evidence`. The recorder never executes tests or
+caller-reported through `evidence`. Optional `scripts/verify.py` collects observed
+argv execution or GitHub API-confirmed workflow results with version/scope and
+provenance; see the evidence section of the recovery reference below. The recorder never executes tests or
 historical suggestions. It resolves attached commits to full SHAs without inferring
 task ownership. Existing flat CLI forms remain compatibility wrappers.
 

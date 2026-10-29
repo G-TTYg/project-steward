@@ -1,5 +1,37 @@
 # Decisions
 
+## 2026-10-29: Collected Evidence And Host-neutral Integration
+
+Keep `long_work.py` non-executing. An optional explicit-argv adapter collects exit,
+duration, bounded minimized output and before/after source snapshots; a fixed-origin
+GitHub adapter imports one completed workflow attempt directly from the API. Caller
+reports cannot self-upgrade their source through the recorder. Observed and API
+confirmation describe provenance and scope, not program correctness or a signed
+certificate. State remains editable; changing source invalidates assumptions about
+applicability. Preserve existing v3 reports and require updated readers for new
+evidence sources. Collection never changes milestone acceptance automatically.
+
+Provide one portable Skill and public host installation/capability/handoff contracts.
+Installers handle discovery, credentials, tool mappings and permissions for Claude
+Code, Pi, OpenClaw and other hosts. A read-only package/handoff check separates host
+declarations from filesystem/Git observations; it cannot certify model behavior.
+No mandatory vendor APIs, automatic command hooks or agent framework are introduced.
+
+## 2026-10-29: Historical Tasks And Controller Review Tools
+
+Supplement the 24 synthetic scenarios with 24 immutable real packaging bug fixes,
+upstream license/provenance and controller-only upstream tests. Validate actual
+baseline test failure, fixed-version acceptance and related unaffected regressions.
+One upstream ecosystem is useful coverage, not a claim of broad task diversity.
+Keep oracle history and grading outside the evaluated agent's sandbox/network.
+
+Collect actual host usage and monotonic elapsed time through explicit argv or log
+adapters; absent/partial counters remain unknown. Human process audits and blinded
+maintainability review retain concrete event references and reasons, separately
+from behavior/ownership outcomes. Failure diagnosis produces a matched retest record
+or queue, never an automatically executed instruction. No actual A/B/C comparisons
+are run or claimed in this implementation.
+
 ## 2026-10-29: Pilot Evaluation And Versioned Publication
 
 Start with 24 deterministic scenarios across eight fixture families, hidden

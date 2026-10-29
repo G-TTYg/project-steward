@@ -1,0 +1,713 @@
+{
+  "schema_version": 1,
+  "tasks": [
+    {
+      "id": "packaging-01",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "reject empty arbitrary versions in requirements",
+      "prompt": "Fix the following packaging defect: reject empty arbitrary versions in requirements. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-specifiers",
+      "base": "2c87a33f665828b7aa0f650b1b50243b3ab95695",
+      "fixed": "2aada00b158feb36109d77dc91d62baa91f7d400",
+      "source_commit": "https://github.com/pypa/packaging/commit/2aada00b158feb36109d77dc91d62baa91f7d400",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1430",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_requirements.py",
+        "tests/test_specifiers.py"
+      ],
+      "test_blobs": {
+        "tests/test_requirements.py": "ad78c2b84e58c59131bed182831d021179dd4e25",
+        "tests/test_specifiers.py": "37fa11e32c8a525202a279ec03561aa4ea715638"
+      },
+      "oracle_source_paths": [
+        "src/packaging/specifiers.py"
+      ],
+      "regression_paths": [
+        "tests/test_version.py"
+      ]
+    },
+    {
+      "id": "packaging-02",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "canonicalize_license_expression mangling case-distinct LicenseRef identifiers",
+      "prompt": "Fix the following packaging defect: canonicalize_license_expression mangling case-distinct LicenseRef identifiers. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-licenses",
+      "base": "0625596e502163179b9a82796aee82c178efc16d",
+      "fixed": "2c87a33f665828b7aa0f650b1b50243b3ab95695",
+      "source_commit": "https://github.com/pypa/packaging/commit/2c87a33f665828b7aa0f650b1b50243b3ab95695",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1412",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_licenses.py"
+      ],
+      "test_blobs": {
+        "tests/test_licenses.py": "d617614ddad1856a4487686c1a308810b9c948f3"
+      },
+      "oracle_source_paths": [
+        "src/packaging/licenses/__init__.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-03",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "anchor the wheel build tag regex to the end of the part",
+      "prompt": "Fix the following packaging defect: anchor the wheel build tag regex to the end of the part. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-utils",
+      "base": "959bb79c06cb883bf1ecd1ddc94a079294907e0f",
+      "fixed": "0625596e502163179b9a82796aee82c178efc16d",
+      "source_commit": "https://github.com/pypa/packaging/commit/0625596e502163179b9a82796aee82c178efc16d",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1427",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_utils.py"
+      ],
+      "test_blobs": {
+        "tests/test_utils.py": "175c47bebac2f42b34cf864ff9dce1f7244757d2"
+      },
+      "oracle_source_paths": [
+        "src/packaging/utils.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-04",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "collect errors from sibling includes after a first parse error",
+      "prompt": "Fix the following packaging defect: collect errors from sibling includes after a first parse error. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-dependency_groups",
+      "base": "d17cfaf0b77a5690f03087359e7c8d665a3c728d",
+      "fixed": "959bb79c06cb883bf1ecd1ddc94a079294907e0f",
+      "source_commit": "https://github.com/pypa/packaging/commit/959bb79c06cb883bf1ecd1ddc94a079294907e0f",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1411",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_dependency_groups.py"
+      ],
+      "test_blobs": {
+        "tests/test_dependency_groups.py": "9a740e56f9c231a79563d55d0a64683694257a26"
+      },
+      "oracle_source_paths": [
+        "src/packaging/dependency_groups.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-05",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "reject drive-relative license-file paths in metadata validation",
+      "prompt": "Fix the following packaging defect: reject drive-relative license-file paths in metadata validation. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-metadata",
+      "base": "1f334c04c6918789974207733f194e11a47698f5",
+      "fixed": "022ae6c6fe5c2ef9615875d0ecfab1ae4024720f",
+      "source_commit": "https://github.com/pypa/packaging/commit/022ae6c6fe5c2ef9615875d0ecfab1ae4024720f",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1382",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_metadata.py"
+      ],
+      "test_blobs": {
+        "tests/test_metadata.py": "728b0538ca3d5b5f641a1bb4915a8b6562188fbe"
+      },
+      "oracle_source_paths": [
+        "src/packaging/metadata.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-06",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "reject whitespace in the URL token",
+      "prompt": "Fix the following packaging defect: reject whitespace in the URL token. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-_tokenizer",
+      "base": "23669b1b69fb5fffbc773a68fc099166fc847356",
+      "fixed": "2602dd07d8bd5d6c54a3ce0e212f52eb2e127f3e",
+      "source_commit": "https://github.com/pypa/packaging/commit/2602dd07d8bd5d6c54a3ce0e212f52eb2e127f3e",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1379",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_requirements.py"
+      ],
+      "test_blobs": {
+        "tests/test_requirements.py": "7e2e3643f7c69f456c46d5dbc086ad4d9121a475"
+      },
+      "oracle_source_paths": [
+        "src/packaging/_tokenizer.py"
+      ],
+      "regression_paths": [
+        "tests/test_version.py"
+      ]
+    },
+    {
+      "id": "packaging-07",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "scope ~= groups with (?a:...)",
+      "prompt": "Fix the following packaging defect: scope ~= groups with (?a:...). Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-specifiers",
+      "base": "de6580e6f077a82b2b10161fd2e80e57b8d52854",
+      "fixed": "f14a0933259121eb9b986bc1b7924910755d535d",
+      "source_commit": "https://github.com/pypa/packaging/commit/f14a0933259121eb9b986bc1b7924910755d535d",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1384",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_specifiers.py"
+      ],
+      "test_blobs": {
+        "tests/test_specifiers.py": "9fb5161215c38e9180c3cd88bf9f88b66f87729a"
+      },
+      "oracle_source_paths": [
+        "src/packaging/specifiers.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-08",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "preserve explicitly empty platform iterables",
+      "prompt": "Fix the following packaging defect: preserve explicitly empty platform iterables. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-tags",
+      "base": "b097450461523502ada842f98274449ad74ff1ff",
+      "fixed": "4e79787a31c99348649bb0dafee2a5078d3595be",
+      "source_commit": "https://github.com/pypa/packaging/commit/4e79787a31c99348649bb0dafee2a5078d3595be",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1360",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_tags.py"
+      ],
+      "test_blobs": {
+        "tests/test_tags.py": "88695c84a43cfc2b1ba1a21b521feace2135d565"
+      },
+      "oracle_source_paths": [
+        "src/packaging/tags.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-09",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "fold every line boundary when writing headers",
+      "prompt": "Fix the following packaging defect: fold every line boundary when writing headers. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-metadata",
+      "base": "413d006fadf5b9b14d78ad444201d8189bff8c64",
+      "fixed": "2d873eb6002021a8c007c933fbdab58b37a5079b",
+      "source_commit": "https://github.com/pypa/packaging/commit/2d873eb6002021a8c007c933fbdab58b37a5079b",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1356",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_metadata.py"
+      ],
+      "test_blobs": {
+        "tests/test_metadata.py": "f6bb7f5480cb9a85f11b8310ae532573f9c7c7e3"
+      },
+      "oracle_source_paths": [
+        "src/packaging/metadata.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-10",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "reject invalid interpreter tags",
+      "prompt": "Fix the following packaging defect: reject invalid interpreter tags. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-tags",
+      "base": "826426fc88773515fab149a5f6bde85761e57fbb",
+      "fixed": "26fa1d42ccd98010d5fcf701dd10069e761b034c",
+      "source_commit": "https://github.com/pypa/packaging/commit/26fa1d42ccd98010d5fcf701dd10069e761b034c",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1351",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_tags.py",
+        "tests/test_utils.py"
+      ],
+      "test_blobs": {
+        "tests/test_tags.py": "63750a18180244ffd368fc5b0b927620293a656b",
+        "tests/test_utils.py": "c543089bcdf8bfc62519d6f14d92e7f1caec7350"
+      },
+      "oracle_source_paths": [
+        "src/packaging/tags.py",
+        "src/packaging/utils.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-11",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "require true end of input",
+      "prompt": "Fix the following packaging defect: require true end of input. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-_tokenizer",
+      "base": "0bfc3cea4f9fe1b1b0c80ce06f02bd2433500c81",
+      "fixed": "189a76d54d64899adbca907c2a3efa5b6befdb28",
+      "source_commit": "https://github.com/pypa/packaging/commit/189a76d54d64899adbca907c2a3efa5b6befdb28",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1345",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_markers.py",
+        "tests/test_requirements.py"
+      ],
+      "test_blobs": {
+        "tests/test_markers.py": "39c1278f0f8cd8a3fae4a101bcfbfbe3f2efd54d",
+        "tests/test_requirements.py": "8c0fd8edeba6e4d5fd7458fac7ac8a217ae64710"
+      },
+      "oracle_source_paths": [
+        "src/packaging/_tokenizer.py"
+      ],
+      "regression_paths": [
+        "tests/test_version.py"
+      ]
+    },
+    {
+      "id": "packaging-12",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "normalize invalid specifier errors",
+      "prompt": "Fix the following packaging defect: normalize invalid specifier errors. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-requirements",
+      "base": "9c652e4b4ced3c94f133a1b91c726023f0950b4f",
+      "fixed": "fe18f139c5b3d73cd9fdd9b25f1eda1b6fd7ba15",
+      "source_commit": "https://github.com/pypa/packaging/commit/fe18f139c5b3d73cd9fdd9b25f1eda1b6fd7ba15",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1332",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_requirements.py"
+      ],
+      "test_blobs": {
+        "tests/test_requirements.py": "3bbae5c139c288fa6bb37e0f57384057bf615862"
+      },
+      "oracle_source_paths": [
+        "src/packaging/requirements.py"
+      ],
+      "regression_paths": [
+        "tests/test_version.py"
+      ]
+    },
+    {
+      "id": "packaging-13",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "wheel filename regex for \\n at end of string",
+      "prompt": "Fix the following packaging defect: wheel filename regex for \\n at end of string. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-utils",
+      "base": "9c6f09ba6b313a561d6a64d988647ff3115e82ae",
+      "fixed": "8af75907bf1140071a6a706874fcf1d73cc39c71",
+      "source_commit": "https://github.com/pypa/packaging/commit/8af75907bf1140071a6a706874fcf1d73cc39c71",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1341",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_utils.py"
+      ],
+      "test_blobs": {
+        "tests/test_utils.py": "bcdedb191f789b69622392a3c6c98689d4bfa725"
+      },
+      "oracle_source_paths": [
+        "src/packaging/utils.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-14",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "aggregate from_email validation errors",
+      "prompt": "Fix the following packaging defect: aggregate from_email validation errors. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-metadata",
+      "base": "5b583e309996a085ad3b5b045f3bf50a09c11b58",
+      "fixed": "206834025040aca6f8a2fdfc4039dbfa2a9861a6",
+      "source_commit": "https://github.com/pypa/packaging/commit/206834025040aca6f8a2fdfc4039dbfa2a9861a6",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1268",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_metadata.py"
+      ],
+      "test_blobs": {
+        "tests/test_metadata.py": "ace19b43f9141e8eb328d1e853159006ad0150ea"
+      },
+      "oracle_source_paths": [
+        "src/packaging/metadata.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-15",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "preserve marker quote semantics when serializing values",
+      "prompt": "Fix the following packaging defect: preserve marker quote semantics when serializing values. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-_parser",
+      "base": "2497782b2bb03812d2a12ae882a4390c61ec5061",
+      "fixed": "5b583e309996a085ad3b5b045f3bf50a09c11b58",
+      "source_commit": "https://github.com/pypa/packaging/commit/5b583e309996a085ad3b5b045f3bf50a09c11b58",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1213",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_markers.py",
+        "tests/test_requirements.py"
+      ],
+      "test_blobs": {
+        "tests/test_markers.py": "a265fef0a1af2b435ea2425db0d8bacfd034d0ff",
+        "tests/test_requirements.py": "7f8a572b7b1b265f6e5073299a76a6a4993424d3"
+      },
+      "oracle_source_paths": [
+        "src/packaging/_parser.py"
+      ],
+      "regression_paths": [
+        "tests/test_version.py"
+      ]
+    },
+    {
+      "id": "packaging-16",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "accept UTF-8 charset case-insensitively",
+      "prompt": "Fix the following packaging defect: accept UTF-8 charset case-insensitively. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-metadata",
+      "base": "58c6cd700bdfd33cb3ebfbb9ad5d8cfde4e82f08",
+      "fixed": "abf000549c2ec5b31357046498d6e4f0f9d7d743",
+      "source_commit": "https://github.com/pypa/packaging/commit/abf000549c2ec5b31357046498d6e4f0f9d7d743",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1330",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_metadata.py"
+      ],
+      "test_blobs": {
+        "tests/test_metadata.py": "e077f6985777fc78dac2169874e0886d12de775a"
+      },
+      "oracle_source_paths": [
+        "src/packaging/metadata.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-17",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "reject malformed Description-Content-Type values",
+      "prompt": "Fix the following packaging defect: reject malformed Description-Content-Type values. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-metadata",
+      "base": "1a9c4cb6b6aac7fb6137fcdc4f440af912d8d87f",
+      "fixed": "9d0ec47b36a1bcdf705b397b84cd89272410a00d",
+      "source_commit": "https://github.com/pypa/packaging/commit/9d0ec47b36a1bcdf705b397b84cd89272410a00d",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1329",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_metadata.py"
+      ],
+      "test_blobs": {
+        "tests/test_metadata.py": "90c623594b4f4f5327e3913891870b620773f7ae"
+      },
+      "oracle_source_paths": [
+        "src/packaging/metadata.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-18",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "make InvalidMetadata and CyclicDependencyGroup picklable",
+      "prompt": "Fix the following packaging defect: make InvalidMetadata and CyclicDependencyGroup picklable. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-dependency_groups",
+      "base": "458b0ae53e5a4261df851657d147e590b4546eb2",
+      "fixed": "1a9c4cb6b6aac7fb6137fcdc4f440af912d8d87f",
+      "source_commit": "https://github.com/pypa/packaging/commit/1a9c4cb6b6aac7fb6137fcdc4f440af912d8d87f",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1328",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_dependency_groups.py",
+        "tests/test_metadata.py"
+      ],
+      "test_blobs": {
+        "tests/test_dependency_groups.py": "5c3e42bc4911006ea2b96fac522994b135ecd24d",
+        "tests/test_metadata.py": "f14d676d04ea6ab5c5e015ceaacbe3f549561ebb"
+      },
+      "oracle_source_paths": [
+        "src/packaging/dependency_groups.py",
+        "src/packaging/metadata.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-19",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "don't rewrite user values containing '{field}' in errors",
+      "prompt": "Fix the following packaging defect: don't rewrite user values containing '{field}' in errors. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-metadata",
+      "base": "30824d9e3b33372a81af5e7a1d7e2ceb95e348c6",
+      "fixed": "458b0ae53e5a4261df851657d147e590b4546eb2",
+      "source_commit": "https://github.com/pypa/packaging/commit/458b0ae53e5a4261df851657d147e590b4546eb2",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1327",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_metadata.py"
+      ],
+      "test_blobs": {
+        "tests/test_metadata.py": "8b50f3d5f1245ef8b3f9337490ab82b56581c01b"
+      },
+      "oracle_source_paths": [
+        "src/packaging/metadata.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-20",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "collect InvalidRequirement instead of leaking it",
+      "prompt": "Fix the following packaging defect: collect InvalidRequirement instead of leaking it. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-dependency_groups",
+      "base": "cf100d20e09c270cb6e19e72edbd0d40728de501",
+      "fixed": "30824d9e3b33372a81af5e7a1d7e2ceb95e348c6",
+      "source_commit": "https://github.com/pypa/packaging/commit/30824d9e3b33372a81af5e7a1d7e2ceb95e348c6",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1302",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_dependency_groups.py"
+      ],
+      "test_blobs": {
+        "tests/test_dependency_groups.py": "bf98d74b973a186115a8968868526300e291dc40"
+      },
+      "oracle_source_paths": [
+        "src/packaging/dependency_groups.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-21",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "normalize extras/dependency_groups membership values at parse time",
+      "prompt": "Fix the following packaging defect: normalize extras/dependency_groups membership values at parse time. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-markers",
+      "base": "c411a96fea8dd0091db7044c52d26bfb2e70cfa8",
+      "fixed": "4c663c9ef5e1ec4f64b01ea9a61c981890a56407",
+      "source_commit": "https://github.com/pypa/packaging/commit/4c663c9ef5e1ec4f64b01ea9a61c981890a56407",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1310",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_markers.py"
+      ],
+      "test_blobs": {
+        "tests/test_markers.py": "9de8a43e93e61deaf6307cc9872d057fcc0eef4a"
+      },
+      "oracle_source_paths": [
+        "src/packaging/markers.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-22",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "raise InvalidTag for malformed tag field counts",
+      "prompt": "Fix the following packaging defect: raise InvalidTag for malformed tag field counts. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-tags",
+      "base": "a33b2941bf334823ab48b059611158d37da5846e",
+      "fixed": "f0620a997147fefd6844af9745c7bf28b43cce29",
+      "source_commit": "https://github.com/pypa/packaging/commit/f0620a997147fefd6844af9745c7bf28b43cce29",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1238",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_tags.py"
+      ],
+      "test_blobs": {
+        "tests/test_tags.py": "08ba2e319ecfcf141b80b73ccc8cb6c25bf9fe9c"
+      },
+      "oracle_source_paths": [
+        "src/packaging/tags.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-23",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "set _hash_cache when copying a Version in _TrimmedRelease",
+      "prompt": "Fix the following packaging defect: set _hash_cache when copying a Version in _TrimmedRelease. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-version",
+      "base": "9d4927b661d44a5a74d31890c9a777838fe31760",
+      "fixed": "a33b2941bf334823ab48b059611158d37da5846e",
+      "source_commit": "https://github.com/pypa/packaging/commit/a33b2941bf334823ab48b059611158d37da5846e",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1242",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_version.py"
+      ],
+      "test_blobs": {
+        "tests/test_version.py": "e4381f95b2e298f9f97f7afe1dd69a4a0cb68c2f"
+      },
+      "oracle_source_paths": [
+        "src/packaging/version.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    },
+    {
+      "id": "packaging-24",
+      "repository": "https://github.com/pypa/packaging",
+      "title": "raise InvalidVersion for non-str pre letters in from_parts",
+      "prompt": "Fix the following packaging defect: raise InvalidVersion for non-str pre letters in from_parts. Keep the public API compatible except for the corrected behavior.",
+      "family": "historical-version",
+      "base": "d5fedc90bba333ed0962ba5dfb7072d38f2c1d84",
+      "fixed": "9d4927b661d44a5a74d31890c9a777838fe31760",
+      "source_commit": "https://github.com/pypa/packaging/commit/9d4927b661d44a5a74d31890c9a777838fe31760",
+      "source_pull_request": "https://github.com/pypa/packaging/pull/1241",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "license_paths": [
+        "LICENSE",
+        "LICENSE.APACHE",
+        "LICENSE.BSD"
+      ],
+      "test_paths": [
+        "tests/test_version.py"
+      ],
+      "test_blobs": {
+        "tests/test_version.py": "06ad917af6b2f967c8343ce8b945e1186d7619dd"
+      },
+      "oracle_source_paths": [
+        "src/packaging/version.py"
+      ],
+      "regression_paths": [
+        "tests/test_requirements.py"
+      ]
+    }
+  ]
+}

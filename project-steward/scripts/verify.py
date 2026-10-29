@@ -26,7 +26,7 @@ from steward_core.storage import run_lock, save_run
 
 def scrub(text, project):
     """Best effort minimization; do not put secrets in argv or test output."""
-    for value in {str(project), str(Path.home()), str(Path(sys.prefix))}:
+    for value in sorted({str(project), str(Path.home()), str(Path(sys.prefix))}, key=len, reverse=True):
         if len(value) > 3:
             text = text.replace(value, "<local>").replace(value.replace("\\", "/"), "<local>")
     for key, value in os.environ.items():
@@ -160,7 +160,7 @@ def github_evidence(repository, run_id, workflow, sha, fetch=github_get):
     return {"status": "passed" if passed else "failed", "exit_code": None, "revision": sha,
             "source": "independently_confirmed", "claimed_source": "independently_confirmed",
             "provenance": {"adapter": "github-actions-api-v1", "repository": repository, "run_id": run_id,
-                           "workflow": workflow, "attempt": attempt, "url": run["html_url"],
+                           "workflow": workflow, "attempt": attempt, "conclusion": run["conclusion"], "url": run["html_url"],
                            "observed_at": now_utc(), "jobs": [{"id": j["id"], "name": j["name"],
                            "conclusion": j["conclusion"]} for j in jobs]}}
 

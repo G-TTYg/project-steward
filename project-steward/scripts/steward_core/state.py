@@ -140,6 +140,7 @@ def validate(state: Any) -> None:
         require(record.get("milestone_id") in ids, "evidence milestone reference is invalid")
         require(record.get("source") in {"reported", "observed", "independently_confirmed"}, "invalid evidence source")
         if record["source"] != "reported":
+            require(record.get("claimed_source") == record["source"], "collected source cannot contradict its claim")
             provenance = record.get("provenance")
             require(isinstance(provenance, dict), "collected evidence requires adapter provenance")
             timestamp(provenance.get("observed_at"))
@@ -152,7 +153,8 @@ def validate(state: Any) -> None:
                             and isinstance(snap.get("files_sha256"), str)
                             and bool(re.fullmatch(r"[0-9a-f]{64}", snap["files_sha256"])), "invalid code snapshot")
                 require(record.get("revision") == provenance["before"]["head"]
-                        and provenance.get("source_changed") == (provenance["before"] != provenance["after"]), "inconsistent source observation")
+                        and type(provenance.get("source_changed")) is bool
+                        and provenance["source_changed"] == (provenance["before"] != provenance["after"]), "inconsistent source observation")
                 require(type(record.get("exit_code")) is int and type(record.get("timed_out")) is bool
                         and type(record.get("duration_seconds")) in (int, float)
                         and 0 <= record["duration_seconds"] < float("inf"), "invalid execution observation")
@@ -163,6 +165,17 @@ def validate(state: Any) -> None:
                         and isinstance(provenance.get("jobs"), list) and provenance["jobs"]
                         and isinstance(record.get("revision"), str)
                         and bool(re.fullmatch(r"[0-9a-f]{40}", record["revision"])), "invalid CI provenance")
+                require(isinstance(provenance.get("workflow"), str) and provenance["workflow"].startswith(".github/workflows/")
+                        and type(provenance.get("attempt")) is int and provenance["attempt"] > 0
+                        and provenance.get("conclusion") in {"success", "failure", "cancelled", "timed_out"}, "invalid CI workflow/attempt")
+                job_ids = set()
+                for job in provenance["jobs"]:
+                    require(isinstance(job, dict) and type(job.get("id")) is int and job["id"] not in job_ids
+                            and isinstance(job.get("name"), str) and isinstance(job.get("conclusion"), str), "invalid CI job record")
+                    job_ids.add(job["id"])
+                passed = provenance["conclusion"] == "success" and all(j["conclusion"] == "success" for j in provenance["jobs"])
+                require(record.get("status") == ("passed" if passed else "failed")
+                        and record.get("exit_code") is None, "CI outcome contradicts workflow/jobs")
         require(record.get("claimed_source") in {"reported", "observed", "independently_confirmed"},
                 "invalid claimed evidence source")
         require(record.get("status") in EVIDENCE_STATUSES, "invalid verification outcome")

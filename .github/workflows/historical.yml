@@ -1,0 +1,27 @@
+name: Historical oracle checks
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  upstream-oracles:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r evals/historical-requirements.txt
+      - name: Fetch controller-only upstream history
+        run: git clone --no-checkout https://github.com/pypa/packaging.git "$RUNNER_TEMP/upstream"
+      - name: Validate pinned broken baselines and upstream fixed oracles
+        run: python evals/historical.py oracle --cache "$RUNNER_TEMP/upstream" --out historical-oracles.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: historical-oracle-self-checks
+          path: historical-oracles.json

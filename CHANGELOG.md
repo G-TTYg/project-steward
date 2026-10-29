@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.4.0 — 2026-10-29
+
+- Add optional explicit-argv verification collection with bounded output,
+  minimization, timeout/exit/duration and before/after source fingerprints.
+- Import one GitHub Actions attempt from the API with repository, workflow,
+  SHA and complete-job checks; keep caller reports separate from collected sources.
+  New sources require this reader; existing v3 reports remain compatible.
+- Add public host installation/capability/handoff contracts and a read-only check;
+  installers own host details. No cross-host model behavior is certified.
+- Add 24 pinned real upstream bug tasks and hidden/oracle/regression validation,
+  alongside the original 24 synthetic scenarios. Provide a manual upstream CI check.
+- Add trial-bound host token/time collection, process-audit validation, opaque blind
+  review bundles and matched diagnosis/retest tooling. No real A/B/C experiment or
+  measured Skill efficacy claim is included.
+
 ## 0.3.1 — 2026-10-29
 
 - Compare license text after normalizing platform newlines when checking an

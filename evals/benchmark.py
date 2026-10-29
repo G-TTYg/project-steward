@@ -145,6 +145,20 @@ def grade(output, tokens=None, seconds=None):
             "tokens": tokens, "elapsed_seconds": seconds, "measurement": "agent_trial"}
 
 
+def attach_metrics(result, metrics):
+    if result["trial_id"] != metrics.get("trial_id") or metrics.get("adapter") not in {"codex-jsonl-v1", "steward-host-v1"}:
+        raise ValueError("metrics must be collected for this trial by a known adapter")
+    for key in ("tokens", "elapsed_seconds"):
+        value = metrics.get(key)
+        if value is not None and (type(value) not in (int, float) or not math.isfinite(value) or value < 0):
+            raise ValueError("invalid collected metric")
+        result[key] = value
+    if metrics.get("tokens") is not None and type(metrics["tokens"]) is not int:
+        raise ValueError("token counts must be integers")
+    result["metric_provenance"] = metrics
+    return result
+
+
 def wilson(passed, total):
     if total == 0:
         return None
@@ -208,12 +222,14 @@ def main():
     check.add_argument("--trial", type=Path, required=True)
     check.add_argument("--tokens", type=int)
     check.add_argument("--seconds", type=float)
+    check.add_argument("--metrics", type=Path, help="trial-bound host telemetry from control.py metrics")
     check.add_argument("--result", type=Path, required=True)
     schedule = sub.add_parser("schedule")
     schedule.add_argument("--profile", type=Path, required=True)
     schedule.add_argument("--seed", type=int, required=True)
     schedule.add_argument("--repetitions", type=int, default=3)
     schedule.add_argument("--out", type=Path, required=True)
+    schedule.add_argument("--corpus", choices=["synthetic", "historical", "all"], default="synthetic")
     report = sub.add_parser("report")
     report.add_argument("--results", type=Path, required=True, help="directory containing result JSON only")
     report.add_argument("--out", type=Path, required=True)
@@ -224,14 +240,22 @@ def main():
     elif args.action == "prepare":
         print(prepare(args.task, args.group, args.out.resolve(), read_profile(args.profile)))
     elif args.action == "grade":
+        if args.metrics and (args.tokens is not None or args.seconds is not None):
+            raise ValueError("choose collected metrics or manual metrics")
         result = grade(args.trial.resolve(), args.tokens, args.seconds)
+        if args.metrics:
+            attach_metrics(result, json.loads(args.metrics.read_text(encoding="utf-8")))
         write_json(args.result, result)
         print("PASS" if result["success"] else "FAIL")
     elif args.action == "schedule":
         if args.repetitions < 1:
             raise ValueError("repetitions must be positive")
+        task_ids = list(TASKS) if args.corpus in {"synthetic", "all"} else []
+        if args.corpus in {"historical", "all"}:
+            from historical import tasks
+            task_ids += [t["id"] for t in tasks()]
         trials = [{"task": task, "group": group, "repeat": repeat}
-                  for repeat in range(1, args.repetitions + 1) for task in TASKS for group in "ABC"]
+                  for repeat in range(1, args.repetitions + 1) for task in task_ids for group in "ABC"]
         random.Random(args.seed).shuffle(trials)
         write_json(args.out, {"profile": read_profile(args.profile), "seed": args.seed, "trials": trials})
         print(f"Scheduled {len(trials)} trials; no agents launched.")
