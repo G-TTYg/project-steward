@@ -59,7 +59,10 @@ in a local temporary backup outside the project. Preserve that backup somewhere
 durable if needed; it can contain machine paths and must not be published. Known
 legacy project/repository path spellings are replaced with `.` in generated state,
 plan, log, and notes. Review free-form content for other private paths/secrets;
-this is not a general redaction tool. Corrupt or unknown schemas are safely refused.
+this is not a general redaction tool. Legacy verified entries without an actual
+verification report retain their old status as history but reopen acceptance as
+`in_progress`; migration never fabricates a pass. Corrupt or unknown schemas are
+safely refused.
 
 ## Consistency And Repair
 

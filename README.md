@@ -7,6 +7,9 @@ facts in their canonical files, and hand off maintainable work across sessions.
 
 Its identity is project stewardship. Long-running checkpoints and handoffs are support tools, not the center of the skill.
 
+Current release: `v0.3.0` (schema v3). See [changes and compatibility](CHANGELOG.md).
+Licensed under [MIT](LICENSE); the exported package carries the same license notice.
+
 The installable skill lives in `project-steward/`. Repository maintenance files stay at the root:
 
 ```text
@@ -136,9 +139,24 @@ For helper changes, run the standard-library regression suite from the developme
 
 ```bash
 python -X utf8 -m unittest discover -s tests -v
+python -X utf8 tools/check_package.py --repository .
 ```
 
 The tests use disposable directories and local Git repositories; they do not change the installed skill or publish anything.
+
+GitHub Actions runs package/link/export checks and the suite on Windows, Linux,
+and macOS with Python 3.10 and 3.13. Local success does not substitute for the
+corresponding remote matrix result. Release tags identify immutable package source;
+stage and validate that exact tag/commit before replacing a runtime snapshot.
+
+## Agent Evaluation
+
+[The evaluation protocol](evals/README.md) defines 24 code-development scenarios,
+controller-only hidden checks, A/B/C conditions (native agent, brief AGENTS, full
+Skill), seeded scheduling, independent behavioral/ownership grading, and cost
+reporting. The fixture self-tests establish grader behavior; no controlled Agent
+performance benefit is claimed. Run real trials with a fixed model/host/resource
+profile and isolated agent access before drawing efficacy conclusions.
 
 ## Context And Document Ownership
 

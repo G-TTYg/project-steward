@@ -168,12 +168,16 @@ def mutate_run(args) -> None:
                 require(args.name is None, "update milestones by ID; names do not establish identity")
                 if selected["status"] == "verified":
                     require(args.action == "start", "verified milestone is immutable; use start to reopen explicitly")
+                    selected.pop("commit", None)
+                    selected.pop("commit_relationship", None)
             require(status in MILESTONE_STATUSES, "invalid milestone state")
             if status == "verified":
                 require(bool(args.verify and args.verify.strip()), "verified milestone requires an explicit non-empty verification report")
                 selected["completed_at"] = now_utc()
+                selected["verified_revision"] = revision + 1
             else:
                 selected.pop("completed_at", None)
+                selected.pop("verified_revision", None)
             selected.update(status=status, summary=summary, verification=args.verify or "Not reported.")
             if commit:
                 selected.update(commit=commit, commit_relationship="caller_attached")
@@ -213,11 +217,13 @@ def mutate_run(args) -> None:
         if args.command != "milestone":
             require(state["milestones"] == old_milestones, "non-milestone operation altered milestone history")
         previous_name = state.get("workflow", {}).get("slice_name")
+        previous_id = state.get("workflow", {}).get("milestone_id")
         name = state.get("current_slice_name", "")
-        if previous_name != name:
+        if (previous_id, previous_name) != (state["current_milestone"], name):
             state["workflow"].pop("commit", None)
             state["workflow"].pop("merge_result", None)
         state["workflow"]["slice_name"] = name
+        state["workflow"]["milestone_id"] = state["current_milestone"]
         if commit:
             state["workflow"].update(commit=commit, commit_relationship="caller_attached")
         for field in ("base_branch", "merge_result"):

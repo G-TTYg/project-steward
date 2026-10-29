@@ -1,5 +1,26 @@
 # Decisions
 
+## 2026-10-29: Pilot Evaluation And Versioned Publication
+
+Start with 24 deterministic scenarios across eight fixture families, hidden
+acceptance/regression checks, and independently checked worktree/index/history
+ownership. Compare native agents, brief AGENTS, and the full Skill using fixed
+model/host/permissions/environment/budgets, randomized order and repetition.
+Keep solutions and grading outside evaluated agent access. A controller-only
+schedule/prepare/grade/report harness avoids choosing providers or launching agents
+without a concrete trial configuration. Missing token/time metrics remain unknown.
+
+Fixture self-tests are not Agent effectiveness results. Host-level scope audits
+and blinded maintainability/process review remain separate evidence. Related
+variants and repeated trials do not justify independence assumptions; descriptive
+intervals are not significance claims. Add rules only in response to diagnosed
+failures and re-evaluate against the brief baseline.
+
+The maintainer selected MIT. Include the same license notice in the independently
+exported runtime package. Tag behavior/CLI/schema changes, maintain a compact
+changelog, run cross-platform CI, and activate only staged packages from the exact
+published commit. Machine baselines/backups remain local metadata.
+
 ## 2026-10-29: Risk Decisions Before Workflow And Portable Core
 
 Keep the skill's identity in its engineering contract; Codex metadata is an

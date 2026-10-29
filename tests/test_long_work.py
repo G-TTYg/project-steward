@@ -65,10 +65,11 @@ class RecoveryCLI(RecoveryCase):
         (run / "STATE.json").write_text(json.dumps(state), encoding="utf-8")
         legacy = "# Old handoff\n\nManual Git merge evidence: keep this.\n"
         (run / "HANDOFF.md").write_text(legacy, encoding="utf-8")
-        self.cli("migrate", "--run", run)
+        self.backup_from_output(self.cli("migrate", "--run", run).stdout)
         self.cli("checkpoint", "--run", run, "--summary", "resuming")
         self.cli("checkpoint", "--run", run, "--summary", "continuing")
-        self.assertEqual(self.verified(run)["name"], "old")
+        self.assertIsNone(self.verified(run))
+        self.assertEqual(self.state(run)["milestones"][0]["legacy_status"], "verified")
         self.assertEqual((run / "HANDOFF.md").read_text(encoding="utf-8").count(legacy), 1)
 
     def test_git_observations_and_attached_commit_are_real(self):

@@ -102,6 +102,8 @@ def validate(state: Any) -> None:
             require(bool(item["verification"].strip()), "verified milestone requires explicit evidence")
             completed = timestamp(item.get("completed_at"))
             require(recorded <= completed <= updated, "invalid milestone completion time")
+            require(type(item.get("verified_revision")) is int
+                    and 1 <= item["verified_revision"] <= state["revision"], "invalid milestone verification revision")
             verified.append(item)
         if "commit" in item:
             require(isinstance(item["commit"], str) and bool(re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", item["commit"])),
@@ -110,7 +112,7 @@ def validate(state: Any) -> None:
     require(state.get("current_milestone") is None or state["current_milestone"] in ids,
             "current_milestone must reference a real milestone ID")
     last = state.get("last_verified")
-    expected = max(verified, key=lambda m: (timestamp(m["completed_at"]), items.index(m)))["id"] if verified else None
+    expected = max(verified, key=lambda m: (m["verified_revision"], timestamp(m["completed_at"]), items.index(m)))["id"] if verified else None
     require(last == expected, "last_verified must reference the latest real verified milestone")
     events = state.get("events")
     require(isinstance(events, list) and len(events) == state["revision"], "event/revision mismatch")
@@ -154,7 +156,7 @@ def validate(state: Any) -> None:
 
 def refresh_verified(state: dict) -> None:
     verified = [m for m in state["milestones"] if m["status"] == "verified"]
-    state["last_verified"] = max(verified, key=lambda m: (timestamp(m["completed_at"]),
+    state["last_verified"] = max(verified, key=lambda m: (m["verified_revision"], timestamp(m["completed_at"]),
                                    state["milestones"].index(m)))["id"] if verified else None
 
 
@@ -201,9 +203,15 @@ def migrate(legacy: dict, project: Path, run: Path, repository: Path | None,
         item["id"] = f"M-{i:03d}"
         item["status"] = LEGACY_STATUS.get(item.get("status"), item.get("status"))
         item.setdefault("recorded_at", created)
+        report = item.get("verification")
+        if item["status"] == "verified" and not (isinstance(report, str) and report.strip()):
+            item["legacy_status"] = item["status"]
+            item["status"] = "in_progress"
+            item.pop("completed_at", None)
         item.setdefault("verification", "Legacy verification report unavailable.")
         if item["status"] == "verified":
             item.setdefault("completed_at", item["recorded_at"])
+            item["verified_revision"] = 1
         if "commit" in item:
             if isinstance(item["commit"], str) and re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", item["commit"]):
                 item["commit_relationship"] = "caller_attached"

@@ -4,10 +4,23 @@ from copy import deepcopy
 import json
 
 from support import RecoveryCase
-from steward_core.state import validate
+from steward_core.state import refresh_verified, validate
 
 
 class StateInvariants(RecoveryCase):
+    def test_same_timestamp_reverification_uses_event_revision(self):
+        run = self.init_run()
+        self.milestone(run)
+        state = self.state(run)
+        first = state["milestones"][0]
+        second = deepcopy(first)
+        second.update(id="M-002", verified_revision=1)
+        state["milestones"].append(second)
+        first["verified_revision"] = state["revision"]
+        refresh_verified(state)
+        self.assertEqual(state["last_verified"], "M-001")
+        validate(state)
+
     def test_impossible_references_times_statuses_and_evidence_are_rejected(self):
         run = self.init_run()
         self.milestone(run)

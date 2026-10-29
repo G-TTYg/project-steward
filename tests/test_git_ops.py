@@ -49,6 +49,17 @@ class ProtectedGitCommits(RecoveryCase):
         self.assertEqual(self.git("rev-parse", "HEAD"), concurrent)
         self.assertEqual(self.git("diff", "--cached", "--name-only"), "")
 
+    def test_hook_worktree_edits_are_preserved_but_prevent_stale_commit(self):
+        self.init_git()
+        run = self.init_run()
+        head = self.git("rev-parse", "HEAD")
+        relative = (run / "PLAN.md").relative_to(self.project).as_posix()
+        self.hook(f"printf '\\nhook edit\\n' >> '{relative}'")
+        with self.assertRaisesRegex(SystemExit, "changed managed worktree"):
+            commit_run_state(self.project, run, "recovery")
+        self.assertEqual(self.git("rev-parse", "HEAD"), head)
+        self.assertIn("hook edit", (run / "PLAN.md").read_text(encoding="utf-8"))
+
     def test_unborn_repository_can_commit_only_the_four_files(self):
         self.git("init", "-b", "main")
         self.git("config", "user.name", "Steward Test")

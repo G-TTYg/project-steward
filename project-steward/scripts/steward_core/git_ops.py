@@ -74,6 +74,7 @@ def commit_run_state(project: Path, run: Path, message: str) -> str | None:
     require(run != project and run.is_relative_to(project) and run.is_relative_to(repo),
             "run-state commit path is outside the project/repository")
     paths = [(run / name).relative_to(repo).as_posix() for name in MANAGED_FILES]
+    prepared_files = {name: (run / name).read_bytes() for name in MANAGED_FILES}
     index_name = git_value(repo, "rev-parse", "--git-path", "index")
     require(bool(index_name), "cannot locate Git index")
     index = Path(index_name)
@@ -109,6 +110,9 @@ def commit_run_state(project: Path, run: Path, message: str) -> str | None:
             # may validate, but any change to staged content invalidates preparation.
             checked("hook", "run", "--ignore-missing", "pre-commit")
             require(checked("write-tree") == tree, "pre-commit hook changed staged content; inspect files and retry explicitly")
+            check_managed_paths(run)
+            require(all((run / name).read_bytes() == content for name, content in prepared_files.items()),
+                    "pre-commit hook changed managed worktree content; preserve it and reobserve")
             require(git_value(repo, "rev-parse", "--verify", "HEAD") == head
                     and (git_value(repo, "symbolic-ref", "--quiet", "HEAD") or "HEAD") == ref,
                     "HEAD changed during recovery commit; preserve work and reobserve")

@@ -58,6 +58,8 @@ Use the current request and these applicable instructions as the maintenance cor
 | Resuming a run? | `project-steward/references/operating-patterns.md` | `Selective Recovery` |
 | Install/update? | `README.md` | matching install/update section |
 | UI metadata? | `project-steward/agents/openai.yaml` | the relevant interface key |
+| Package/export or CI validation? | `tools/check_package.py`, `.github/workflows/ci.yml` | `check_package`, platform/Python matrix |
+| Agent effectiveness or corpus grading? | `evals/README.md`, `evals/benchmark.py`, `evals/corpus.py` | `Conditions And Isolation`, `Measurements And Interpretation`, affected scenario |
 | Why was a policy chosen? | `DECISIONS.md` | matching policy heading |
 | What happened in a prior task? | `logs/YYYY-MM-DD.md` | search the task/date/result; historical lookup only |
 
@@ -97,6 +99,7 @@ Before delivery, run:
 
 - `quick_validate.py` for the skill folder.
 - `git diff --check`.
+- `python -X utf8 tools/check_package.py --repository .` for package/doc/release changes.
 - Helper regression tests when `project-steward/scripts/` or its path changes.
 
 Report validation, Git commit, push state, and any residual risk.

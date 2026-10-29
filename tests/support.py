@@ -6,6 +6,7 @@ Shared disposable CLI fixtures. No test reads or mutates the user's installed sk
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -17,6 +18,14 @@ sys.path.insert(0, str(SCRIPT.parent))
 
 
 class RecoveryCase(unittest.TestCase):
+    def backup_from_output(self, output):
+        backup = Path(next(line.split("locally: ")[-1] for line in output.splitlines() if "locally: " in line))
+        self.assertTrue(backup.is_absolute())
+        self.assertEqual(backup.resolve().parent, Path(tempfile.gettempdir()).resolve())
+        self.assertTrue(backup.name.startswith("project-steward-legacy-"))
+        self.addCleanup(shutil.rmtree, backup)
+        return backup
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="steward-test-")
         self.addCleanup(self.temp.cleanup)

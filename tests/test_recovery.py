@@ -83,6 +83,14 @@ class PortableRecovery(RecoveryCase):
         self.cli("checkpoint", "--run", run, "--milestone", "same", "--summary", "ambiguous label")
         self.assertIsNone(self.state(run)["current_milestone"])
 
+    def test_duplicate_name_does_not_inherit_other_milestone_commit(self):
+        self.init_git()
+        run = self.init_run()
+        self.milestone(run, "same", "--commit", self.git("rev-parse", "HEAD"))
+        self.milestone(run, "same")
+        self.assertNotIn("commit", self.state(run)["workflow"])
+        self.assertNotIn("commit", self.verified(run))
+
     def test_reopening_verified_milestone_requires_explicit_action(self):
         run = self.init_run()
         self.milestone(run)
@@ -149,8 +157,7 @@ class PortableRecovery(RecoveryCase):
                 self.legacy(run, version)
                 before = self.snapshot(run)
                 output = self.cli("migrate", "--run", run).stdout
-                backup = Path(next(line.split("locally: ")[-1] for line in output.splitlines() if "locally: " in line))
-                self.addCleanup(shutil.rmtree, backup)
+                backup = self.backup_from_output(output)
                 self.assertEqual(before, self.snapshot(backup))
                 self.assertEqual(self.state(run)["last_verified"], "M-001")
                 self.cli("doctor", "--run", run)
@@ -167,7 +174,7 @@ class PortableRecovery(RecoveryCase):
         moved = target / relative
         self.cli("migrate", "--run", moved, ok=False)
         output = self.cli("migrate", "--run", moved, "--project", target).stdout
-        self.addCleanup(shutil.rmtree, Path(next(line.split("locally: ")[-1] for line in output.splitlines() if "locally: " in line)))
+        self.backup_from_output(output)
         self.cli("doctor", "--run", moved)
 
     def test_each_migration_replace_failure_preserves_recoverable_originals(self):
@@ -189,8 +196,7 @@ class PortableRecovery(RecoveryCase):
                 output = io.StringIO()
                 with redirect_stdout(output), patch.object(storage.os, "replace", side_effect=fail), self.assertRaises(OSError):
                     migrate_run(argparse.Namespace(run=str(run), project=None))
-                backup = Path(next(line.split("locally: ")[-1] for line in output.getvalue().splitlines() if "locally: " in line))
-                self.addCleanup(shutil.rmtree, backup)
+                backup = self.backup_from_output(output.getvalue())
                 self.assertEqual(before, self.snapshot(backup))
                 if failure == 1:
                     self.assertEqual(before, self.snapshot(run))
