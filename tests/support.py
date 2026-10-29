@@ -29,7 +29,7 @@ class RecoveryCase(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="steward-test-")
         self.addCleanup(self.temp.cleanup)
-        self.project = Path(self.temp.name) / "project"
+        self.project = (Path(self.temp.name) / "project").resolve()
         self.project.mkdir()
         self.env = os.environ.copy()
         self.env.update({"GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull})

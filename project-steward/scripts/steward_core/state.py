@@ -40,6 +40,8 @@ def timestamp(value: Any) -> dt.datetime:
 
 
 def binding(project: Path, run: Path, repository: Path | None) -> dict:
+    project, run = project.resolve(), run.resolve()
+    repository = repository.resolve() if repository is not None else None
     require(project.is_dir() and run != project and run.is_relative_to(project),
             "run must be a subdirectory of its existing project")
     return {"root_relative": os.path.relpath(project, run).replace(os.sep, "/"),
@@ -48,6 +50,7 @@ def binding(project: Path, run: Path, repository: Path | None) -> dict:
 
 
 def resolve_project(run: Path, state: dict) -> Path:
+    run = run.resolve()
     project = state.get("project")
     require(isinstance(project, dict), "schema v3 project must be an object")
     root = project.get("root_relative")

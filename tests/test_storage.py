@@ -9,6 +9,14 @@ from steward_core import storage
 
 
 class InterruptedStorage(RecoveryCase):
+    def test_noncanonical_alias_shares_boundaries_and_writer_lock(self):
+        run = self.init_run()
+        alias = run / ".." / run.name
+        storage.check_managed_paths(alias)
+        self.assertEqual(storage.read_state(alias), storage.read_state(run))
+        with storage.run_lock(alias):
+            self.cli("checkpoint", "--run", run, "--summary", "same physical run", ok=False)
+
     def test_each_replace_failure_is_detected_and_repairable(self):
         for failure in (1, 2, 3):
             with self.subTest(failure=failure):

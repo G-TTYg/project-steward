@@ -66,7 +66,7 @@ class ProtectedGitCommits(RecoveryCase):
         self.git("config", "user.email", "steward@example.invalid")
         self.git("config", "core.hooksPath", str(Path(self.temp.name) / "no-hooks"))
         run = self.init_run()
-        result = commit_run_state(self.project, run, "initialize recovery")
+        result = commit_run_state(self.project, run / ".." / run.name, "initialize recovery")
         self.assertRegex(result, r"^[0-9a-f]{40,64}$")
         self.assertEqual(self.git("rev-parse", "HEAD"), result)
         paths = self.git("diff-tree", "--root", "--no-commit-id", "--name-only", "-r", "HEAD").splitlines()

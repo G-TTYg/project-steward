@@ -34,6 +34,7 @@ def repository_root(project: Path) -> Path | None:
 
 
 def observe_git(project: Path) -> dict:
+    project = project.resolve()
     root = repository_root(project)
     if root is None:
         return {"available": False, "reason": "Git unavailable or project is not a Git repository."}
@@ -50,6 +51,7 @@ def observe_git(project: Path) -> dict:
 
 
 def check_repository_binding(project: Path, state: dict) -> list[str]:
+    project = project.resolve()
     expected = state["project"].get("repository_subpath")
     root = repository_root(project)
     if expected is not None and root is None:
@@ -69,6 +71,7 @@ def require_empty_index(project: Path) -> Path:
 
 
 def commit_run_state(project: Path, run: Path, message: str) -> str | None:
+    project, run = project.resolve(), run.resolve()
     repo = require_empty_index(project)
     check_managed_paths(run)
     require(run != project and run.is_relative_to(project) and run.is_relative_to(repo),

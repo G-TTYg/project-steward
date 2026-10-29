@@ -20,6 +20,7 @@ END = "<!-- project-steward:status:end -->"
 
 
 def check_managed_paths(run: Path) -> None:
+    run = run.resolve()
     require(run.is_dir(), f"run directory does not exist: {run}")
     for name in MANAGED_FILES:
         path = run / name
@@ -29,6 +30,7 @@ def check_managed_paths(run: Path) -> None:
 
 
 def read_state(run: Path) -> dict:
+    run = run.resolve()
     check_managed_paths(run)
     try:
         state = json.loads((run / "STATE.json").read_text(encoding="utf-8"))
@@ -154,6 +156,7 @@ def legacy_file_unchanged(run: Path, state: dict, name: str) -> bool:
 
 def replace_files(run: Path, contents: dict[str, str]) -> None:
     """Prepare/fsync every temp file before replacing STATE and then derived views."""
+    run = run.resolve()
     check_managed_paths(run)
     prepared = {}
     try:
@@ -201,6 +204,7 @@ def repair_views(run: Path, state: dict) -> None:
 
 @contextmanager
 def run_lock(run: Path):
+    run = run.resolve()
     directory = Path(tempfile.gettempdir()) / "project-steward-locks"
     directory.mkdir(exist_ok=True)
     name = hashlib.sha256(os.path.normcase(str(run)).encode()).hexdigest()
