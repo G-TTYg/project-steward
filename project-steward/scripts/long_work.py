@@ -391,14 +391,8 @@ def update_run(args: argparse.Namespace) -> None:
         entry["risk"] = args.risk
     if is_milestone:
         state["milestones"].append(entry)
-    if status in VERIFIED:
+    if is_milestone and status in VERIFIED:
         state["last_verified"] = entry.copy()
-    elif commit and state.get("last_verified") and state["last_verified"].get("name") == name:
-        state["last_verified"]["commit"] = commit
-        for item in reversed(state["milestones"]):
-            if item.get("name") == name and item.get("status") in VERIFIED:
-                item["commit"] = commit
-                break
     log = (f"\n## {stamp}\n\n- {args.command}: {args.summary}\n- Slice: {name or 'not specified'}\n"
            f"- Slice status: {status}\n- Verification report: {state['verification']}\n"
            f"- Next: {state.get('next', '')}\n")

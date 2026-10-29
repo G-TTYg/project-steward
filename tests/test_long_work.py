@@ -141,14 +141,14 @@ class RecoveryCLI(unittest.TestCase):
         self.assertEqual(state["git"]["upstream"], "baseline")
         self.assertEqual(state["git"]["unpushed_count"], 1)
 
-    def test_checkpoint_can_attach_verified_slice_commit(self):
+    def test_checkpoint_cannot_change_verified_slice_history(self):
         self.init_git()
         run = self.init_run()
         self.milestone(run)
         commit = self.git("rev-parse", "HEAD")
         self.cli("checkpoint", "--run", run, "--summary", "recording commit", "--commit", commit)
-        self.assertEqual(self.state(run)["last_verified"]["commit"], commit)
-        self.assertEqual(self.state(run)["milestones"][-1]["commit"], commit)
+        self.assertNotIn("commit", self.state(run)["last_verified"])
+        self.assertNotIn("commit", self.state(run)["milestones"][-1])
 
     def test_invalid_commit_leaves_files_and_index_unchanged(self):
         self.init_git()
@@ -217,15 +217,18 @@ class RecoveryCLI(unittest.TestCase):
                  "--status", "complete", "--verify", "checks passed")
         self.assertEqual(self.state(run)["status"], "complete")
         self.assertEqual(self.state(run)["risk"], "")
+        self.assertIsNone(self.state(run)["last_verified"])
 
     def test_run_closure_retains_recorded_implementation_commit(self):
         self.init_git()
         run = self.init_run()
         commit = self.git("rev-parse", "HEAD")
         self.milestone(run, "first", "--commit", commit)
+        verified = self.state(run)["last_verified"]
         self.cli("checkpoint", "--run", run, "--summary", "close run",
                  "--status", "complete", "--verify", "all checks passed")
         self.assertEqual(self.state(run)["last_verified"]["commit"], commit)
+        self.assertEqual(self.state(run)["last_verified"], verified)
 
     def test_complete_milestone_is_distinct_from_complete_run(self):
         run = self.init_run()
