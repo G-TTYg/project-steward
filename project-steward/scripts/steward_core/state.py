@@ -1,7 +1,7 @@
 """Portable schema, migrations, and invariants without filesystem mutations.
 
 Run lifecycle, milestone acceptance, and progress events have separate semantics.
-References use stable IDs; evidence is a caller report, never a test certificate.
+References use stable IDs; evidence provenance describes collection, never correctness.
 """
 
 from __future__ import annotations
@@ -138,7 +138,31 @@ def validate(state: Any) -> None:
                 "evidence IDs must be unique V-001 identifiers")
         evidence_ids.add(eid)
         require(record.get("milestone_id") in ids, "evidence milestone reference is invalid")
-        require(record.get("source") == "reported", "this recorder accepts caller-reported evidence only")
+        require(record.get("source") in {"reported", "observed", "independently_confirmed"}, "invalid evidence source")
+        if record["source"] != "reported":
+            provenance = record.get("provenance")
+            require(isinstance(provenance, dict), "collected evidence requires adapter provenance")
+            timestamp(provenance.get("observed_at"))
+            if record["source"] == "observed":
+                require(provenance.get("adapter") == "explicit-argv-v1", "invalid observed adapter")
+                for key in ("before", "after"):
+                    snap = provenance.get(key)
+                    require(isinstance(snap, dict) and isinstance(snap.get("head"), str)
+                            and bool(re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", snap["head"]))
+                            and isinstance(snap.get("files_sha256"), str)
+                            and bool(re.fullmatch(r"[0-9a-f]{64}", snap["files_sha256"])), "invalid code snapshot")
+                require(record.get("revision") == provenance["before"]["head"]
+                        and provenance.get("source_changed") == (provenance["before"] != provenance["after"]), "inconsistent source observation")
+                require(type(record.get("exit_code")) is int and type(record.get("timed_out")) is bool
+                        and type(record.get("duration_seconds")) in (int, float)
+                        and 0 <= record["duration_seconds"] < float("inf"), "invalid execution observation")
+            else:
+                require(provenance.get("adapter") == "github-actions-api-v1"
+                        and isinstance(provenance.get("repository"), str)
+                        and type(provenance.get("run_id")) is int and provenance["run_id"] > 0
+                        and isinstance(provenance.get("jobs"), list) and provenance["jobs"]
+                        and isinstance(record.get("revision"), str)
+                        and bool(re.fullmatch(r"[0-9a-f]{40}", record["revision"])), "invalid CI provenance")
         require(record.get("claimed_source") in {"reported", "observed", "independently_confirmed"},
                 "invalid claimed evidence source")
         require(record.get("status") in EVIDENCE_STATUSES, "invalid verification outcome")

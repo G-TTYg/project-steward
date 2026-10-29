@@ -109,11 +109,57 @@ evidence --run RUN --id M-001 --summary "API suite" --result passed --exit-code 
 
 Records use `V-001` IDs and milestone IDs. Outcomes are `passed`, `failed`, `skipped`,
 `unavailable`, `not_run`; supplied exit codes must agree with passed/failed.
-`source` is always `reported` because this tool only records the caller's data.
+For `long_work.py evidence`, `source` is always `reported`: it records caller data.
 `--claimed-source observed|independently_confirmed` preserves an external collector
 or CI claim without attesting it. Include the artifact/CI pointer in the summary
 and code/dirty-state details in scope. No recorded command is executed. Native
-execution collection is deliberately not part of this recorder.
+execution collection is deliberately separate from this recorder.
+
+### Optional Observed Evidence Adapter
+
+Use `python <skill-root>/scripts/verify.py` only for an already authorized check.
+Arguments before `exec`/`github` belong to the collector. Supply an explicit argv
+after `--`; no shell expansion is performed and no commands are loaded from state:
+
+```text
+python <skill-root>/scripts/verify.py --run RUN --id M-001 --summary "API regression" --scope "API compatibility" exec --timeout 300 -- python -m unittest discover -s tests
+python <skill-root>/scripts/verify.py --run RUN --id M-001 --summary "Published CI" --scope "Workflow matrix" github --repository OWNER/REPO --run-id RUN_ID --workflow .github/workflows/ci.yml --sha FULL_SHA
+```
+
+`exec` records `source: observed`: argv, platform, Python version, exit code, timeout,
+monotonic duration, a bounded combined output excerpt, total byte count/hash, and
+before/after source snapshots. It requires a Git commit. The snapshot covers HEAD
+and tracked/nonignored untracked file bytes, excluding this run; ignored files,
+external services and the full environment are outside its coverage. Tests may
+modify source; `source_changed` highlights this and requires applicability review.
+Passing execution never verifies a milestone automatically. Missing executables
+and collection errors refuse evidence instead of manufacturing a pass.
+
+Default output retention is 64 KiB (maximum 1 MiB). Known home/project/interpreter
+paths, secret-valued environment variables and common token/password forms are
+minimized before storage. This is best effort, not general secret detection: never
+put secrets in argv or test output, and inspect evidence before committing. Raw
+output is not written to a log. The hash covers raw bytes, the excerpt is redacted.
+Timeouts terminate the process group/tree; detached descendants may exceed that
+boundary. This adapter is an executor, not a sandbox or new execution authority.
+
+`github` queries GitHub's fixed API origin, requires a full locally present SHA,
+matches the selected repository to `origin`, verifies repository/workflow/SHA/run,
+fetches all jobs from one attempt, then rechecks for concurrent reruns. Only a
+completed successful workflow with all jobs successful is a pass; skipped jobs
+do not prove verification. This records `independently_confirmed` for the workflow
+observation, not a claim that its tests are sufficient or independent of the author.
+Review the pinned workflow and its coverage. Pull-request merge-SHA runs require
+that actual SHA; no inference from a PR head is made.
+
+HTTPS is standard-library only, with optional `GITHUB_TOKEN` authentication.
+`--transport gh` uses an already configured GitHub CLI without changing credentials
+or settings. Local JSON cannot be imported as observed/independent evidence. State
+remains editable, unsigned project data: adapter provenance is inspectable, not a
+cryptographic attestation. Run revisions changing during collection cause refusal;
+reconcile explicitly, never overwrite another writer's update. Existing schema v3
+reports remain valid; old runtime readers must be upgraded before reading the new
+sources. No collector pushes, deploys, or changes milestone acceptance.
 
 ## Git Commit Boundary
 

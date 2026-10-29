@@ -84,8 +84,9 @@ def render_handoff(state: dict) -> str:
     pending = [f"{m['id']} ({m['status']})" for m in state["milestones"] if m["status"] != "verified"]
     evidence = state["evidence"][-3:]
     evidence_text = "\n".join(
-        f"- {e['id']} / {e['milestone_id']}: {e['status']}; reported (claimed {e['claimed_source']}); "
+        f"- {e['id']} / {e['milestone_id']}: {e['status']}; {e['source']} (claimed {e['claimed_source']}); "
         f"{e['summary']}; revision: {e.get('revision') or 'unspecified'}; scope: {e.get('scope') or 'unspecified'}"
+        + ("; SOURCE CHANGED during execution, recheck applicability" if e.get('provenance', {}).get('source_changed') else "")
         for e in evidence) or "- No structured evidence recorded."
     observed = state["git"]
     git_text = (f"Branch: {observed.get('branch')}; HEAD: {observed.get('head') or 'unborn'}; "
@@ -114,7 +115,8 @@ Run: {state['run_id']} · {state['status']}
 
 {evidence_text}
 
-The recorder does not run checks or attest imported claims. Historical passes
+The recorder accepts reports; the optional adapter collects execution/API observations.
+State is editable, not a signed certificate; inspect provenance. Historical passes
 apply only to their recorded version/scope. Run closure does not verify milestones.
 
 ## Do Not Assume

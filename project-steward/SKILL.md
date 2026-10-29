@@ -68,6 +68,7 @@ This table routes questions about stewardship itself. Open the matching section 
 | Which architecture, structure, or code-comment standard applies? | [Stewardship standards](references/stewardship-standards.md) | `Default Architecture Shape`, `Code Comment Standards`, `ADR Triggers` |
 | How should this Git ownership, staging, branch, or publication case work? | [Git stewardship](references/git-stewardship.md) | `Agent-Owned Commit Closure`, `Milestone Branch Loop`, `Remote Safety` |
 | How do I resume a specific run or handle a long execution? | [Operating patterns](references/operating-patterns.md#selective-recovery) | `Selective Recovery`, `Compression checkpoints` |
+| How do I install on another host or transfer a handoff? | [Host integration](references/host-integration.md) | `Installation And Capabilities`, `Cross-host Handoff`, `Telemetry Adapter Boundary` |
 | What are the helper's lifecycle, schema, migration, evidence, and repair rules? | [Recovery state](references/recovery-state.md) | `Lifecycle And IDs`, `Consistency And Repair`, `Evidence`, `Git Commit Boundary` |
 | Which skeleton should I use for a needed document? | [Template index](references/templates.md#template-index) | exact template heading; copy only that template |
 
@@ -144,7 +145,10 @@ lifecycle. `milestone` retains the legacy reported-verification wrapper. Prefer
 `milestone verify --id M-001 --summary "outcome" --verify "actual result"` (each with
 `--run <run-dir>`). Use `run close --run <run-dir> --reason "delivered / known limits"`
 to close the run; closure does not verify outstanding milestones. Verification
-and imported execution results remain caller reports; no checks are executed.
+through this recorder remains caller-reported. The optional `scripts/verify.py`
+adapter can collect an explicitly authorized argv or fetch a completed GitHub
+workflow; it never executes commands read from recovery files. See the evidence
+section of [Recovery state](references/recovery-state.md#evidence).
 
 `--commit <hash>` resolves a full SHA but records only a caller-attached relationship,
 not proof of ownership or acceptance. Old lifecycle flags remain compatibility

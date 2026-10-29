@@ -83,6 +83,9 @@ def check_package(package):
         for args in commands:
             subprocess.run([sys.executable, "-B", "-X", "utf8", str(script), *args], check=True,
                            capture_output=True, text=True, encoding="utf-8", env=env)
+        for helper, args in (("verify.py", ["--help"]), ("host_check.py", ["--project", str(project)])):
+            subprocess.run([sys.executable, "-B", "-X", "utf8", str(export / "scripts" / helper), *args],
+                           check=True, capture_output=True, env=env)
         run = next((project / "docs" / "agent-runs").iterdir())
         subprocess.run([sys.executable, "-B", str(script), "doctor", "--run", str(run)], check=True,
                        capture_output=True, env=env)
