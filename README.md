@@ -7,7 +7,7 @@ facts in their canonical files, and hand off maintainable work across sessions.
 
 Its identity is project stewardship. Long-running checkpoints and handoffs are support tools, not the center of the skill.
 
-Current release: `v0.3.0` (schema v3). See [changes and compatibility](CHANGELOG.md).
+Current release: `v0.3.1` (schema v3). See [changes and compatibility](CHANGELOG.md).
 Licensed under [MIT](LICENSE); the exported package carries the same license notice.
 
 The installable skill lives in `project-steward/`. Repository maintenance files stay at the root:

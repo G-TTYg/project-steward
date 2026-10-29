@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1 — 2026-10-29
+
+- Compare license text after normalizing platform newlines when checking an
+  exported LF package against a Windows CRLF checkout. Exact package/Git-blob
+  verification is unaffected. The runtime package is unchanged from 0.3.0.
+
 ## 0.3.0 — 2026-10-29
 
 - Separate Run lifecycle, stable Milestone IDs/acceptance, and Checkpoint events.

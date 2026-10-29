@@ -94,7 +94,7 @@ def main():
     parser.add_argument("--package", type=Path, default=Path(__file__).resolve().parents[1] / "project-steward")
     parser.add_argument("--repository", type=Path, default=None, help="also check maintenance Markdown routes")
     args = parser.parse_args()
-    if args.repository and (args.package / "LICENSE").read_bytes() != (args.repository / "LICENSE").read_bytes():
+    if args.repository and (args.package / "LICENSE").read_text(encoding="utf-8") != (args.repository / "LICENSE").read_text(encoding="utf-8"):
         raise ValueError("runtime and repository license notices must match")
     references = check_package(args.package.resolve())
     count = check_links((args.repository or args.package).resolve())
