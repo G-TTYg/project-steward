@@ -1,6 +1,9 @@
 # Project Steward
 
-Project Steward is a Codex skill for maintainable project work. It makes agents bind to the right project root, preserve architecture and project structure, keep code intent visible, store facts in the right project files, maintain production-grade Git hygiene, and deliver verified slices with proportional branch isolation and durable handoff checkpoints that humans and future agents can continue.
+Project Steward is a portable software engineering contract delivered as an Agent
+Skill, with a Codex integration. It guides coding agents to bind to the right project,
+preserve architecture and ownership, verify changes with evidence, keep durable
+facts in their canonical files, and hand off maintainable work across sessions.
 
 Its identity is project stewardship. Long-running checkpoints and handoffs are support tools, not the center of the skill.
 
@@ -38,7 +41,14 @@ python -X utf8 "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\i
 python -X utf8 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo G-TTYg/project-steward --path project-steward
 ```
 
-The installer exports only that directory and refuses to overwrite an existing installation. Use the Update procedure below for an existing copy. Add `--ref <commit>` to install an exact published version; otherwise the installer uses `main`. If the system installer is unavailable, copy only the `project-steward/` directory from a trusted checkout into the skills directory. Do not clone the whole repository into the runtime path.
+The installer exports only that directory and refuses to overwrite an existing installation. Use the Update procedure below for an existing copy. Add `--ref <full-commit-or-release-tag>` to pin a verified release; unpinned installation follows mutable `main`. If the system installer is unavailable, copy only the `project-steward/` directory from a trusted checkout into the skills directory. Do not clone the whole repository into the runtime path.
+
+The core contract/references do not require Codex APIs. Other Agent Skills hosts can
+use the same complete package in their documented discovery directory; no alternate
+SKILL is maintained. `agents/openai.yaml` is optional host metadata. Discovery and
+behavior on other hosts have not been independently certified. Python 3.10+ is
+needed only for the optional recovery helper; Git 2.36+ is needed for its opt-in
+state commits. Without those tools, follow the contract with existing project tools.
 
 ## Use
 
@@ -180,40 +190,46 @@ Task sizing is explicit:
 - `project-steward/scripts/long_work.py` manages agent execution state only; it does not own canonical durable facts or business-code commits. `tests/` verifies it from the repository root.
 - `project-steward/agents/openai.yaml` is UI metadata and must stay aligned with the package's `SKILL.md`.
 
-Use the installed `scripts/long_work.py` when a task needs agent execution state for recovery or handoff. For development, its repository-relative path is `project-steward/scripts/long_work.py`:
+Use the optional helper only when recovery is useful. From this development checkout:
 
 ```bash
-python ~/.codex/skills/project-steward/scripts/long_work.py init --project . --task "short task title"
+python project-steward/scripts/long_work.py init --project . --task "short task title"
 ```
 
-Then checkpoint meaningful progress:
+Save progress, accept a milestone, and close the task as separate operations:
 
 ```bash
-python ~/.codex/skills/project-steward/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --next "next action" --verify "test result"
+python project-steward/scripts/long_work.py milestone add --run <run-dir> --name "Parser compatibility" --summary "Preserve accepted inputs"
+python project-steward/scripts/long_work.py checkpoint --run <run-dir> --id M-001 --summary "One edge case remains" --next "Inspect parser boundary tests"
+python project-steward/scripts/long_work.py milestone verify --run <run-dir> --id M-001 --summary "Parser compatible" --verify "Regression passed"
+python project-steward/scripts/long_work.py run close --run <run-dir> --reason "Delivered; documented limits remain"
 ```
 
-Attach checkpoints to a milestone when the work is broad or likely to be resumed:
+`complete` ends a Run; it does not certify outstanding milestones. Evidence is
+caller-reported, with explicit outcome, code version, scope, and claimed external
+provenance available through `evidence`. The recorder never executes tests or
+historical suggestions. It resolves attached commits to full SHAs without inferring
+task ownership. Existing flat CLI forms remain compatibility wrappers.
+
+Schema v3 uses paths relative to the run/project and an authoritative revisioned
+STATE. Move the complete project preserving its internal structure. Old schemas
+remain readable and require explicit migration with a local backup:
 
 ```bash
-python ~/.codex/skills/project-steward/scripts/long_work.py checkpoint --run <run-dir> --milestone "parser compatibility" --summary "what changed" --next "next action" --verify "pending check"
+python project-steward/scripts/long_work.py migrate --run <legacy-run-dir> --project <current-project-root>
+python project-steward/scripts/long_work.py doctor --run <run-dir>
+python project-steward/scripts/long_work.py resume --run <run-dir>
 ```
 
-Record a verified milestone (use `--status active`, `paused`, or `blocked` for unfinished work):
+If a write was interrupted, `doctor` rejects stale views; explicit `repair` rebuilds
+them from valid STATE while protecting maintainer notes and unknown LOG edits.
+Neither `doctor` nor `resume` changes code or runs recorded commands. For exact
+schema, migration, repair and Git limitations, read
+[Recovery state and CLI](project-steward/references/recovery-state.md).
 
-```bash
-python ~/.codex/skills/project-steward/scripts/long_work.py milestone --run <run-dir> --name "parser compatibility" --summary "slice outcome" --verify "test result" --next "next milestone or handoff action"
-```
-
-For multi-step implementation, map steps to verifiable slices and commit completed agent-owned work unless the user or project workflow says otherwise. Keep the current task branch when it is appropriate; separate branches/worktrees are optional isolation tools. The fixed `leg` loop is supported only when explicitly requested. Refresh recovery state after verified slices when that state is in use.
-
-The helper records verification supplied by the caller; it does not run tests, compact conversations, or create/merge implementation branches. Milestone status applies to a slice; close the entire run with `checkpoint --status complete --verify "observed results"`. `HANDOFF.md` keeps generated status between markers and preserves manual text outside them. Git observations are refreshed automatically before writing/committing the checkpoint; no upstream means the unpushed count is unknown. Attach an existing implementation commit with `--commit <hash>` and optional workflow context with `--base-branch <branch>` / `--merge-result <text>`.
-
-On the first update of an older run, the helper preserves the unmarked legacy handoff in full. Do not relocate a run outside its recorded project; updates require its initialized state and four regular managed files. A new checkpoint without `--verify` reports its verification as unreported rather than inheriting an older slice's success. Use `--risk ""` to clear a resolved risk.
-
-When the agent execution state files are agent-owned and ready to preserve in project history, add an explicit local run-state commit:
-
-```bash
-python ~/.codex/skills/project-steward/scripts/long_work.py checkpoint --run <run-dir> --summary "what changed" --commit-run-state
-```
-
-`--commit-run-state` stages only the four managed recovery files (`PLAN.md`, `LOG.md`, `HANDOFF.md`, `STATE.json`), refuses pre-existing staged changes, and never pushes. It never commits business-code paths; verified milestone code commits must use explicit Git staging outside the script.
+`--commit-run-state` commits only the four managed files through an isolated index,
+refuses existing staging, validates pre-commit hooks without accepting hook changes
+to the prepared tree, and uses a compare-and-swap ref update. It does not supply the
+full porcelain hook/signing cycle; use ordinary Git when project policies need it.
+On failure it reports HEAD/staging without resetting other work. It never pushes.
+Implementation commits remain explicit Git operations outside the helper.

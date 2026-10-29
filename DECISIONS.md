@@ -1,5 +1,38 @@
 # Decisions
 
+## 2026-10-29: Portable State And Explicit Acceptance
+
+Schema v3 separates run lifecycle, stable milestone identity/acceptance, and
+checkpoint events. Run closure means ended, not fully verified. Only milestone
+operations alter acceptance; reopening a verified milestone is explicit. A
+resolvable commit is merely caller-attached. Evidence retains caller provenance
+even when an external observation/CI source is claimed. The recorder executes no
+historical commands or tests.
+
+Bind relative to the explicitly selected run/project, with a Git subproject check
+when available. This enables relocation without publishing machine roots; it does
+not authenticate repository identity. Read old schemas without silently rewriting
+them; migrate explicitly, preserving originals in a local backup and scrubbing
+known legacy root spellings. This supersedes the absolute binding and implicit
+migration described in earlier decisions.
+
+## 2026-10-29: Authoritative Revision And Isolated Recovery Commits
+
+STATE is the atomic commit point. Its ordered events preserve append-only history
+semantics and reconstruct LOG and the generated HANDOFF block. Prepare all files,
+replace each atomically, detect divergent revisions, and repair derived views
+explicitly. A local OS lock plus revision precondition protects cooperating helper
+writers; there is no distributed transaction or arbitrary-filesystem isolation.
+Unknown log edits and malformed notes fail safely. Migration includes sanitized
+seeds/hashes to recover interruptions during its own replacement sequence.
+
+Recovery commits hold the normal index lock but stage into a private index. Run
+pre-commit validation and reject tree changes before creating a commit object and
+compare-and-swap publishing its ref. This avoids both shared-index staging residue
+on failure and hook-added foreign files. The tradeoff is a narrower hook/signing
+cycle; project policies requiring porcelain commits use manual Git instead. No
+automatic reset, history rewrite, branch operation, or push is added.
+
 ## 2026-10-28: Proportional Milestones And Branch Isolation
 
 Milestones describe verifiable progress. They do not require a new branch, a fixed `leg` name, or a run directory. Use existing project conventions and keep an appropriate task branch; introduce a branch/worktree when isolation helps. Preserve the `leg` loop when explicitly requested.

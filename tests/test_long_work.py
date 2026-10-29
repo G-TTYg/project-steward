@@ -16,57 +16,10 @@ import unittest
 SCRIPT = Path(__file__).resolve().parents[1] / "project-steward" / "scripts" / "long_work.py"
 
 
-class RecoveryCLI(unittest.TestCase):
-    def setUp(self):
-        self.temp = tempfile.TemporaryDirectory(prefix="steward-test-")
-        self.addCleanup(self.temp.cleanup)
-        self.project = Path(self.temp.name) / "project"
-        self.project.mkdir()
-        self.env = os.environ.copy()
-        self.env.update({"GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull})
+from support import RecoveryCase
 
-    def cli(self, *args, ok=True):
-        result = subprocess.run(
-            [sys.executable, "-X", "utf8", str(SCRIPT), *map(str, args)],
-            capture_output=True, text=True, encoding="utf-8", env=self.env,
-        )
-        if ok:
-            self.assertEqual(result.returncode, 0, result.stderr)
-        else:
-            self.assertNotEqual(result.returncode, 0, result.stdout)
-        return result
 
-    def git(self, *args):
-        result = subprocess.run(
-            ["git", "-C", str(self.project), *args],
-            capture_output=True, text=True, encoding="utf-8", env=self.env,
-        )
-        self.assertEqual(result.returncode, 0, result.stderr)
-        return result.stdout.strip()
-
-    def init_git(self):
-        self.git("init", "-b", "main")
-        self.git("config", "user.name", "Steward Test")
-        self.git("config", "user.email", "steward@example.invalid")
-        self.git("config", "commit.gpgsign", "false")
-        self.git("config", "core.hooksPath", str(Path(self.temp.name) / "no-hooks"))
-        (self.project / "app.txt").write_text("baseline\n", encoding="utf-8")
-        self.git("add", "--", "app.txt")
-        self.git("commit", "-m", "baseline")
-
-    def init_run(self, *args):
-        self.cli("init", "--project", self.project, "--task", "review", *args)
-        return sorted((self.project / "docs" / "agent-runs").iterdir())[-1]
-
-    def state(self, run):
-        return json.loads((run / "STATE.json").read_text(encoding="utf-8"))
-
-    def milestone(self, run, name="first", *args):
-        return self.cli(
-            "milestone", "--run", run, "--name", name, "--summary", "slice outcome",
-            "--verify", "unit tests passed", "--next", "continue", *args,
-        )
-
+class RecoveryCLI(RecoveryCase):
     def test_pending_checkpoint_does_not_verify_a_slice(self):
         run = self.init_run()
         self.cli("checkpoint", "--run", run, "--milestone", "unfinished",
@@ -80,7 +33,7 @@ class RecoveryCLI(unittest.TestCase):
         self.milestone(run)
         state = self.state(run)
         self.assertEqual(state["status"], "active")
-        self.assertEqual(state["last_verified"]["name"], "first")
+        self.assertEqual(self.verified(run)["name"], "first")
         self.assertEqual(state["milestones"][-1]["status"], "verified")
 
     def test_unverified_milestones_preserve_previous_verified_slice(self):
@@ -90,7 +43,7 @@ class RecoveryCLI(unittest.TestCase):
             with self.subTest(status=status):
                 self.milestone(run, "unfinished", "--status", status)
                 state = self.state(run)
-                self.assertEqual(state["last_verified"]["name"], "first")
+                self.assertEqual(self.verified(run)["name"], "first")
                 self.assertNotIn("completed_at", state["milestones"][-1])
 
     def test_handoff_notes_survive_repeated_updates(self):
@@ -107,13 +60,15 @@ class RecoveryCLI(unittest.TestCase):
         state = self.state(run)
         state.pop("schema_version", None)
         state.pop("last_verified", None)
+        state["project"] = str(self.project)
         state["milestones"] = [{"name": "old", "status": "verified", "summary": "legacy"}]
         (run / "STATE.json").write_text(json.dumps(state), encoding="utf-8")
         legacy = "# Old handoff\n\nManual Git merge evidence: keep this.\n"
         (run / "HANDOFF.md").write_text(legacy, encoding="utf-8")
+        self.cli("migrate", "--run", run)
         self.cli("checkpoint", "--run", run, "--summary", "resuming")
         self.cli("checkpoint", "--run", run, "--summary", "continuing")
-        self.assertEqual(self.state(run)["last_verified"]["name"], "old")
+        self.assertEqual(self.verified(run)["name"], "old")
         self.assertEqual((run / "HANDOFF.md").read_text(encoding="utf-8").count(legacy), 1)
 
     def test_git_observations_and_attached_commit_are_real(self):
@@ -127,7 +82,7 @@ class RecoveryCLI(unittest.TestCase):
         self.assertEqual(state["git"]["head"], commit)
         self.assertIsNone(state["git"]["upstream"])
         self.assertIsNone(state["git"]["unpushed_count"])
-        self.assertEqual(state["last_verified"]["commit"], commit)
+        self.assertEqual(self.verified(run)["commit"], commit)
         self.assertEqual(state["workflow"]["base_branch"], "main")
 
     def test_upstream_comparison_counts_local_commits(self):
@@ -147,7 +102,7 @@ class RecoveryCLI(unittest.TestCase):
         self.milestone(run)
         commit = self.git("rev-parse", "HEAD")
         self.cli("checkpoint", "--run", run, "--summary", "recording commit", "--commit", commit)
-        self.assertNotIn("commit", self.state(run)["last_verified"])
+        self.assertNotIn("commit", self.verified(run))
         self.assertNotIn("commit", self.state(run)["milestones"][-1])
 
     def test_invalid_commit_leaves_files_and_index_unchanged(self):
@@ -208,7 +163,7 @@ class RecoveryCLI(unittest.TestCase):
         state = self.state(run)
         self.assertNotEqual(state["verification"], "unit tests passed")
         self.assertNotIn("commit", state["workflow"])
-        self.assertEqual(state["last_verified"]["name"], "first")
+        self.assertEqual(self.verified(run)["name"], "first")
 
     def test_run_closes_explicitly_and_risk_can_be_cleared(self):
         run = self.init_run()
@@ -227,14 +182,14 @@ class RecoveryCLI(unittest.TestCase):
         verified = self.state(run)["last_verified"]
         self.cli("checkpoint", "--run", run, "--summary", "close run",
                  "--status", "complete", "--verify", "all checks passed")
-        self.assertEqual(self.state(run)["last_verified"]["commit"], commit)
+        self.assertEqual(self.verified(run)["commit"], commit)
         self.assertEqual(self.state(run)["last_verified"], verified)
 
     def test_complete_milestone_is_distinct_from_complete_run(self):
         run = self.init_run()
         self.milestone(run, "first", "--status", "complete")
         self.assertEqual(self.state(run)["status"], "active")
-        self.assertEqual(self.state(run)["last_verified"]["status"], "complete")
+        self.assertEqual(self.verified(run)["status"], "verified")
 
     def test_invalid_handoff_markers_fail_without_partial_writes(self):
         run = self.init_run()
@@ -285,7 +240,7 @@ class RecoveryCLI(unittest.TestCase):
         run = self.init_run()
         self.milestone(run)
         self.assertFalse(self.state(run)["git"]["available"])
-        self.assertEqual(self.state(run)["last_verified"]["name"], "first")
+        self.assertEqual(self.verified(run)["name"], "first")
 
     def test_unborn_and_detached_git_states_are_observed(self):
         self.git("init", "-b", "main")

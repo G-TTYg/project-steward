@@ -50,7 +50,8 @@ Use the current request and these applicable instructions as the maintenance cor
 | Runtime behavior or task sizing? | [SKILL.md](project-steward/SKILL.md) | `Core Contract`, `Choose Proportional Stewardship`, relevant numbered workflow section |
 | Context retrieval or stopping rules? | [context-management.md](project-steward/references/context-management.md) | `Retrieve By Question`, `Working Context`, `Missing Or Stale Routes` |
 | Markdown responsibilities or project index shape? | [project-files.md](project-steward/references/project-files.md) | `Markdown Responsibilities`, `Index Contract` |
-| Recovery helper behavior? | `project-steward/scripts/long_work.py`, `tests/test_long_work.py` | `rg -n '^def ' project-steward/scripts/long_work.py`; search the affected function or test name |
+| Recovery CLI or compatibility? | `project-steward/scripts/long_work.py`, `project-steward/references/recovery-state.md` | affected command/function, `Lifecycle And IDs`, `Portable Binding And Migration` |
+| State invariants, storage, or Git isolation? | `project-steward/scripts/steward_core/`, `tests/test_state.py`, `tests/test_storage.py`, `tests/test_git_ops.py`, `tests/test_recovery.py` | affected symbol/invariant; `Consistency And Repair`, `Git Commit Boundary` in recovery-state |
 | Architecture, structure, or comment standard? | `project-steward/references/stewardship-standards.md` | matching architecture/structure/comment heading |
 | Git ownership, staging, branch, or publication edge case? | `project-steward/references/git-stewardship.md` | matching Git workflow heading |
 | Creating a needed artifact? | `project-steward/references/templates.md` | `Template Index`, then only the selected skeleton |
@@ -96,6 +97,6 @@ Before delivery, run:
 
 - `quick_validate.py` for the skill folder.
 - `git diff --check`.
-- Helper regression tests when `project-steward/scripts/long_work.py` or its path changes.
+- Helper regression tests when `project-steward/scripts/` or its path changes.
 
 Report validation, Git commit, push state, and any residual risk.
